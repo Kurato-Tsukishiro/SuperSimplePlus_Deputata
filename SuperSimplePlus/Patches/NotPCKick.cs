@@ -4,7 +4,8 @@ using SuperSimplePlus.Modules;
 
 namespace SuperSimplePlus.Patches
 {
-    public class NotPCKick{
+    public class NotPCKick
+    {
         public static bool IsKick = false;
     }
     [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Update))]
@@ -12,7 +13,7 @@ namespace SuperSimplePlus.Patches
     {
         public static void Postfix(GameStartManager __instance)
         {
-            if (AmongUsClient.Instance.AmHost &&NotPCKick.IsKick)
+            if (AmongUsClient.Instance.AmHost && NotPCKick.IsKick)
             {
                 foreach (InnerNet.ClientData p in AmongUsClient.Instance.allClients)
                 {
