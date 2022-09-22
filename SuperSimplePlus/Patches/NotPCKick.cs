@@ -17,25 +17,10 @@ namespace SuperSimplePlus.Patches
             {
                 foreach (InnerNet.ClientData p in AmongUsClient.Instance.allClients)
                 {
-                    switch (p.PlatformData.Platform)
+                    if (p.PlatformData.Platform is not Platforms.StandaloneEpicPC and not Platforms.StandaloneSteamPC)
                     {
-                        case Platforms.StandaloneEpicPC:
-                        case Platforms.StandaloneSteamPC:
-                            break;
-                        case Platforms.Unknown:
-                        case Platforms.StandaloneMac:
-                        case Platforms.StandaloneWin10:
-                        case Platforms.StandaloneItch:
-                        case Platforms.IPhone:
-                        case Platforms.Android:
-                        case Platforms.Switch:
-                        case Platforms.Xbox:
-                        case Platforms.Playstation:
-                            AmongUsClient.Instance.KickPlayer(p.Id, false);
-                            Logger.Info($"Kick PlayerName:{p.PlayerName}({p.PlatformData.Platform})", "NotPCKick");
-                            break;
-                        default:
-                            break;
+                        AmongUsClient.Instance.KickPlayer(p.Id, false);
+                        Logger.Info($"Kick PlayerName:{p.PlayerName}({p.PlatformData.Platform})", "NotPCKick");
                     }
                 }
             }
