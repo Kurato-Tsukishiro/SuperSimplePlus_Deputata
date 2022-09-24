@@ -15,7 +15,6 @@ This mod is not affiliated with Among Us or Innersloth LLC, and the content cont
 製作者はいつでも募集しています！discordかTwitterかissueまで！
 
 # 実装予定の機能
-・PC以外をキック<br>
 **追加機能募集中です!**
 
 ## クレジット
@@ -23,6 +22,7 @@ This mod is not affiliated with Among Us or Innersloth LLC, and the content cont
 [TownOfSuper](https://github.com/reitou-mugicha/TownOfSuper)Thanks to **reitou-mugicha**!!<br>
 [TheOtherRoles](https://github.com/Eisbison/TheOtherRoles)Thanks to **Eisbison**!!<br>
 [TheOtherRoles GM Edition](https://github.com/yukinogatari/TheOtherRoles-GM)Thanks to **yukinogatari**!!<br>
+[TheOtherRoles-GM-Haoming](https://github.com/haoming37/TheOtherRoles-GM-Haoming)Thanks to **haoming37**!!<br>
 [Town Of Host](https://github.com/tukasa0001/TownOfHost) - Thanks to **tukasa0001**!!<br>
 
 ## 機能一覧
@@ -35,6 +35,7 @@ This mod is not affiliated with Among Us or Innersloth LLC, and the content cont
 ##### 設定
 |機能                |
 |PC以外をキックする|
+|PC以外をバンする|
 #### その他機能
 | 機能             | 操作                                                       |
 | ---------------- | ---------------------------------------------------------- |
