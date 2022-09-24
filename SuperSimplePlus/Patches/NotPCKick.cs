@@ -21,6 +21,7 @@ namespace SuperSimplePlus.Patches
                 {
                     if (p.PlatformData.Platform is not Platforms.StandaloneEpicPC and not Platforms.StandaloneSteamPC)
                     {
+                        //IsBanがtrueの時はバン、IsBanがfalseの時キックをするコードに変わる。
                         AmongUsClient.Instance.KickPlayer(p.Id, NotPCKick.IsBan);
                     }
                 }
