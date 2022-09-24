@@ -13,8 +13,10 @@ namespace SuperSimplePlus.Patches
     [HarmonyPatch]
     public static class ClientOptionsPatch
     {
-        private static readonly SelectionBehaviour[] AllOptions = {
+        private static readonly SelectionBehaviour[] AllOptions =
+        {
             new(ModTranslation.getString("NotPCKick"),()=> NotPCKick.IsKick = !NotPCKick.IsKick,NotPCKick.IsKick),
+            new(ModTranslation.getString("NotPCBan"),()=> NotPCKick.IsBan = !NotPCKick.IsBan,NotPCKick.IsBan),
         };
 
         public static GameObject SSPSettingButton;
