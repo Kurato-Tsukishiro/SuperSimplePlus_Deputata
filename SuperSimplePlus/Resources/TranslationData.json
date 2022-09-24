@@ -24,5 +24,9 @@
     "NotPCKick": {
         "0": "Kick non-PC",
         "11": "PC\u4ee5\u5916\u3092\u30ad\u30c3\u30af\u3059\u308b"
+    },
+    "NotPCBan": {
+        "0": "Ban non-PC",
+        "11": "PC\u4ee5\u5916\u3092\u30d0\u30f3"
     }
 }
