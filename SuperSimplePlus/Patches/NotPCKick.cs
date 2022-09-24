@@ -1,3 +1,4 @@
+using InnerNet;
 using System;
 using HarmonyLib;
 using SuperSimplePlus.Modules;
@@ -21,10 +22,18 @@ namespace SuperSimplePlus.Patches
                     if (p.PlatformData.Platform is not Platforms.StandaloneEpicPC and not Platforms.StandaloneSteamPC)
                     {
                         AmongUsClient.Instance.KickPlayer(p.Id, NotPCKick.IsBan);
-                        Logger.Info($"{(NotPCKick.IsBan ? "BAN" : "Kick")} PlayerName:{p.PlayerName}({p.PlatformData.Platform})", $"NotPC{(NotPCKick.IsBan ? "BAN" : "Kick")}");
                     }
                 }
             }
+        }
+    }
+    //参考=>https://github.com/haoming37/TheOtherRoles-GM-Haoming/blob/haoming-main/TheOtherRoles/Patches/GameStartManagerPatch.cs
+    [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerLeft))]
+    public class AmongUsClientOnPlayerLeftPatch
+    {
+        public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client, [HarmonyArgument(1)] DisconnectReasons reason)
+        {
+            Logger.Info($"PlayerName: \"{client.PlayerName}(ID:{client.Id})({client.PlatformData.Platform})\" Left (Reason: {reason})", "OnPlayerLeft");
         }
     }
 }
