@@ -15,14 +15,14 @@ namespace SuperSimplePlus.Patches
     {
         public static void Postfix(GameStartManager __instance)
         {
-            if (AmongUsClient.Instance.AmHost && (NotPCKick.IsKick || NotPCKick.IsBan))
+            if (AmongUsClient.Instance.AmHost && (SSPPlugin.NotPCKick.Value || SSPPlugin.NotPCBan.Value))
             {
                 foreach (InnerNet.ClientData p in AmongUsClient.Instance.allClients)
                 {
                     if (p.PlatformData.Platform is not Platforms.StandaloneEpicPC and not Platforms.StandaloneSteamPC)
                     {
                         //IsBanがtrueの時はバン、IsBanがfalseの時キックをするコードに変わる。
-                        AmongUsClient.Instance.KickPlayer(p.Id, NotPCKick.IsBan);
+                        AmongUsClient.Instance.KickPlayer(p.Id, SSPPlugin.NotPCBan.Value);
                     }
                 }
             }
