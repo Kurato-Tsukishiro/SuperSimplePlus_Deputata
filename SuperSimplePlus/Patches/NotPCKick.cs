@@ -5,11 +5,6 @@ using SuperSimplePlus.Modules;
 
 namespace SuperSimplePlus.Patches
 {
-    public class NotPCKick
-    {
-        public static bool IsKick = false;
-        public static bool IsBan = false;
-    }
     [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Update))]
     public class GameStartManagerUpdatePatch
     {
