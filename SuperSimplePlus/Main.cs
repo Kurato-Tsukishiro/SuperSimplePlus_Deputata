@@ -16,7 +16,6 @@ namespace SuperSimplePlus
         public const String ColoredModName = "<color=#8cfc03>SuperSimplePlus</color>";
 
         public static ConfigEntry<bool> debugTool { get; set; }
-        public static ConfigEntry<string> StereotypedText { get; set; }
         public static ConfigEntry<bool> NotPCKick { get; set; }
         public static ConfigEntry<bool> NotPCBan { get; set; }
 
@@ -34,7 +33,6 @@ namespace SuperSimplePlus
             debugTool = Config.Bind("Client Options", "Debug Tool", false);
             NotPCKick = Config.Bind("Client Options", "NotPCKick", false);
             NotPCBan = Config.Bind("Client Options", "NotPCBan", false);
-            StereotypedText = Config.Bind("Client Options", "StereotypedText", "SuperSimplePlus定型文");
 
             //Load
             ModTranslation.Load();
