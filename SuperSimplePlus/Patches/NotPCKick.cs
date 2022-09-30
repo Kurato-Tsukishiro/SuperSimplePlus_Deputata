@@ -5,24 +5,20 @@ using SuperSimplePlus.Modules;
 
 namespace SuperSimplePlus.Patches
 {
-    public class NotPCKick
-    {
-        public static bool IsKick = false;
-        public static bool IsBan = false;
-    }
     [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Update))]
     public class GameStartManagerUpdatePatch
     {
         public static void Postfix(GameStartManager __instance)
         {
-            if (AmongUsClient.Instance.AmHost && (NotPCKick.IsKick || NotPCKick.IsBan))
+            if (AmongUsClient.Instance.AmHost && (SSPPlugin.NotPCKick.Value || SSPPlugin.NotPCBan.Value))
             {
                 foreach (InnerNet.ClientData p in AmongUsClient.Instance.allClients)
                 {
                     if (p.PlatformData.Platform is not Platforms.StandaloneEpicPC and not Platforms.StandaloneSteamPC)
                     {
-                        //IsBanがtrueの時はバン、IsBanがfalseの時キックをするコードに変わる。
-                        AmongUsClient.Instance.KickPlayer(p.Id, NotPCKick.IsBan);
+                        //[NotPCBan.Value] が <true> の時はバン、 [NotPCBan.Value] が <false> の時はキックをするコードに変わる。
+                        //kickにするコードに変わっても [NotPCKick.Value] が <true> でない時はここのコードに入らない
+                        AmongUsClient.Instance.KickPlayer(p.Id, SSPPlugin.NotPCBan.Value);
                     }
                 }
             }

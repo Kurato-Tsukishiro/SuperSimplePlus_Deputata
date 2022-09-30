@@ -11,12 +11,14 @@ namespace SuperSimplePlus
     public class SSPPlugin : BasePlugin
     {
         public const String Id = "jp.satsumaimoamo.SuperSimplePlus";
-        public const String Version = "1.3.0";
+        public const String Version = "1.4.0";
 
         public const String ColoredModName = "<color=#8cfc03>SuperSimplePlus</color>";
 
         public static ConfigEntry<bool> debugTool { get; set; }
-        public static ConfigEntry<string> StereotypedText { get; set; }
+        public static ConfigEntry<bool> NotPCKick { get; set; }
+        public static ConfigEntry<bool> NotPCBan { get; set; }
+
         public Harmony Harmony = new(Id);
         internal static BepInEx.Logging.ManualLogSource Logger;
 
@@ -29,7 +31,8 @@ namespace SuperSimplePlus
             SuperSimplePlus.Logger.Info("SuperSimplePlusLoading!!!!!!!!!!!!!!!!!", "SuperSimplePlus");
 
             debugTool = Config.Bind("Client Options", "Debug Tool", false);
-            StereotypedText = Config.Bind("Client Options", "StereotypedText", "SuperSimplePlus定型文");
+            NotPCKick = Config.Bind("Client Options", "NotPCKick", false);
+            NotPCBan = Config.Bind("Client Options", "NotPCBan", false);
 
             //Load
             ModTranslation.Load();

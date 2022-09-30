@@ -15,8 +15,8 @@ namespace SuperSimplePlus.Patches
     {
         private static readonly SelectionBehaviour[] AllOptions =
         {
-            new(ModTranslation.getString("NotPCKick"),()=> NotPCKick.IsKick = !NotPCKick.IsKick,NotPCKick.IsKick),
-            new(ModTranslation.getString("NotPCBan"),()=> NotPCKick.IsBan = !NotPCKick.IsBan,NotPCKick.IsBan),
+            new(ModTranslation.getString("NotPCKick"),()=> SSPPlugin.NotPCKick.Value = !SSPPlugin.NotPCKick.Value,SSPPlugin.NotPCKick.Value),
+            new(ModTranslation.getString("NotPCBan"),()=> SSPPlugin.NotPCBan.Value = !SSPPlugin.NotPCBan.Value,SSPPlugin.NotPCBan.Value),
         };
 
         public static GameObject SSPSettingButton;
