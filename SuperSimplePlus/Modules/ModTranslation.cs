@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using HarmonyLib;
 using Newtonsoft.Json.Linq;
-using SuperSimplePlus.Patches;
-using UnityEngine;
 
 namespace SuperSimplePlus
 {
