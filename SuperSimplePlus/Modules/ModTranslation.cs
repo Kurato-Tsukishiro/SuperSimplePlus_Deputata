@@ -1,3 +1,4 @@
+using AmongUs.Data.Legacy;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -77,7 +78,7 @@ namespace SuperSimplePlus
             }
 
             var data = stringData[keyClean];
-            int lang = (int)SaveManager.LastLanguage;
+            int lang = (int)(SupportedLangs)LegacySaveManager.LastLanguage;
 
             if (data.ContainsKey(lang))
             {
