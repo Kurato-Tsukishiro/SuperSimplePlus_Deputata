@@ -6,7 +6,6 @@ namespace SuperSimplePlus.Patches
     [HarmonyPatch(typeof(ControllerManager), nameof(ControllerManager.Update))]
     class ShoutcutKeyBoard
     {
-        public static ShipStatus CachedShipStatus = ShipStatus.Instance;
         public static void Postfix()
         {
             if (AmongUsClient.Instance.GameState == AmongUsClient.GameStates.Started)//ゲームがスタートしているとき
@@ -18,7 +17,6 @@ namespace SuperSimplePlus.Patches
                     {
                         Logger.Info("廃村", "EndGame");
                         GameManager.Instance.RpcEndGame(GameOverReason.HumansByTask, false);//タスクを終わらせる
-                        CachedShipStatus.enabled = false;
                     }
                     //ミーティング強制終了
                     if (Input.GetKeyDown(KeyCode.S) && Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.RightShift))//Sと右左シフトを押したとき
