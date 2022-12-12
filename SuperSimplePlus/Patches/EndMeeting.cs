@@ -7,7 +7,7 @@ namespace SuperSimplePlus.Patches
     class ShoutcutKeyBoard
     {
         public static ShipStatus CachedShipStatus = ShipStatus.Instance;
-        public static void Postfix(ControllerManager __instance)
+        public static void Postfix()
         {
             if (AmongUsClient.Instance.GameState == AmongUsClient.GameStates.Started)//ゲームがスタートしているとき
             {
@@ -17,7 +17,7 @@ namespace SuperSimplePlus.Patches
                     if (Input.GetKeyDown(KeyCode.A) && Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.RightShift))//Aと右左シフトを押したとき
                     {
                         Logger.Info("廃村", "EndGame");
-                        ShipStatus.RpcEndGame(GameOverReason.HumansByTask, false);//タスクを終わらせる
+                        GameManager.Instance.RpcEndGame(GameOverReason.HumansByTask, false);//タスクを終わらせる
                         CachedShipStatus.enabled = false;
                     }
                     //ミーティング強制終了
