@@ -19,7 +19,8 @@ namespace SuperSimplePlus.Patches
             new(ModTranslation.getString("NotPCBan"),()=> SSPPlugin.NotPCBan.Value = !SSPPlugin.NotPCBan.Value,SSPPlugin.NotPCBan.Value),
         };
 
-        public static GameObject SSPSettingButton;
+        public static PassiveButton SSPSettingButton;
+        public static SpriteRenderer SSPSettingSpriteRenderer;
         public static GameObject SSPOptionsMenu;
         private static TextMeshPro titleText;
 
@@ -44,23 +45,21 @@ namespace SuperSimplePlus.Patches
         [HarmonyPatch(typeof(HudManager), nameof(HudManager.Start))]
         public static void HudManager_StartPostfix()
         {
-            SSPSettingButton = GameObject.Instantiate(FastDestroyableSingleton<HudManager>.Instance.MapButton.gameObject);
-            SSPSettingButton.transform.SetParent(FastDestroyableSingleton<HudManager>.Instance.transform.FindChild("Buttons").FindChild("TopRight"));
+            SSPSettingButton = GameObject.Instantiate(FastDestroyableSingleton<HudManager>.Instance.MapButton, FastDestroyableSingleton<HudManager>.Instance.MapButton.transform);
+            SSPSettingSpriteRenderer = SSPSettingButton.GetComponent<SpriteRenderer>();
 
-            SSPSettingButton.SetActive(true);
+            SSPSettingSpriteRenderer.sprite = Helpers.loadSpriteFromResources("SuperSimplePlus.Resources.SettingButton.png", 115f);
 
-            SSPSettingButton.GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("SuperSimplePlus.Resources.SettingButton.png", 115f);
+            SSPSettingButton.OnClick = new ButtonClickedEvent();
 
-            ButtonBehavior SSPSettingButtonButtonBehavior = SSPSettingButton.GetComponent<ButtonBehavior>();
-            SSPSettingButtonButtonBehavior.OnClick = new ButtonClickedEvent();
-            SSPSettingButtonButtonBehavior.OnClick.AddListener((UnityAction)(() => { SSPSettingButtonOnClick(); }));
+            SSPSettingButton.OnClick.AddListener((UnityAction)(() => { SSPSettingButtonOnClick(); }));
 
             buttonPrefab = Object.Instantiate(FastDestroyableSingleton<HudManager>.Instance.transform.FindChild("Menu").GetComponent<OptionsMenuBehaviour>().CensorChatButton);
             Object.DontDestroyOnLoad(buttonPrefab);
             buttonPrefab.name = "CensorChatPrefab";
             buttonPrefab.gameObject.SetActive(false);
 
-            SSPSettingButton.transform.localPosition = new(SSPSettingButton.transform.localPosition.x, SSPSettingButton.transform.localPosition.y - 0.75f, SSPSettingButton.transform.localPosition.z);
+            SSPSettingSpriteRenderer.gameObject.transform.localPosition = new(SSPSettingButton.transform.localPosition.x, SSPSettingButton.transform.localPosition.y - 0.75f, SSPSettingButton.transform.localPosition.z);
         }
 
         private static void SSPSettingButtonOnClick()
