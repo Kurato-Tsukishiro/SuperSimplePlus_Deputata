@@ -50,6 +50,9 @@ namespace SuperSimplePlus.Patches
 
             SSPSettingSpriteRenderer.sprite = Helpers.loadSpriteFromResources("SuperSimplePlus.Resources.SettingButton.png", 115f);
 
+            SSPSettingSpriteRenderer.gameObject.SetActive(true);
+            SSPSettingSpriteRenderer.enabled = true;
+
             SSPSettingButton.OnClick = new ButtonClickedEvent();
 
             SSPSettingButton.OnClick.AddListener((UnityAction)(() => { SSPSettingButtonOnClick(); }));
