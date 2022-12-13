@@ -7,7 +7,7 @@ namespace SuperSimplePlus.Patches
     public class UpdatePatch
     {
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(FastDestroyableSingleton<HudManager>), nameof(HudManager.Update))]
+        [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
         public static void HudManager_UpdatePostfix()
         {
             if (ClientOptionsPatch.SSPOptionsMenu)

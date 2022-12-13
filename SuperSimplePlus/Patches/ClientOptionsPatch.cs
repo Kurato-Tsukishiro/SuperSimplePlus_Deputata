@@ -43,7 +43,7 @@ namespace SuperSimplePlus.Patches
         }
 
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(FastDestroyableSingleton<HudManager>), nameof(HudManager.Start))]
+        [HarmonyPatch(typeof(HudManager), nameof(HudManager.Start))]
         public static void HudManager_StartPostfix()
         {
             var __instance = FastDestroyableSingleton<HudManager>.Instance;
