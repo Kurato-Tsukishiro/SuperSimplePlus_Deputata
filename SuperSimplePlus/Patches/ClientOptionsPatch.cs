@@ -19,9 +19,7 @@ namespace SuperSimplePlus.Patches
             new(ModTranslation.getString("NotPCBan"),()=> SSPPlugin.NotPCBan.Value = !SSPPlugin.NotPCBan.Value,SSPPlugin.NotPCBan.Value),
         };
 
-        public static PassiveButton SSPSettingPassiveButton;
         public static GameObject SSPSettingButton;
-
         public static GameObject SSPOptionsMenu;
         private static TextMeshPro titleText;
 
@@ -46,10 +44,8 @@ namespace SuperSimplePlus.Patches
         [HarmonyPatch(typeof(HudManager), nameof(HudManager.Start))]
         public static void HudManager_StartPostfix()
         {
-            var __instance = FastDestroyableSingleton<HudManager>.Instance;
-            SSPSettingPassiveButton = GameObject.Instantiate(__instance.MapButton);
-            SSPSettingButton = SSPSettingPassiveButton.gameObject;
-            SSPSettingButton.transform.SetParent(__instance.transform.FindChild("Buttons").FindChild("TopRight"));
+            SSPSettingButton = GameObject.Instantiate(FastDestroyableSingleton<HudManager>.Instance.MapButton.gameObject);
+            SSPSettingButton.transform.SetParent(FastDestroyableSingleton<HudManager>.Instance.transform.FindChild("Buttons").FindChild("TopRight"));
 
             SSPSettingButton.SetActive(true);
 
@@ -59,7 +55,7 @@ namespace SuperSimplePlus.Patches
             SSPSettingButtonButtonBehavior.OnClick = new ButtonClickedEvent();
             SSPSettingButtonButtonBehavior.OnClick.AddListener((UnityAction)(() => { SSPSettingButtonOnClick(); }));
 
-            buttonPrefab = Object.Instantiate(__instance.transform.FindChild("Menu").GetComponent<OptionsMenuBehaviour>().CensorChatButton);
+            buttonPrefab = Object.Instantiate(FastDestroyableSingleton<HudManager>.Instance.transform.FindChild("Menu").GetComponent<OptionsMenuBehaviour>().CensorChatButton);
             Object.DontDestroyOnLoad(buttonPrefab);
             buttonPrefab.name = "CensorChatPrefab";
             buttonPrefab.gameObject.SetActive(false);
