@@ -46,10 +46,10 @@ namespace SuperSimplePlus.Patches
         [HarmonyPatch(typeof(HudManager), nameof(HudManager.Start))]
         public static void HudManager_StartPostfix()
         {
-            var __instance = FastDestroyableSingleton<HudManager>.Instance;
-            SSPSettingPassiveButton = GameObject.Instantiate(__instance.MapButton);
+            var fastDestroy = FastDestroyableSingleton<HudManager>.Instance;
+            SSPSettingPassiveButton = GameObject.Instantiate(fastDestroy.MapButton);
             SSPSettingButton = SSPSettingPassiveButton.gameObject;
-            SSPSettingButton.transform.SetParent(__instance.transform.FindChild("Buttons").FindChild("TopRight"));
+            SSPSettingButton.transform.SetParent(fastDestroy.transform.FindChild("Buttons").FindChild("TopRight"));
 
             SSPSettingButton.SetActive(true);
 
@@ -59,7 +59,7 @@ namespace SuperSimplePlus.Patches
             SSPSettingButtonButtonBehavior.OnClick = new ButtonClickedEvent();
             SSPSettingButtonButtonBehavior.OnClick.AddListener((UnityAction)(() => { SSPSettingButtonOnClick(); }));
 
-            buttonPrefab = Object.Instantiate(__instance.transform.FindChild("Menu").GetComponent<OptionsMenuBehaviour>().CensorChatButton);
+            buttonPrefab = Object.Instantiate(fastDestroy.transform.FindChild("Menu").GetComponent<OptionsMenuBehaviour>().CensorChatButton);
             Object.DontDestroyOnLoad(buttonPrefab);
             buttonPrefab.name = "CensorChatPrefab";
             buttonPrefab.gameObject.SetActive(false);
@@ -71,14 +71,14 @@ namespace SuperSimplePlus.Patches
         {
             if (SSPOptionsMenu) return;
 
-            var __instance = FastDestroyableSingleton<HudManager>.Instance;
+            var fastDestroy = FastDestroyableSingleton<HudManager>.Instance;
 
-            SSPOptionsMenu = Object.Instantiate(__instance.transform.FindChild("Menu").GetComponent<OptionsMenuBehaviour>().Background.gameObject);
-            SSPOptionsMenu.transform.SetParent(__instance.transform);
-            SSPOptionsMenu.transform.position = __instance.transform.FindChild("Menu").GetComponent<OptionsMenuBehaviour>().transform.position;
+            SSPOptionsMenu = Object.Instantiate(fastDestroy.transform.FindChild("Menu").GetComponent<OptionsMenuBehaviour>().Background.gameObject);
+            SSPOptionsMenu.transform.SetParent(fastDestroy.transform);
+            SSPOptionsMenu.transform.position = fastDestroy.transform.FindChild("Menu").GetComponent<OptionsMenuBehaviour>().transform.position;
             SSPOptionsMenu.transform.localScale = new(SSPOptionsMenu.transform.localScale.x * 0.9f, SSPOptionsMenu.transform.localScale.y * 0.9f, SSPOptionsMenu.transform.localScale.z);
 
-            GameObject SSPOptionsMenuCloseButton = GameObject.Instantiate(__instance.MapButton.gameObject);
+            GameObject SSPOptionsMenuCloseButton = GameObject.Instantiate(fastDestroy.MapButton.gameObject);
             SSPOptionsMenuCloseButton.SetActive(true);
             SSPOptionsMenuCloseButton.transform.SetParent(SSPOptionsMenu.transform);
             SSPOptionsMenuCloseButton.transform.localPosition = new(2.25f, 2.44f, SSPOptionsMenuCloseButton.transform.localPosition.z);
