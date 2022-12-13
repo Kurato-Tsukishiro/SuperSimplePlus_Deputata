@@ -13,7 +13,7 @@ namespace SuperSimplePlus
         public const String Id = "jp.satsumaimoamo.SuperSimplePlus";
         public const String Version = "1.4.1";
 
-        public const String ColoredModName = "<color=#8cfc03>SuperSimplePlus</color>";
+        public const String ColoredModName = "<color=#96514d>SSP_Deputata</color>";
 
         public static ConfigEntry<bool> debugTool { get; set; }
         public static ConfigEntry<bool> NotPCKick { get; set; }
