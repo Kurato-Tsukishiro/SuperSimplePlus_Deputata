@@ -45,7 +45,7 @@ namespace SuperSimplePlus.Patches
         [HarmonyPatch(typeof(HudManager), nameof(HudManager.Start))]
         public static void HudManager_StartPostfix()
         {
-            SSPSettingButton = GameObject.Instantiate(FastDestroyableSingleton<HudManager>.Instance.MapButton, FastDestroyableSingleton<HudManager>.Instance.MapButton.transform);
+            SSPSettingButton = GameObject.Instantiate(FastDestroyableSingleton<HudManager>.Instance.MapButton, HudManager.Instance.transform.FindChild("Buttons").FindChild("TopRight"));
             SSPSettingSpriteRenderer = SSPSettingButton.GetComponent<SpriteRenderer>();
 
             SSPSettingSpriteRenderer.sprite = Helpers.loadSpriteFromResources("SuperSimplePlus.Resources.SettingButton.png", 115f);
