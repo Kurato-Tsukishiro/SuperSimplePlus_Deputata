@@ -81,8 +81,8 @@ namespace SuperSimplePlus.Patches
 
             SpriteRenderer closeSpriteRenderer = closeButton.GetComponent<SpriteRenderer>();
             closeSpriteRenderer.sortingOrder = 1;
-            closeSpriteRenderer.transform.SetParent(SSPOptionsMenu.transform);
-            closeSpriteRenderer.transform.localPosition = new(2.25f, 2.44f, closeButton.transform.localPosition.z);
+            closeSpriteRenderer.gameObject.transform.SetParent(SSPOptionsMenu.transform);
+            closeSpriteRenderer.gameObject.transform.localPosition = new(2.25f, 2.44f, closeButton.transform.localPosition.z);
 
             closeSpriteRenderer.sprite = Helpers.loadSpriteFromResources("SuperSimplePlus.Resources.CloseButton.png", 115f);
 
