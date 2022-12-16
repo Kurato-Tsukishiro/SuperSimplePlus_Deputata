@@ -77,7 +77,7 @@ namespace SuperSimplePlus.Patches
             SSPOptionsMenu.transform.position = __instance.transform.FindChild("Menu").GetComponent<OptionsMenuBehaviour>().transform.position;
             SSPOptionsMenu.transform.localScale = new(SSPOptionsMenu.transform.localScale.x * 0.9f, SSPOptionsMenu.transform.localScale.y * 0.9f, SSPOptionsMenu.transform.localScale.z);
 
-            PassiveButton closeButton = GameObject.Instantiate(FastDestroyableSingleton<HudManager>.Instance.MapButton, HudManager.Instance.transform.FindChild("Buttons").FindChild("TopRight"));
+            PassiveButton closeButton = GameObject.Instantiate(SSPSettingButton, SSPSettingButton.transform);
 
             SpriteRenderer closeSpriteRenderer = closeButton.GetComponent<SpriteRenderer>();
             closeSpriteRenderer.sortingOrder = 1;
