@@ -12,11 +12,9 @@ namespace SuperSimplePlus.Patches
         {
             if (ClientOptionsPatch.SSPOptionsMenu)
             {
-                PlayerControl.LocalPlayer.moveable = false;
                 if (Input.GetKeyDown(KeyCode.Escape))
                 {
                     GameObject.Destroy(ClientOptionsPatch.SSPOptionsMenu);
-                    PlayerControl.LocalPlayer.moveable = true;
                 }
             }
         }

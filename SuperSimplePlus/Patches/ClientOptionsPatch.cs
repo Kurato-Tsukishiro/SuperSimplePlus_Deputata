@@ -94,7 +94,6 @@ namespace SuperSimplePlus.Patches
             closeButton.OnClick.AddListener((UnityAction)(() =>
             {
                 GameObject.Destroy(SSPOptionsMenu);
-                PlayerControl.LocalPlayer.moveable = true;
             }));
 
             var title = Object.Instantiate(titleText, SSPOptionsMenu.transform);
