@@ -46,6 +46,7 @@ namespace SuperSimplePlus.Patches
         public static void HudManager_StartPostfix()
         {
             SSPSettingButton = GameObject.Instantiate(FastDestroyableSingleton<HudManager>.Instance.MapButton, HudManager.Instance.transform.FindChild("Buttons").FindChild("TopRight"));
+
             SSPSettingSpriteRenderer = SSPSettingButton.GetComponent<SpriteRenderer>();
 
             SSPSettingSpriteRenderer.sprite = Helpers.loadSpriteFromResources("SuperSimplePlus.Resources.SettingButton.png", 115f);
@@ -80,14 +81,13 @@ namespace SuperSimplePlus.Patches
 
             SpriteRenderer closeSpriteRenderer = closeButton.GetComponent<SpriteRenderer>();
             closeSpriteRenderer.sortingOrder = 1;
+            closeSpriteRenderer.transform.SetParent(SSPOptionsMenu.transform);
+            closeSpriteRenderer.transform.localPosition = new(2.25f, 2.44f, closeButton.transform.localPosition.z);
+
             closeSpriteRenderer.sprite = Helpers.loadSpriteFromResources("SuperSimplePlus.Resources.CloseButton.png", 115f);
 
             closeSpriteRenderer.gameObject.SetActive(true);
             closeSpriteRenderer.enabled = true;
-
-            closeSpriteRenderer.transform.SetParent(SSPOptionsMenu.transform);
-            closeSpriteRenderer.transform.localPosition = new(2.25f, 2.44f, closeButton.transform.localPosition.z);
-
 
             closeButton.OnClick = new ButtonClickedEvent();
 
