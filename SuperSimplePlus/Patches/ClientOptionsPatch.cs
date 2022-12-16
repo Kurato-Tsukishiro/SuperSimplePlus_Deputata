@@ -76,18 +76,22 @@ namespace SuperSimplePlus.Patches
             SSPOptionsMenu.transform.position = __instance.transform.FindChild("Menu").GetComponent<OptionsMenuBehaviour>().transform.position;
             SSPOptionsMenu.transform.localScale = new(SSPOptionsMenu.transform.localScale.x * 0.9f, SSPOptionsMenu.transform.localScale.y * 0.9f, SSPOptionsMenu.transform.localScale.z);
 
-            GameObject SSPOptionsMenuCloseButton = GameObject.Instantiate(__instance.MapButton.gameObject);
-            SSPOptionsMenuCloseButton.SetActive(true);
-            SSPOptionsMenuCloseButton.transform.SetParent(SSPOptionsMenu.transform);
-            SSPOptionsMenuCloseButton.transform.localPosition = new(2.25f, 2.44f, SSPOptionsMenuCloseButton.transform.localPosition.z);
+            PassiveButton closeButton = GameObject.Instantiate(FastDestroyableSingleton<HudManager>.Instance.MapButton, HudManager.Instance.transform.FindChild("Buttons").FindChild("TopRight"));
 
-            SpriteRenderer OptionsMenuCloseButtonSpriteRender = SSPOptionsMenuCloseButton.GetComponent<SpriteRenderer>();
-            OptionsMenuCloseButtonSpriteRender.sortingOrder = 1;
-            OptionsMenuCloseButtonSpriteRender.sprite = Helpers.loadSpriteFromResources("SuperSimplePlus.Resources.CloseButton.png", 115f);
+            SpriteRenderer closeSpriteRenderer = closeButton.GetComponent<SpriteRenderer>();
+            closeSpriteRenderer.sortingOrder = 1;
+            closeSpriteRenderer.sprite = Helpers.loadSpriteFromResources("SuperSimplePlus.Resources.CloseButton.png", 115f);
 
-            ButtonBehavior OptionsMenuCloseButtonButtonBehaviour = SSPOptionsMenuCloseButton.GetComponent<ButtonBehavior>();
-            OptionsMenuCloseButtonButtonBehaviour.OnClick = new ButtonClickedEvent();
-            OptionsMenuCloseButtonButtonBehaviour.OnClick.AddListener((UnityAction)(() =>
+            closeSpriteRenderer.gameObject.SetActive(true);
+            closeSpriteRenderer.enabled = true;
+
+            closeSpriteRenderer.transform.SetParent(SSPOptionsMenu.transform);
+            closeSpriteRenderer.transform.localPosition = new(2.25f, 2.44f, closeButton.transform.localPosition.z);
+
+
+            closeButton.OnClick = new ButtonClickedEvent();
+
+            closeButton.OnClick.AddListener((UnityAction)(() =>
             {
                 GameObject.Destroy(SSPOptionsMenu);
                 PlayerControl.LocalPlayer.moveable = true;
