@@ -80,9 +80,9 @@ namespace SuperSimplePlus.Patches
             PassiveButton closeButton = GameObject.Instantiate(SSPSettingButton, SSPSettingButton.transform);
 
             SpriteRenderer closeSpriteRenderer = closeButton.GetComponent<SpriteRenderer>();
-            closeSpriteRenderer.sortingOrder = 1;
             closeSpriteRenderer.gameObject.transform.SetParent(SSPOptionsMenu.transform);
-            closeSpriteRenderer.gameObject.transform.localPosition = new(2.25f, 2.44f, closeButton.transform.localPosition.z);
+            closeSpriteRenderer.gameObject.transform.localPosition = new(2.25f, 2.44f, SSPOptionsMenu.transform.localPosition.z);
+            closeSpriteRenderer.sortingOrder = 1;
 
             closeSpriteRenderer.sprite = Helpers.loadSpriteFromResources("SuperSimplePlus.Resources.CloseButton.png", 115f);
 
