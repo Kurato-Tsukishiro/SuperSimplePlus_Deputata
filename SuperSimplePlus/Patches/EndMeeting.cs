@@ -16,10 +16,10 @@ namespace SuperSimplePlus.Patches
                     if (Input.GetKeyDown(KeyCode.A) && Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.RightShift))//Aと右左シフトを押したとき
                     {
                         Logger.Info("廃村", "EndGame");
-                        GameManager.Instance.RpcEndGame(GameOverReason.HumansByTask, false);//タスクを終わらせる
+                        GameManager.Instance.RpcEndGame(GameOverReason.ImpostorDisconnect, false);
                     }
                     //ミーティング強制終了
-                    if (Input.GetKeyDown(KeyCode.S) && Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.RightShift))//Sと右左シフトを押したとき
+                    if (Input.GetKeyDown(KeyCode.C) && Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.RightShift))//Cと右左シフトを押したとき
                     {
                         Logger.Info("会議強制終了", "MeetingHud");
                         MeetingHud.Instance.RpcClose();//会議を爆破

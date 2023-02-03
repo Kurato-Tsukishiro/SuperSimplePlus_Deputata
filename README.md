@@ -31,7 +31,7 @@ This mod is not affiliated with Among Us or Innersloth LLC, and the content cont
 | キー                    | 機能           | 使えるとき     |
 | ----------------------- | -------------- | -------------- |
 | `左Shift`+`A`+`右Shift` | 廃村           | 試合中いつでも |
-| `左Shift`+`S`+`右Shift` | 投票をスキップ | 会議中         |
+| `左Shift`+`C`+`右Shift` | 投票をスキップ | 会議中         |
 ##### 設定
 |機能                |
 |PC以外をキックする|
