@@ -15,7 +15,7 @@ namespace SuperSimplePlus.Patches
                     //廃村
                     if (Input.GetKeyDown(KeyCode.A) && Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.RightShift))//Aと右左シフトを押したとき
                     {
-                        Logger.Info("廃村", "EndGame");
+                        Logger.Info("================= SSPによる 廃村 ==================", "End Game");
                         GameManager.Instance.RpcEndGame(GameOverReason.ImpostorDisconnect, false);
                     }
                     //ミーティング強制終了
