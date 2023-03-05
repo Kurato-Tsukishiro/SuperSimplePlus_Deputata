@@ -33,4 +33,13 @@ namespace SuperSimplePlus.Patches
             Logger.Info($"PlayerName: \"{client.PlayerName}(ID:{client.Id})({client.PlatformData.Platform})\" Left (Reason: {reason})", "OnPlayerLeft");
         }
     }
+    //参考=>https://github.com/ykundesu/SuperNewRoles/blob/master/SuperNewRoles/Patches/ShareGameVersionPatch.cs
+    [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Update))]
+    public static class PlayerCountChange
+    {
+        public static void Prefix(GameStartManager __instance)
+        {
+            __instance.MinPlayers = 1;
+        }
+    }
 }
