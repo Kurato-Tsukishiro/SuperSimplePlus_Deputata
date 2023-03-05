@@ -1,4 +1,5 @@
 using HarmonyLib;
+using UnityEngine;
 
 namespace SuperSimplePlus.Patches
 {
@@ -11,6 +12,7 @@ namespace SuperSimplePlus.Patches
             {
                 __instance.text.alignment = TMPro.TextAlignmentOptions.TopRight;
                 __instance.text.text = ThisAssembly.Git.Branch == "main" ? $"{SSPPlugin.ColoredModName} ver.{SSPPlugin.Version}\n{__instance.text.text}" : $"{SSPPlugin.ColoredModName} ver.{SSPPlugin.Version}\n{ThisAssembly.Git.Branch}({ThisAssembly.Git.Commit})\n{__instance.text.text}";
+                __instance.gameObject.GetComponent<AspectPosition>().DistanceFromEdge = new Vector3(1.2f, 0.1f, 0.5f);
             }
         }
     }
