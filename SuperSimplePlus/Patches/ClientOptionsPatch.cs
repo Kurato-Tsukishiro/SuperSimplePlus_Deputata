@@ -32,11 +32,12 @@ namespace SuperSimplePlus.Patches
         public static void MainMenuManager_StartPostfix(MainMenuManager __instance)
         {
             // Prefab for the title
-            var tmp = __instance.Announcement.Title;
+            var go = new GameObject("TitleTextSSP");
+            var tmp = go.AddComponent<TextMeshPro>();
+            tmp.fontSize = 3;
             tmp.alignment = TextAlignmentOptions.Center;
             tmp.transform.localPosition += Vector3.left * 0.2f;
             titleText = Object.Instantiate(tmp);
-            Object.Destroy(titleText.GetComponent<TextTranslatorTMP>());
             titleText.gameObject.SetActive(false);
             Object.DontDestroyOnLoad(titleText);
         }
