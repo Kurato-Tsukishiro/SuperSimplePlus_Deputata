@@ -21,7 +21,8 @@ class ShoutcutKeyBoard
                 if (Input.GetKeyDown(KeyCode.C) && Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.RightShift))//Cと右左シフトを押したとき
                 {
                     Logger.Info("会議強制終了", "MeetingHud");
-                    MeetingHud.Instance.RpcClose();//会議を爆破
+                    if (MeetingHud.Instance != null)
+                        MeetingHud.Instance.RpcClose();//会議を爆破
                 }
             }
         }
