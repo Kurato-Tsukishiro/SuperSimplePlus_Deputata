@@ -1,6 +1,6 @@
-using InnerNet;
 using System;
 using HarmonyLib;
+using InnerNet;
 using SuperSimplePlus.Modules;
 
 namespace SuperSimplePlus.Patches
