@@ -12,42 +12,40 @@ using SuperSimplePlus.Patches;
 using UnhollowerBaseLib;
 using UnityEngine;
 
-namespace SuperSimplePlus
+namespace SuperSimplePlus;
+public class Helpers
 {
-    public class Helpers
+    public static Sprite loadSpriteFromResources(string path, float pixelsPerUnit)
     {
-        public static Sprite loadSpriteFromResources(string path, float pixelsPerUnit)
+        try
         {
-            try
-            {
-                Texture2D texture = loadTextureFromResources(path);
-                return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), pixelsPerUnit);
-            }
-            catch
-            {
-                System.Console.WriteLine("Error loading sprite from path: " + path);
-            }
-            return null;
+            Texture2D texture = loadTextureFromResources(path);
+            return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), pixelsPerUnit);
         }
+        catch
+        {
+            System.Console.WriteLine("Error loading sprite from path: " + path);
+        }
+        return null;
+    }
 
-        public static unsafe Texture2D loadTextureFromResources(string path)
+    public static unsafe Texture2D loadTextureFromResources(string path)
+    {
+        try
         {
-            try
-            {
-                Texture2D texture = new(2, 2, TextureFormat.ARGB32, true);
-                Assembly assembly = Assembly.GetExecutingAssembly();
-                Stream stream = assembly.GetManifestResourceStream(path);
-                var length = stream.Length;
-                var byteTexture = new Il2CppStructArray<byte>(length);
-                stream.Read(new Span<byte>(IntPtr.Add(byteTexture.Pointer, IntPtr.Size * 4).ToPointer(), (int)length));
-                ImageConversion.LoadImage(texture, byteTexture, false);
-                return texture;
-            }
-            catch
-            {
-                System.Console.WriteLine("Error loading texture from resources: " + path);
-            }
-            return null;
+            Texture2D texture = new(2, 2, TextureFormat.ARGB32, true);
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            Stream stream = assembly.GetManifestResourceStream(path);
+            var length = stream.Length;
+            var byteTexture = new Il2CppStructArray<byte>(length);
+            stream.Read(new Span<byte>(IntPtr.Add(byteTexture.Pointer, IntPtr.Size * 4).ToPointer(), (int)length));
+            ImageConversion.LoadImage(texture, byteTexture, false);
+            return texture;
         }
+        catch
+        {
+            System.Console.WriteLine("Error loading texture from resources: " + path);
+        }
+        return null;
     }
 }
