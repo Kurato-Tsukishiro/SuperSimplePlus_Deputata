@@ -36,7 +36,6 @@ namespace SuperSimplePlus.Patches
             var tmp = go.AddComponent<TextMeshPro>();
             tmp.fontSize = 3;
             tmp.alignment = TextAlignmentOptions.Center;
-            tmp.transform.localPosition += Vector3.left * 0.2f;
             titleText = Object.Instantiate(tmp);
             titleText.gameObject.SetActive(false);
             Object.DontDestroyOnLoad(titleText);
@@ -83,6 +82,7 @@ namespace SuperSimplePlus.Patches
             SpriteRenderer closeSpriteRenderer = closeButton.GetComponent<SpriteRenderer>();
             closeSpriteRenderer.gameObject.transform.SetParent(SSPOptionsMenu.transform);
             closeSpriteRenderer.gameObject.transform.localPosition = new(2.25f, 2.44f, SSPOptionsMenu.transform.localPosition.z);
+            closeSpriteRenderer.gameObject.layer = 5;
             closeSpriteRenderer.sortingOrder = 1;
 
             closeSpriteRenderer.sprite = Helpers.loadSpriteFromResources("SuperSimplePlus.Resources.CloseButton.png", 115f);
@@ -98,7 +98,8 @@ namespace SuperSimplePlus.Patches
             }));
 
             var title = Object.Instantiate(titleText, SSPOptionsMenu.transform);
-            title.GetComponent<RectTransform>().localPosition = Vector3.up * 2.3f;
+            title.GetComponent<RectTransform>().localPosition = Vector3.up * 2.0f;
+            title.gameObject.layer = 5;
             title.gameObject.SetActive(true);
             title.text = ModTranslation.getString("SSPSettings");
             title.name = "TitleText";
