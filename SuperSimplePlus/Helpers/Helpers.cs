@@ -48,4 +48,10 @@ public class Helpers
         }
         return null;
     }
+    /// <summary>
+    /// keyCodesが押されているか
+    ///参考=>https://github.com/ykundesu/SuperNewRoles/blob/master/SuperNewRoles/Patches/ShareGameVersionPatch.cs
+    /// </summary>
+    public static bool GetManyKeyDown(KeyCode[] keyCodes) =>
+        keyCodes.All(x => Input.GetKey(x)) && keyCodes.Any(x => Input.GetKeyDown(x));
 }
