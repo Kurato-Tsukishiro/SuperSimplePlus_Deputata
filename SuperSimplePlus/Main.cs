@@ -13,6 +13,7 @@ public class SSPPlugin : BasePlugin
     public const String Version = "1.4.1";
 
     public const String ColoredModName = "<color=#96514d>SSP_Deputata</color>";
+    public const String shortModName = "SSP_Deputata";
 
     public static ConfigEntry<bool> debugTool { get; set; }
     public static ConfigEntry<bool> NotPCKick { get; set; }
@@ -27,7 +28,7 @@ public class SSPPlugin : BasePlugin
     {
         Logger = Log;
 
-        SuperSimplePlus.Logger.Info("SuperSimplePlusLoading!!!!!!!!!!!!!!!!!", "SuperSimplePlus");
+        SuperSimplePlus.Logger.Info("SuperSimplePlus_Deputata 読み込み開始", shortModName);
 
         debugTool = Config.Bind("Client Options", "Debug Tool", false);
         NotPCKick = Config.Bind("Client Options", "NotPCKick", false);
@@ -38,7 +39,7 @@ public class SSPPlugin : BasePlugin
 
         Harmony.PatchAll();
 
-        SuperSimplePlus.Logger.Info("SuperSimplePlus End of loading!!!!!!!!!!!!!!!!!", "SuperSimplePlus");
+        SuperSimplePlus.Logger.Info("SuperSimplePlus_Deputata 読み込み終了", shortModName);
     }
 }
 
