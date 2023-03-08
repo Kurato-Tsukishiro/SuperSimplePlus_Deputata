@@ -46,10 +46,7 @@ public class SSPPlugin : BasePlugin
 [HarmonyPatch(typeof(ModManager), nameof(ModManager.LateUpdate))]
 public class ShowModStampPatch
 {
-    public static void Postfix(ModManager __instance)
-    {
-        __instance.ShowModStamp();
-    }
+    public static void Postfix(ModManager __instance) => __instance.ShowModStamp();
 }
 
 [HarmonyPatch(typeof(VersionShower), nameof(VersionShower.Start))]
