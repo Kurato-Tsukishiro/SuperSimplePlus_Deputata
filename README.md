@@ -1,4 +1,5 @@
 # SuperSimplePlus_Deputata
+<img src="https://raw.githubusercontent.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/88505517de349ec9ad5e692e054cf39a0728374a/SuperSimplePlus/Resources/SSP_Deputata_Long.png" alt="SuperSimplePlus_DeputataLogo" height="300px">
 
 # 免責事項
 - 原文
