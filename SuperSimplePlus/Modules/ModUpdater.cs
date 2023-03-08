@@ -25,7 +25,7 @@ namespace SuperSimplePlus.Modules
             var client = new HttpClient();
             client.DefaultRequestHeaders.Add("User-Agent", "SuperSimplePlus Updater");
 
-            var req = await client.GetAsync("https://api.github.com/repos/satsumaimoamo/SuperSimplePlus/releases/latest", HttpCompletionOption.ResponseContentRead);
+            var req = await client.GetAsync("https://api.github.com/repos/Kurato-Tsukishiro/SuperSimplePlus_Deputata/releases/latest", HttpCompletionOption.ResponseContentRead);
             if (!req.IsSuccessStatusCode) return false;
 
             var dataString = await req.Content.ReadAsStringAsync();

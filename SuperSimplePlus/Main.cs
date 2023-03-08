@@ -9,7 +9,7 @@ namespace SuperSimplePlus;
 [BepInPlugin(Id, "SuperSimplePlus", Version)]
 public class SSPPlugin : BasePlugin
 {
-    public const String Id = "jp.satsumaimoamo.SuperSimplePlus";
+    public const String Id = "jp.Kurato-Tsukishiro.SuperSimplePlus_Deputata";
     public const String Version = "1.4.1";
 
     public const String ColoredModName = "<color=#96514d>SSP_Deputata</color>";
