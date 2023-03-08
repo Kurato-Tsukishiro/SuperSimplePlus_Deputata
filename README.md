@@ -27,6 +27,7 @@
 - SuperSimplePlus_dotnet6.dll
   - 共存先のmodの.NETバージョンが``.NET6.0``の時に使用してください。
     - 共存先のmodが[ExtremeRoles](https://github.com/yukieiji/ExtremeRoles)の場合はこちらになります。
+    - 共存先のmodが[Nebula on the Ship](https://github.com/Dolly1016/Nebula)の場合はこちらになります。
     - **テストはしていますが、SNR以外のmodとの共存の動作は完全な保証はできません。**
 
 ## .NETバージョンの確認の仕方
@@ -71,3 +72,4 @@
 | 機能             | 操作                                                       |
 | ---------------- | ---------------------------------------------------------- |
 | アップデート機能 | タイトル画面の右上のアップデートボタンを押してアップデート |
+| 一人からゲームを開始できる<br>(共存先Modが[Nebula on the Ship](https://github.com/Dolly1016/Nebula)の場合機能が動いていない) | ロビーで常時発動 |
