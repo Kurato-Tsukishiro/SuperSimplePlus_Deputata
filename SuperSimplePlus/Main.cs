@@ -52,8 +52,5 @@ public class ShowModStampPatch
 [HarmonyPatch(typeof(VersionShower), nameof(VersionShower.Start))]
 public class VersionShowerPatch
 {
-    public static void Postfix(VersionShower __instance)
-    {
-        __instance.text.text += $" + {SSPPlugin.ColoredModName} ver." + SSPPlugin.Version; //<color=#ffddef>AZ</color>
-    }
+    public static void Postfix(VersionShower __instance) => __instance.text.text += $" + {SSPPlugin.ColoredModName} ver." + SSPPlugin.Version; //<color=#ffddef>AZ</color>
 }
