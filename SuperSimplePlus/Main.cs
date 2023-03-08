@@ -9,10 +9,11 @@ namespace SuperSimplePlus;
 [BepInPlugin(Id, "SuperSimplePlus", Version)]
 public class SSPPlugin : BasePlugin
 {
-    public const String Id = "jp.satsumaimoamo.SuperSimplePlus";
+    public const String Id = "jp.Kurato-Tsukishiro.SuperSimplePlus_Deputata";
     public const String Version = "1.4.1";
 
     public const String ColoredModName = "<color=#96514d>SSP_Deputata</color>";
+    public const String shortModName = "SSP_Deputata";
 
     public static ConfigEntry<bool> debugTool { get; set; }
     public static ConfigEntry<bool> NotPCKick { get; set; }
@@ -27,7 +28,7 @@ public class SSPPlugin : BasePlugin
     {
         Logger = Log;
 
-        SuperSimplePlus.Logger.Info("SuperSimplePlusLoading!!!!!!!!!!!!!!!!!", "SuperSimplePlus");
+        SuperSimplePlus.Logger.Info("SuperSimplePlus_Deputata 読み込み開始", shortModName);
 
         debugTool = Config.Bind("Client Options", "Debug Tool", false);
         NotPCKick = Config.Bind("Client Options", "NotPCKick", false);
@@ -38,24 +39,18 @@ public class SSPPlugin : BasePlugin
 
         Harmony.PatchAll();
 
-        SuperSimplePlus.Logger.Info("SuperSimplePlus End of loading!!!!!!!!!!!!!!!!!", "SuperSimplePlus");
+        SuperSimplePlus.Logger.Info("SuperSimplePlus_Deputata 読み込み終了", shortModName);
     }
 }
 
 [HarmonyPatch(typeof(ModManager), nameof(ModManager.LateUpdate))]
 public class ShowModStampPatch
 {
-    public static void Postfix(ModManager __instance)
-    {
-        __instance.ShowModStamp();
-    }
+    public static void Postfix(ModManager __instance) => __instance.ShowModStamp();
 }
 
 [HarmonyPatch(typeof(VersionShower), nameof(VersionShower.Start))]
 public class VersionShowerPatch
 {
-    public static void Postfix(VersionShower __instance)
-    {
-        __instance.text.text += $" + {SSPPlugin.ColoredModName} ver." + SSPPlugin.Version; //<color=#ffddef>AZ</color>
-    }
+    public static void Postfix(VersionShower __instance) => __instance.text.text += $" + {SSPPlugin.ColoredModName} ver." + SSPPlugin.Version; //<color=#ffddef>AZ</color>
 }
