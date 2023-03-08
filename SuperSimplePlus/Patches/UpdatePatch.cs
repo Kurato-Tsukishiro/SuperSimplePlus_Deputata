@@ -1,23 +1,19 @@
 using HarmonyLib;
 using UnityEngine;
 
-namespace SuperSimplePlus.Patches
+namespace SuperSimplePlus.Patches;
+[HarmonyPatch]
+public class UpdatePatch
 {
-    [HarmonyPatch]
-    public class UpdatePatch
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
+    public static void HudManager_UpdatePostfix()
     {
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
-        public static void HudManager_UpdatePostfix(HudManager __instance)
+        if (ClientOptionsPatch.SSPOptionsMenu)
         {
-            if (ClientOptionsPatch.SSPOptionsMenu)
+            if (Input.GetKeyDown(KeyCode.Escape))
             {
-                PlayerControl.LocalPlayer.moveable = false;
-                if (Input.GetKeyDown(KeyCode.Escape))
-                {
-                    GameObject.Destroy(ClientOptionsPatch.SSPOptionsMenu);
-                    PlayerControl.LocalPlayer.moveable = true;
-                }
+                GameObject.Destroy(ClientOptionsPatch.SSPOptionsMenu);
             }
         }
     }
