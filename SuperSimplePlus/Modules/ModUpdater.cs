@@ -25,7 +25,7 @@ namespace SuperSimplePlus.Modules
             var client = new HttpClient();
             client.DefaultRequestHeaders.Add("User-Agent", "SuperSimplePlus Updater");
 
-            var req = await client.GetAsync("https://api.github.com/repos/satsumaimoamo/SuperSimplePlus/releases/latest", HttpCompletionOption.ResponseContentRead);
+            var req = await client.GetAsync("https://api.github.com/repos/Kurato-Tsukishiro/SuperSimplePlus_Deputata/releases/latest", HttpCompletionOption.ResponseContentRead);
             if (!req.IsSuccessStatusCode) return false;
 
             var dataString = await req.Content.ReadAsStringAsync();
@@ -118,7 +118,12 @@ namespace SuperSimplePlus.Modules
                     passiveButtonSSPUpdate.OnClick.AddListener((System.Action)(() =>
                     {
                         popup.Show();
-                        popup.TextAreaTMP.text = Task.Run(DownloadUpdate).Result ? String.Format(ModTranslation.getString("UpdateSuccess"), SSPPlugin.ColoredModName) : ModTranslation.getString("UpdateFailed");
+                        popup.TextAreaTMP.text =
+                            ThisAssembly.Git.Branch == "master_.NET6ver" ?
+                                String.Format(ModTranslation.getString("UpdateUsingDotnetSix"), SSPPlugin.ColoredModName):
+                            Task.Run(DownloadUpdate).Result ?
+                                String.Format(ModTranslation.getString("UpdateSuccess"), SSPPlugin.ColoredModName) :
+                                ModTranslation.getString("UpdateFailed");
                         PopupButton.SetActive(true);
                     }));
                 }
