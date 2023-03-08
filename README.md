@@ -11,8 +11,29 @@
   - © Innersloth LLC.
 
 # このmodについて
-このmodは廃村機能などのごく僅かな機能しか無い便利modです！<br>
-**絶対**他modに干渉しないようにします。<br>
+## 目的
+- このmodは廃村機能などのごく僅かな機能しか無い、機能追加modです。
+- 他modに干渉しない事を目指しています。
+  - 完全な共存性を保証できるModは[SuperNewRoles](https://github.com/ykundesu/SuperNewRoles)のみとなっています。
+  - 主要Modとの共存性は調査していますが、完全な保証はできません。
+  - このModを導入してバグが発生した場合、共存先modのバグだけでなく此方のModの原因も疑ってください。
+    - 共存先のModのデバック時、このModの機能が必要ない場合は、抜く事をお勧めします。
+    - このModの機能がデバックに必要で共存させる場合は、Host機のみに入れる事を推奨します。
+
+## dllの違いについて
+- SuperSimplePlus.dll
+  - 共存先のmodの.NETバージョンが``netstandard2.1``の時に使用してください。
+  - 共存先のmodが[SuperNewRoles](https://github.com/ykundesu/SuperNewRoles)は此方になります。
+- SuperSimplePlus_dotnet6.dll
+  - 共存先のmodの.NETバージョンが``.NET6.0``の時に使用してください。
+    - 共存先のmodが[ExtremeRoles](https://github.com/yukieiji/ExtremeRoles)の場合はこちらになります。
+    - **テストはしていますが、SNR以外のmodとの共存の動作は完全な保証はできません。**
+
+## .NETバージョンの確認の仕方
+- 共存先のModの``モッド名.csrroj``ファイルの``<TargetFramework>○○</TargetFramework>``を確認してください。
+  - ○○の部分が.NETバージョンになります
+- SSPの場合は[ここ](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/blob/main/SuperSimplePlus/SuperSimplePlus.csproj#L3)です。
+- <img src="https://user-images.githubusercontent.com/104145991/223727561-71424b18-7f74-484d-bec7-8b1166421b34.png" alt=".NETversionの確認" title=".NETversionの確認" width="500px">
 
 [![](https://img.shields.io/discord/996781291871678544?label=Discord)](https://discord.gg/rsaU2zntey)
 
