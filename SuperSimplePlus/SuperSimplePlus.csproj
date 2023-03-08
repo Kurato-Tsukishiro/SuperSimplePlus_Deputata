@@ -4,7 +4,7 @@
         <Version>1.0.0</Version>
         <Description>SuperSimplePlus</Description>
         <Authors>satsumaimoamo</Authors>
-        <AmongUs Condition=" '$(AmongUs)' == '' ">C:/Program Files/Epic Games/AmongUs_mymod</AmongUs>
+        <AmongUsSSP Condition=" '$(AmongUsSSP)' == '' ">C:/Program Files/Epic Games/AmongUs_mymod</AmongUsSSP>
         <langVersion>preview</langVersion>
     </PropertyGroup>
 
@@ -17,8 +17,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Reference Include="$(AmongUs)/BepInEx/core/*.dll" />
-        <Reference Include="$(AmongUs)/BepInEx/unhollowed/*.dll" />
+        <Reference Include="$(AmongUsSSP)/BepInEx/core/*.dll" />
+        <Reference Include="$(AmongUsSSP)/BepInEx/unhollowed/*.dll" />
         <EmbeddedResource Include=".\Resources\**" />
     </ItemGroup>
 
@@ -37,6 +37,6 @@
 
     <Target Name="CopyCustomContent" AfterTargets="AfterBuild">
         <Message Text="Second occurrence" />
-        <Copy SourceFiles="$(ProjectDir)bin\$(Configuration)\netstandard2.1\SuperSimplePlus.dll" DestinationFolder="$(AmongUs)/BepInEx/plugins/" />
+        <Copy SourceFiles="$(ProjectDir)bin\$(Configuration)\netstandard2.1\SuperSimplePlus.dll" DestinationFolder="$(AmongUsSSP)/BepInEx/plugins/" />
     </Target>
 </Project>
