@@ -18,6 +18,7 @@ This mod is not affiliated with Among Us or Innersloth LLC, and the content cont
 **追加機能募集中です!**
 
 ## クレジット
+[ExtremeRoles](https://github.com/yukieiji/ExtremeRoles)Thanks to **yukieiji**!!<br>
 [SuperNewRoles](https://github.com/ykundesu/SuperNewRoles)Thanks to **ykundesu**!!<br>
 [TownOfSuper](https://github.com/reitou-mugicha/TownOfSuper)Thanks to **reitou-mugicha**!!<br>
 [TheOtherRoles](https://github.com/Eisbison/TheOtherRoles)Thanks to **Eisbison**!!<br>
