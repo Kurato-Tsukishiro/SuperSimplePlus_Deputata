@@ -118,7 +118,12 @@ namespace SuperSimplePlus.Modules
                     passiveButtonSSPUpdate.OnClick.AddListener((System.Action)(() =>
                     {
                         popup.Show();
-                        popup.TextAreaTMP.text = Task.Run(DownloadUpdate).Result ? String.Format(ModTranslation.getString("UpdateSuccess"), SSPPlugin.ColoredModName) : ModTranslation.getString("UpdateFailed");
+                        popup.TextAreaTMP.text =
+                            ThisAssembly.Git.Branch == "master_.NET6ver" ?
+                                String.Format(ModTranslation.getString("UpdateUsingDotnetSix"), SSPPlugin.ColoredModName):
+                            Task.Run(DownloadUpdate).Result ?
+                                String.Format(ModTranslation.getString("UpdateSuccess"), SSPPlugin.ColoredModName) :
+                                ModTranslation.getString("UpdateFailed");
                         PopupButton.SetActive(true);
                     }));
                 }
