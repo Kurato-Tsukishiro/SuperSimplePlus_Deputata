@@ -1,8 +1,14 @@
-## SuperSimplePlus
+# SuperSimplePlus_Deputata
 
-# とりあえず書くやつ
-This mod is not affiliated with Among Us or Innersloth LLC, and the content contained therein is not endorsed or otherwise sponsored by Innersloth LLC. Portions of the materials contained herein are property of Innersloth LLC. © Innersloth LLC.
-訳:これはInnerslothが作ったものじゃなくて個人が作ったものなのでInnerslothは関係ないよ!あとこの中にある素材の一部はInnerslothのものだよ！
+# 免責事項
+- 原文
+  - This mod is not affiliated with Among Us or Innersloth LLC, and the content contained therein is not endorsed or otherwise sponsored by Innersloth LLC.
+  - Portions of the materials contained herein are property of Innersloth LLC.
+  - © Innersloth LLC.<br><br>
+- 訳
+  - SuperSimplePlus_DeputataはAmong UsやInnersloth LLCとは無関係であり、含まれるコンテンツはInnersloth LLCによって承認されたり、直接提供を受けているものではありません。
+  - 此処に含まれる素材の一部はInnersloth LLCの所有物です。
+  - © Innersloth LLC.
 
 # このmodについて
 このmodは廃村機能などのごく僅かな機能しか無い便利modです！<br>
