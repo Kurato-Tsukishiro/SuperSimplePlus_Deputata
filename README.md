@@ -38,8 +38,11 @@
 [![](https://img.shields.io/discord/996781291871678544?label=Discord)](https://discord.gg/rsaU2zntey)
 
 # 製作者
-[さつまいも](https://github.com/satsumaimoamo) ([Twitter](https://twitter.com/satsumaimo_SNR))<br>
-製作者はいつでも募集しています！discordかTwitterかissueまで！
+- SuperSimplePlus_Deputata
+  - [月城蔵徒](https://github.com/Kurato-Tsukishiro)([Twitter](https://twitter.com/Kurato_SNR7))
+- SuperSimplePlus (fork元製作者)
+  - ~~[さつまいも](https://github.com/satsumaimoamo) ([Twitter](https://twitter.com/satsumaimo_SNR))~~
+- 製作者はいつでも募集しています！Issuesまで！
 
 # 実装予定の機能
 **追加機能募集中です!**
