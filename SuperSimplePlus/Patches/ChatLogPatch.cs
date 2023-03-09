@@ -53,4 +53,27 @@ internal static class SaveChatLogPatch
     {
         Logger.Info(chatLog);
     }
+
+    internal static string ChatLogFileName;
+    internal static string ChatLogFolderPath;
+    internal static string ChatLogFilePath;
+
+    /// <summary>
+    /// Modロード時に出力先のパスを作成
+    /// </summary>
+    internal static void ChatLogFileCreate()
+    {
+        // ファイル名に使用する変数作成
+        string date = DateTime.Now.ToString("yyMMdd_HHmm");
+
+        // ファイル名作成
+        ChatLogFileName = $"{date}_AmongUs_ChatLog.log";
+
+        // 出力先のパス作成
+        ChatLogFolderPath = Path.GetDirectoryName(UnityEngine.Application.dataPath) + @"\SSP_Deputata\SaveChatLogFolder\";
+        Directory.CreateDirectory(ChatLogFolderPath);
+        ChatLogFilePath = @$"{ChatLogFolderPath}" + @$"{ChatLogFileName}";
+
+        Logger.Info($"{string.Format(ModTranslation.getString("ChatLogFileCreate"), ChatLogFileName)}");
+    }
 }
