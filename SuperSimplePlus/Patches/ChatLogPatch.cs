@@ -24,7 +24,7 @@ class AddChatPatch
     /// <returns>true:チャットをチャットに表記する / false:表記しない, 消す</returns>
     public static bool Prefix(PlayerControl sourcePlayer, string chatText)
     {
-        SaveChatLogPatch.SaveLog(SaveChatLogPatch.GetChat(sourcePlayer, chatText));
+        SaveChatLogPatch.SaveChatLog(SaveChatLogPatch.GetChatLog(sourcePlayer, chatText));
         return true; // Chatは消さない!!
     }
 }
@@ -56,21 +56,36 @@ internal static class SaveChatLogPatch
         ChatLogFilePath = @$"{folderPath}" + @$"{fileName}";
 
         Logger.Info($"{string.Format(ModTranslation.getString("ChatLogFileCreate"), fileName)}");
+        SaveSystemLog(GetSystemMessageLog($"{string.Format(ModTranslation.getString("ChatLogFileCreate"), fileName)}"));
     }
 
     /// <summary>
-    /// チャット内容をlogに記載する為加工する。
+    /// チャット内容をChatLogに記載する為に加工する。
     /// </summary>
     /// <param name="sourcePlayer">チャット送信者</param>
     /// <param name="chatText">チャット内容</param>
     /// <returns> chatLog : 加工した文字列</returns>
-    internal static string GetChat(PlayerControl sourcePlayer, string chatText)
+    internal static string GetChatLog(PlayerControl sourcePlayer, string chatText)
     {
         string chatLog = null;
-        string date = DateTime.Now.ToString("yy/MM/dd_HH:mm:ss");
+        string date = DateTime.Now.ToString("HH:mm:ss");
         chatLog = $"[{date}] {sourcePlayer.name} ( {GetColorName(sourcePlayer.GetClient())} ) :「 {chatText} 」";
 
         return chatLog;
+    }
+
+    /// <summary>
+    /// sシステムメッセージをChatLogに記載する為に加工する。
+    /// </summary>
+    /// <param name="systemMessageText">システムメッセージ</param>
+    /// <returns></returns>
+    internal static string GetSystemMessageLog(string systemMessageText)
+    {
+        string systemMessageLog = null;
+        string date = DateTime.Now.ToString("HH:mm:ss");
+        systemMessageLog = $"[{date}] SystemMessage  : 『 {systemMessageText} 』";
+
+        return systemMessageLog;
     }
 
     /// <summary>
@@ -79,5 +94,11 @@ internal static class SaveChatLogPatch
     /// error対策を入れると正常に動かなくなった為、行っていない。必要なら方法を考える…
     /// </summary>
     /// <param name="chatLog"></param>
-    internal static void SaveLog(string chatLog) => File.AppendAllText(ChatLogFilePath, $"{chatLog}" + Environment.NewLine);
+    internal static void SaveChatLog(string chatLog) => File.AppendAllText(ChatLogFilePath, $"{chatLog}" + Environment.NewLine);
+
+    /// <summary>
+    /// システムログをファイルに出力する
+    /// </summary>
+    /// <param name="systemMessageLog"></param>
+    internal static void SaveSystemLog(string systemMessageLog) => File.AppendAllText(ChatLogFilePath, $"{systemMessageLog}" + Environment.NewLine);
 }
