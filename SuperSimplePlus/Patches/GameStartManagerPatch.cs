@@ -31,8 +31,26 @@ public class GameStartManagerUpdatePatch
 [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerLeft))]
 public class AmongUsClientOnPlayerLeftPatch
 {
-    public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client, [HarmonyArgument(1)] DisconnectReasons reason)
-    {
+    public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client, [HarmonyArgument(1)] DisconnectReasons reason) =>
         Logger.Info($"PlayerName: \"{client.PlayerName}(ID:{client.Id})({client.PlatformData.Platform})\" Left (Reason: {reason})", "OnPlayerLeft");
+}
+
+[HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Start))]
+public class GameStartManagerStartPatch
+{
+    public static void Postfix() => VariableManager.ClearAndReload();
+}
+
+/// <summary>
+/// ClearAndReloadを行う変数の管理場所。
+/// 本来此処に置くべき物ではないが、初期化が必要な変数がそこまで増えると思えない為、
+/// 逆に同じ場所で宣言・初期化した方が分かりやすいと思い此処に置いた。
+/// </summary>
+public class VariableManager
+{
+    public static int NumberOfMeetings;
+    public static void ClearAndReload()
+    {
+        NumberOfMeetings = 0;
     }
 }

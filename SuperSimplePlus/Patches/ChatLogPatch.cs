@@ -102,3 +102,35 @@ internal static class SaveChatLogPatch
     /// <param name="systemMessageLog"></param>
     internal static void SaveSystemLog(string systemMessageLog) => File.AppendAllText(ChatLogFilePath, $"{systemMessageLog}" + Environment.NewLine);
 }
+
+/// <summary>
+/// チャットログに記載する、システムメッセージに関わるメソッドを纏めている。
+/// </summary>
+internal static class SystemLogMethodManager
+{
+    internal static void DescribeMeetingEndSystemLog() =>
+        SaveChatLogPatch.SaveSystemLog(SaveChatLogPatch.GetSystemMessageLog($"{VariableManager.NumberOfMeetings}回目の 会議終了"));
+}
+
+/// <summary>
+/// チャットログに記載する、システムメッセージに関わるHarmonyPatchを纏めている。
+/// </summary>
+[HarmonyPatch]
+class ChatLogHarmonyPatch
+{
+    // 会議開始
+    [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.Start)), HarmonyPostfix]
+    public static void MeetingStartPostfix(MeetingHud __instance)
+    {
+        VariableManager.NumberOfMeetings++;
+        SaveChatLogPatch.SaveSystemLog(SaveChatLogPatch.GetSystemMessageLog($"{VariableManager.NumberOfMeetings}回目の 会議開始"));
+    }
+
+    // 会議終了(airship以外)
+    [HarmonyPatch(typeof(ExileController), nameof(ExileController.WrapUp)), HarmonyPostfix]
+    public static void MeetingEndPostfix(ExileController __instance) => SystemLogMethodManager.DescribeMeetingEndSystemLog();
+
+    // 会議終了(airship)
+    [HarmonyPatch(typeof(AirshipExileController), nameof(AirshipExileController.WrapUpAndSpawn)), HarmonyPostfix]
+    public static void AirshipMeetingEndPostfix(ExileController __instance) => SystemLogMethodManager.DescribeMeetingEndSystemLog();
+}
