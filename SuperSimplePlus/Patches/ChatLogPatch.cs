@@ -1,13 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using BepInEx.IL2CPP.Utils;
 using HarmonyLib;
 using UnityEngine;
 using static System.String;
-using System.IO;
+using static SuperSimplePlus.Helpers;
 
 namespace SuperSimplePlus.Patches;
 
@@ -40,7 +41,7 @@ internal static class SaveChatLogPatch
     {
         string chatLog = null;
         string date = DateTime.Now.ToString("yy/MM/dd_HH:mm:ss");
-        chatLog = $"[{date}] {sourcePlayer.name} :「 {chatText} 」";
+        chatLog = $"[{date}] {sourcePlayer.name} ( {GetColorName(sourcePlayer.GetClient())} ) :「 {chatText} 」";
 
         return chatLog;
     }

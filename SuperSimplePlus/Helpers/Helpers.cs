@@ -7,13 +7,14 @@ using System.Text;
 using System.Text.RegularExpressions;
 using HarmonyLib;
 using Hazel;
+using InnerNet;
 using SuperSimplePlus.Modules;
 using SuperSimplePlus.Patches;
 using UnhollowerBaseLib;
 using UnityEngine;
 
 namespace SuperSimplePlus;
-public class Helpers
+public static class Helpers
 {
     public static Sprite loadSpriteFromResources(string path, float pixelsPerUnit)
     {
@@ -54,4 +55,30 @@ public class Helpers
     /// </summary>
     public static bool GetManyKeyDown(KeyCode[] keyCodes) =>
         keyCodes.All(x => Input.GetKey(x)) && keyCodes.Any(x => Input.GetKeyDown(x));
+
+    /// <summary>
+    /// PlayerControl型のオブジェクトをClientData型に変換する。\n 参考=>https://github.com/ykundesu/SuperNewRoles/blob/master/SuperNewRoles/ModHelpers.cs
+    /// </summary>
+    /// <param name="player">変換したいPlayerControl型のオブジェクト</param>
+    /// <returns>cd : 変換されたClientData型のオブジェクト</returns>
+    public static ClientData GetClient(this PlayerControl player) =>
+        AmongUsClient.Instance.allClients.ToArray().Where(cd => cd.Character.PlayerId == player.PlayerId).FirstOrDefault();
+
+    /*
+        参考=>https://github.com/tugaru1975/TownOfPlus/blob/main/Helpers.cs
+        GetColorName(ClientData client), TryGetPlayerColor(int colorId, out string color), GetTranslation(this StringNames name)
+    */
+    public static string GetColorName(ClientData client) => TryGetPlayerColor(client.ColorId, out var color) ? color : "";
+
+    public static bool TryGetPlayerColor(int colorId, out string color)
+    {
+        color = "";
+        if (Palette.ColorNames.Length <= colorId) return false;
+
+        color = Palette.ColorNames[colorId].GetTranslation();
+        return true;
+    }
+
+    public static string GetTranslation(this StringNames name) =>
+        DestroyableSingleton<TranslationController>.Instance.GetString(name, new Il2CppReferenceArray<Il2CppSystem.Object>(0));
 }
