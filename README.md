@@ -52,23 +52,25 @@
 **追加機能募集中です!**
 
 ## クレジット
-[ExtremeRoles](https://github.com/yukieiji/ExtremeRoles)Thanks to **yukieiji**!!<br>
-[SuperNewRoles](https://github.com/ykundesu/SuperNewRoles)Thanks to **ykundesu**!!<br>
-[TownOfSuper](https://github.com/reitou-mugicha/TownOfSuper)Thanks to **reitou-mugicha**!!<br>
-[TheOtherRoles](https://github.com/Eisbison/TheOtherRoles)Thanks to **Eisbison**!!<br>
-[TheOtherRoles GM Edition](https://github.com/yukinogatari/TheOtherRoles-GM)Thanks to **yukinogatari**!!<br>
-[TheOtherRoles-GM-Haoming](https://github.com/haoming37/TheOtherRoles-GM-Haoming)Thanks to **haoming37**!!<br>
-[Town Of Host](https://github.com/tukasa0001/TownOfHost) - Thanks to **tukasa0001**!!<br>
+- [ExtremeRoles](https://github.com/yukieiji/ExtremeRoles) Thanks to **yukieiji**!!
+- [SuperNewRoles](https://github.com/ykundesu/SuperNewRoles) Thanks to **ykundesu**!!
+- [TheOtherRoles](https://github.com/Eisbison/TheOtherRoles) Thanks to **Eisbison**!!
+- [TheOtherRoles GM Edition](https://github.com/yukinogatari/TheOtherRoles-GM) Thanks to **yukinogatari**!!
+- [TheOtherRoles-GM-Haoming](https://github.com/haoming37/TheOtherRoles-GM-Haoming) Thanks to **haoming37**!!
+- [TownOfHost](https://github.com/tukasa0001/TownOfHost) Thanks to **tukasa0001**!!
+- [TownOfPlus](https://github.com/tugaru1975/TownOfPlus) Thanks to **tugaru1975**!!
+- [TownOfSuper](https://github.com/reitou-mugicha/TownOfSuper)Thanks to **reitou-mugicha**!!
 
 ## 機能一覧
 #### ホストのみ
-#####　キーボードショートカット
+##### キーボードショートカット
 | キー                    | 機能           | 使えるとき     |
 | ----------------------- | -------------- | -------------- |
 | `左Shift`+`A`+`右Shift` | 廃村           | 試合中いつでも |
 | `左Shift`+`C`+`右Shift` | 投票&開票をスキップ | 会議中         |
 ##### 設定
 |機能                |
+| -- |
 |PC以外をキックする|
 |PC以外をバンする|
 #### その他機能
