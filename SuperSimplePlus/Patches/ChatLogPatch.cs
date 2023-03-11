@@ -23,14 +23,12 @@ class AddChatPatch
     /// </summary>
     /// <param name="sourcePlayer">チャット送信者</param>
     /// <param name="chatText">チャット内容</param>
-    /// <returns>true:チャットをチャットに表記する / false:表記しない, 消す</returns>
-    public static bool Prefix(PlayerControl sourcePlayer, string chatText)
+    public static void Prefix(PlayerControl sourcePlayer, string chatText)
     {
         if (!sourcePlayer.name.Contains(SNRSystemMessage))
             SaveChatLog(GetChatLog(sourcePlayer, chatText));
         else
             SaveSystemLog(GetSystemMessageLog(chatText));
-        return true; // Chatは消さない!!
     }
 }
 
