@@ -9,6 +9,7 @@ using HarmonyLib;
 using UnityEngine;
 using static System.String;
 using static SuperSimplePlus.Helpers;
+using static SuperSimplePlus.Patches.SaveChatLogPatch;
 
 namespace SuperSimplePlus.Patches;
 
@@ -17,14 +18,18 @@ namespace SuperSimplePlus.Patches;
 class AddChatPatch
 {
     /// <summary>
-    /// チャットに流れた文字をチャットログを作成するメソッドに渡す
+    /// チャットに流れた文字をチャットログを作成するメソッドに渡す。
+    /// SNRのコマンドの返答等SNR側のSystemMessageの場合はSystemMessageとして反映する。
     /// </summary>
     /// <param name="sourcePlayer">チャット送信者</param>
     /// <param name="chatText">チャット内容</param>
     /// <returns>true:チャットをチャットに表記する / false:表記しない, 消す</returns>
     public static bool Prefix(PlayerControl sourcePlayer, string chatText)
     {
-        SaveChatLogPatch.SaveChatLog(SaveChatLogPatch.GetChatLog(sourcePlayer, chatText));
+        if (!sourcePlayer.name.Contains(SNRSystemMessage))
+            SaveChatLog(GetChatLog(sourcePlayer, chatText));
+        else
+            SaveSystemLog(GetSystemMessageLog(chatText));
         return true; // Chatは消さない!!
     }
 }
@@ -43,6 +48,11 @@ internal static class SaveChatLogPatch
     /// </summary>
     private static string ChatLogFilePath;
     internal static int GameCount;
+    /// <summary>
+    /// SNRのシステムメッセージに含まれる文字列
+    /// </summary>
+    internal const string SNRSystemMessage
+        = "<color=#ffa500>Super</color><color=#ff0000>New</color><color=#00ff00>Roles</color>";
 
     /// <summary>
     /// Modロード時に出力先のパスを作成
@@ -122,21 +132,21 @@ class ChatLogHarmonyPatch
     public static void IntroCutsceneCoBeginPostfix()
     {
         // TODO:確かサクランダーさんが「ログに試合数を記載したい」と言っていたので入れてみた。うまく動けばSNRにも実装したい
-        SaveChatLogPatch.GameCount++;
-        SaveChatLogPatch.SaveSystemLog(SaveChatLogPatch.GetSystemMessageLog("|:===================================================================================:|"));
+        GameCount++;
+        SaveSystemLog(GetSystemMessageLog("|:===================================================================================:|"));
 
-        SaveChatLogPatch.SaveSystemLog(SaveChatLogPatch.GetSystemMessageLog("=================Game Info================="));
-        SaveChatLogPatch.SaveSystemLog(SaveChatLogPatch.GetSystemMessageLog($"{SaveChatLogPatch.GameCount}回目の試合 開始"));
-        SaveChatLogPatch.SaveSystemLog(SaveChatLogPatch.GetSystemMessageLog($"MapId:{GameManager.Instance.LogicOptions.currentGameOptions.MapId} MapNames:{(MapNames)GameManager.Instance.LogicOptions.currentGameOptions.MapId}"));
+        SaveSystemLog(GetSystemMessageLog("=================Game Info================="));
+        SaveSystemLog(GetSystemMessageLog($"{GameCount}回目の試合 開始"));
+        SaveSystemLog(GetSystemMessageLog($"MapId:{GameManager.Instance.LogicOptions.currentGameOptions.MapId} MapNames:{(MapNames)GameManager.Instance.LogicOptions.currentGameOptions.MapId}"));
 
-        SaveChatLogPatch.SaveSystemLog(SaveChatLogPatch.GetSystemMessageLog("=================Player Info================="));
+        SaveSystemLog(GetSystemMessageLog("=================Player Info================="));
 
-        SaveChatLogPatch.SaveSystemLog(SaveChatLogPatch.GetSystemMessageLog("=================Player Data================="));
-        SaveChatLogPatch.SaveSystemLog(SaveChatLogPatch.GetSystemMessageLog($"プレイヤー数：{PlayerControl.AllPlayerControls.Count}人"));
+        SaveSystemLog(GetSystemMessageLog("=================Player Data================="));
+        SaveSystemLog(GetSystemMessageLog($"プレイヤー数：{PlayerControl.AllPlayerControls.Count}人"));
         foreach (PlayerControl p in PlayerControl.AllPlayerControls)
-            SaveChatLogPatch.SaveSystemLog(SaveChatLogPatch.GetSystemMessageLog($"{p.name}(pid:{p.PlayerId})({p.GetClient()?.PlatformData?.Platform}"));
+            SaveSystemLog(GetSystemMessageLog($"{p.name}(pid:{p.PlayerId})({p.GetClient()?.PlatformData?.Platform}"));
 
-        SaveChatLogPatch.SaveSystemLog(SaveChatLogPatch.GetSystemMessageLog("|:===================================================================================:|"));
+        SaveSystemLog(GetSystemMessageLog("|:===================================================================================:|"));
     }
 
     // 会議開始
@@ -144,7 +154,7 @@ class ChatLogHarmonyPatch
     public static void MeetingStartPostfix(MeetingHud __instance)
     {
         VariableManager.NumberOfMeetings++;
-        SaveChatLogPatch.SaveSystemLog(SaveChatLogPatch.GetSystemMessageLog($"{SaveChatLogPatch.GameCount}回目の試合の {VariableManager.NumberOfMeetings}回目の会議 開始"));
+        SaveSystemLog(GetSystemMessageLog($"{GameCount}回目の試合の {VariableManager.NumberOfMeetings}回目の会議 開始"));
     }
 
     // 会議終了(airship以外)
@@ -162,5 +172,5 @@ class ChatLogHarmonyPatch
 internal static class SystemLogMethodManager
 {
     internal static void DescribeMeetingEndSystemLog() =>
-        SaveChatLogPatch.SaveSystemLog(SaveChatLogPatch.GetSystemMessageLog($"{SaveChatLogPatch.GameCount}回目の試合の {VariableManager.NumberOfMeetings}回目の会議 終了"));
+        SaveSystemLog(GetSystemMessageLog($"{GameCount}回目の試合の {VariableManager.NumberOfMeetings}回目の会議 終了"));
 }
