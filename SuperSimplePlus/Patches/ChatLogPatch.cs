@@ -31,18 +31,25 @@ class AddChatPatch
 
 internal static class SaveChatLogPatch
 {
+    internal static void Load()
+    {
+        ChatLogFileCreate();
+        GameCount = 0;
+    }
+
     /// <summary>
     /// ChatLogを出力するファイルのパス。
     /// ModLoad時に一回だけChatLogFileCreate()により作成している。
     /// </summary>
     private static string ChatLogFilePath;
+    internal static int GameCount;
 
     /// <summary>
     /// Modロード時に出力先のパスを作成
     /// 参考=>https://github.com/ykundesu/SuperNewRoles/blob/master/SuperNewRoles/Modules/Logger.cs
     /// 自分がSNRの方で作成したコードを参考として書く必要はあるのだろうか()
     /// </summary>
-    internal static void ChatLogFileCreate()
+    private static void ChatLogFileCreate()
     {
         // ファイル名に使用する変数作成
         string date = DateTime.Now.ToString("yyMMdd_HHmm");
@@ -104,26 +111,40 @@ internal static class SaveChatLogPatch
 }
 
 /// <summary>
-/// チャットログに記載する、システムメッセージに関わるメソッドを纏めている。
-/// </summary>
-internal static class SystemLogMethodManager
-{
-    internal static void DescribeMeetingEndSystemLog() =>
-        SaveChatLogPatch.SaveSystemLog(SaveChatLogPatch.GetSystemMessageLog($"{VariableManager.NumberOfMeetings}回目の 会議終了"));
-}
-
-/// <summary>
 /// チャットログに記載する、システムメッセージに関わるHarmonyPatchを纏めている。
 /// </summary>
 [HarmonyPatch]
 class ChatLogHarmonyPatch
 {
+    // ゲーム開始時に情報を記載する
+    // 参考=> https://github.com/ykundesu/SuperNewRoles/blob/master/SuperNewRoles/Patches/IntroPatch.cs
+    [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.CoBegin)), HarmonyPostfix]
+    public static void IntroCutsceneCoBeginPostfix()
+    {
+        // TODO:確かサクランダーさんが「ログに試合数を記載したい」と言っていたので入れてみた。うまく動けばSNRにも実装したい
+        SaveChatLogPatch.GameCount++;
+        SaveChatLogPatch.SaveSystemLog(SaveChatLogPatch.GetSystemMessageLog("|:===================================================================================:|"));
+
+        SaveChatLogPatch.SaveSystemLog(SaveChatLogPatch.GetSystemMessageLog("=================Game Info================="));
+        SaveChatLogPatch.SaveSystemLog(SaveChatLogPatch.GetSystemMessageLog($"{SaveChatLogPatch.GameCount}回目の試合 開始"));
+        SaveChatLogPatch.SaveSystemLog(SaveChatLogPatch.GetSystemMessageLog($"MapId:{GameManager.Instance.LogicOptions.currentGameOptions.MapId} MapNames:{(MapNames)GameManager.Instance.LogicOptions.currentGameOptions.MapId}"));
+
+        SaveChatLogPatch.SaveSystemLog(SaveChatLogPatch.GetSystemMessageLog("=================Player Info================="));
+
+        SaveChatLogPatch.SaveSystemLog(SaveChatLogPatch.GetSystemMessageLog("=================Player Data================="));
+        SaveChatLogPatch.SaveSystemLog(SaveChatLogPatch.GetSystemMessageLog($"プレイヤー数：{PlayerControl.AllPlayerControls.Count}人"));
+        foreach (PlayerControl p in PlayerControl.AllPlayerControls)
+            SaveChatLogPatch.SaveSystemLog(SaveChatLogPatch.GetSystemMessageLog($"{p.name}(pid:{p.PlayerId})({p.GetClient()?.PlatformData?.Platform}"));
+
+        SaveChatLogPatch.SaveSystemLog(SaveChatLogPatch.GetSystemMessageLog("|:===================================================================================:|"));
+    }
+
     // 会議開始
     [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.Start)), HarmonyPostfix]
     public static void MeetingStartPostfix(MeetingHud __instance)
     {
         VariableManager.NumberOfMeetings++;
-        SaveChatLogPatch.SaveSystemLog(SaveChatLogPatch.GetSystemMessageLog($"{VariableManager.NumberOfMeetings}回目の 会議開始"));
+        SaveChatLogPatch.SaveSystemLog(SaveChatLogPatch.GetSystemMessageLog($"{SaveChatLogPatch.GameCount}回目の試合の {VariableManager.NumberOfMeetings}回目の会議 開始"));
     }
 
     // 会議終了(airship以外)
@@ -133,4 +154,13 @@ class ChatLogHarmonyPatch
     // 会議終了(airship)
     [HarmonyPatch(typeof(AirshipExileController), nameof(AirshipExileController.WrapUpAndSpawn)), HarmonyPostfix]
     public static void AirshipMeetingEndPostfix(ExileController __instance) => SystemLogMethodManager.DescribeMeetingEndSystemLog();
+}
+
+/// <summary>
+/// チャットログに記載する、システムメッセージに関わるメソッドを纏めている。
+/// </summary>
+internal static class SystemLogMethodManager
+{
+    internal static void DescribeMeetingEndSystemLog() =>
+        SaveChatLogPatch.SaveSystemLog(SaveChatLogPatch.GetSystemMessageLog($"{SaveChatLogPatch.GameCount}回目の試合の {VariableManager.NumberOfMeetings}回目の会議 終了"));
 }

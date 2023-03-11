@@ -39,7 +39,7 @@ public class SSPPlugin : BasePlugin
 
         Harmony.PatchAll();
 
-        Patches.SaveChatLogPatch.ChatLogFileCreate();
+        Patches.SaveChatLogPatch.Load();
 
         SuperSimplePlus.Logger.Info("SuperSimplePlus_Deputata 読み込み終了", shortModName);
     }
