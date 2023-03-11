@@ -142,7 +142,7 @@ class ChatLogHarmonyPatch
         SaveSystemLog(GetSystemMessageLog("=================Player Data================="));
         SaveSystemLog(GetSystemMessageLog($"プレイヤー数：{PlayerControl.AllPlayerControls.Count}人"));
         foreach (PlayerControl p in PlayerControl.AllPlayerControls)
-            SaveSystemLog(GetSystemMessageLog($"{p.name}(pid:{p.PlayerId})({p.GetClient()?.PlatformData?.Platform}"));
+            SaveSystemLog(GetSystemMessageLog($"{p.name}(pid:{p.PlayerId})({GetColorName(p.GetClient())})({p.GetClient()?.PlatformData?.Platform})"));
 
         SaveSystemLog(GetSystemMessageLog("|:===================================================================================:|"));
     }
@@ -162,6 +162,11 @@ class ChatLogHarmonyPatch
     // 会議終了(airship)
     [HarmonyPatch(typeof(AirshipExileController), nameof(AirshipExileController.WrapUpAndSpawn)), HarmonyPostfix]
     public static void AirshipMeetingEndPostfix(ExileController __instance) => SystemLogMethodManager.DescribeMeetingEndSystemLog();
+
+    // キル発生時
+    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MurderPlayer)), HarmonyPostfix]
+    public static void MurderPlayerPostfix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target) =>
+        SaveSystemLog(GetSystemMessageLog($"{__instance.name} が {target.name}を殺害しました。"));
 }
 
 /// <summary>
