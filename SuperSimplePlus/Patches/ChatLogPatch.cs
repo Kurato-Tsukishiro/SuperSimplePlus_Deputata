@@ -10,6 +10,7 @@ using UnityEngine;
 using static System.String;
 using static SuperSimplePlus.Helpers;
 using static SuperSimplePlus.Patches.SaveChatLogPatch;
+using static SuperSimplePlus.Patches.SystemLogMethodManager;
 
 namespace SuperSimplePlus.Patches;
 
@@ -125,13 +126,46 @@ internal static class SaveChatLogPatch
 class ChatLogHarmonyPatch
 {
     // ゲーム開始時に情報を記載する
-    // 参考=> https://github.com/ykundesu/SuperNewRoles/blob/master/SuperNewRoles/Patches/IntroPatch.cs
     [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.CoBegin)), HarmonyPostfix]
-    public static void IntroCutsceneCoBeginPostfix()
+    public static void IntroCutsceneCoBeginPostfix() => IntroCutsceneCoBeginSystemLog();
+
+    // 会議開始
+    [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.Start)), HarmonyPostfix]
+    public static void MeetingStartPostfix(MeetingHud __instance) => MeetingStartSystemLog(__instance);
+
+    // 会議終了(airship以外)
+    [HarmonyPatch(typeof(ExileController), nameof(ExileController.WrapUp)), HarmonyPostfix]
+    public static void MeetingEndPostfix(ExileController __instance) => DescribeMeetingEndSystemLog(__instance.exiled);
+
+    // 会議終了(airship)
+    [HarmonyPatch(typeof(AirshipExileController), nameof(AirshipExileController.WrapUpAndSpawn)), HarmonyPostfix]
+    public static void AirshipMeetingEndPostfix(ExileController __instance) => DescribeMeetingEndSystemLog(__instance.exiled);
+
+    // キル発生時
+    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MurderPlayer)), HarmonyPostfix]
+    public static void MurderPlayerPostfix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target) => MurderPlayerSystemLog(__instance, target);
+
+    // 試合終了
+    [HarmonyPatch(typeof(EndGameManager), nameof(EndGameManager.SetEverythingUp)), HarmonyPostfix]
+    public static void EndGamePostfix() => EndGameSystemLog();
+
+}
+
+/// <summary>
+/// チャットログに記載する、システムメッセージに関わるメソッドを纏めている。
+/// </summary>
+internal static class SystemLogMethodManager
+{
+    private const string delimiterLine
+    = "|:===================================================================================:|";
+
+    // ゲーム開始時
+    // 参考=> https://github.com/ykundesu/SuperNewRoles/blob/master/SuperNewRoles/Patches/IntroPatch.cs
+    internal static void IntroCutsceneCoBeginSystemLog()
     {
         // TODO:確かサクランダーさんが「ログに試合数を記載したい」と言っていたので入れてみた。うまく動けばSNRにも実装したい
         GameCount++;
-        SaveSystemLog(GetSystemMessageLog("|:===================================================================================:|"));
+        SaveSystemLog(GetSystemMessageLog(delimiterLine));
 
         SaveSystemLog(GetSystemMessageLog("=================Game Info================="));
         SaveSystemLog(GetSystemMessageLog($"{GameCount}回目の試合 開始"));
@@ -144,48 +178,18 @@ class ChatLogHarmonyPatch
         foreach (PlayerControl p in PlayerControl.AllPlayerControls)
             SaveSystemLog(GetSystemMessageLog($"{p.name}(pid:{p.PlayerId})({GetColorName(p.GetClient())})({p.GetClient()?.PlatformData?.Platform})"));
 
-        SaveSystemLog(GetSystemMessageLog("|:===================================================================================:|"));
+        SaveSystemLog(GetSystemMessageLog(delimiterLine));
     }
 
     // 会議開始
-    [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.Start)), HarmonyPostfix]
-    public static void MeetingStartPostfix(MeetingHud __instance)
+    internal static void MeetingStartSystemLog(MeetingHud __instance)
     {
         VariableManager.NumberOfMeetings++;
         SaveSystemLog(GetSystemMessageLog("=================Meeting Phase Start================="));
         SaveSystemLog(GetSystemMessageLog($"{GameCount}回目の試合の {VariableManager.NumberOfMeetings}回目の会議 開始"));
     }
 
-    // 会議終了(airship以外)
-    [HarmonyPatch(typeof(ExileController), nameof(ExileController.WrapUp)), HarmonyPostfix]
-    public static void MeetingEndPostfix(ExileController __instance) => SystemLogMethodManager.DescribeMeetingEndSystemLog(__instance.exiled);
-
-    // 会議終了(airship)
-    [HarmonyPatch(typeof(AirshipExileController), nameof(AirshipExileController.WrapUpAndSpawn)), HarmonyPostfix]
-    public static void AirshipMeetingEndPostfix(ExileController __instance) => SystemLogMethodManager.DescribeMeetingEndSystemLog(__instance.exiled);
-
-    // キル発生時
-    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MurderPlayer)), HarmonyPostfix]
-    public static void MurderPlayerPostfix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target) =>
-        SaveSystemLog(GetSystemMessageLog($"{__instance.name} が {target.name}を殺害しました。"));
-
-    // 試合終了
-    [HarmonyPatch(typeof(EndGameManager), nameof(EndGameManager.SetEverythingUp)), HarmonyPostfix]
-    public static void EndGamePostfix()
-    {
-        SaveSystemLog(GetSystemMessageLog("|:===================================================================================:|"));
-        SaveSystemLog(GetSystemMessageLog("=================End Game Info================="));
-        SaveSystemLog(GetSystemMessageLog($"{GameCount}回目の試合 終了"));
-        SaveSystemLog(GetSystemMessageLog("|:===================================================================================:|"));
-    }
-
-}
-
-/// <summary>
-/// チャットログに記載する、システムメッセージに関わるメソッドを纏めている。
-/// </summary>
-internal static class SystemLogMethodManager
-{
+    // 会議終了
     internal static void DescribeMeetingEndSystemLog(GameData.PlayerInfo exiled)
     {
         SaveSystemLog(GetSystemMessageLog("=================End Meeting Info================="));
@@ -194,5 +198,18 @@ internal static class SystemLogMethodManager
         if (exiled == null) SaveSystemLog(GetSystemMessageLog($"誰も追放されませんでした。"));
         else SaveSystemLog(GetSystemMessageLog($"{exiled.Object.name}が追放されました。"));
         SaveSystemLog(GetSystemMessageLog("=================Task Phase Start================="));
+    }
+
+    // キル発生時
+    internal static void MurderPlayerSystemLog(PlayerControl Killer, PlayerControl victim) =>
+        SaveSystemLog(GetSystemMessageLog($"{Killer.name} が {victim.name}を殺害しました。"));
+
+    // 試合終了
+    internal static void EndGameSystemLog()
+    {
+        SaveSystemLog(GetSystemMessageLog(delimiterLine));
+        SaveSystemLog(GetSystemMessageLog("=================End Game Info================="));
+        SaveSystemLog(GetSystemMessageLog($"{GameCount}回目の試合 終了"));
+        SaveSystemLog(GetSystemMessageLog(delimiterLine));
     }
 }
