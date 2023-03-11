@@ -152,16 +152,17 @@ class ChatLogHarmonyPatch
     public static void MeetingStartPostfix(MeetingHud __instance)
     {
         VariableManager.NumberOfMeetings++;
+        SaveSystemLog(GetSystemMessageLog("=================Meeting Phase Start================="));
         SaveSystemLog(GetSystemMessageLog($"{GameCount}回目の試合の {VariableManager.NumberOfMeetings}回目の会議 開始"));
     }
 
     // 会議終了(airship以外)
     [HarmonyPatch(typeof(ExileController), nameof(ExileController.WrapUp)), HarmonyPostfix]
-    public static void MeetingEndPostfix(ExileController __instance) => SystemLogMethodManager.DescribeMeetingEndSystemLog();
+    public static void MeetingEndPostfix(ExileController __instance) => SystemLogMethodManager.DescribeMeetingEndSystemLog(__instance.exiled);
 
     // 会議終了(airship)
     [HarmonyPatch(typeof(AirshipExileController), nameof(AirshipExileController.WrapUpAndSpawn)), HarmonyPostfix]
-    public static void AirshipMeetingEndPostfix(ExileController __instance) => SystemLogMethodManager.DescribeMeetingEndSystemLog();
+    public static void AirshipMeetingEndPostfix(ExileController __instance) => SystemLogMethodManager.DescribeMeetingEndSystemLog(__instance.exiled);
 
     // キル発生時
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MurderPlayer)), HarmonyPostfix]
@@ -185,6 +186,13 @@ class ChatLogHarmonyPatch
 /// </summary>
 internal static class SystemLogMethodManager
 {
-    internal static void DescribeMeetingEndSystemLog() =>
+    internal static void DescribeMeetingEndSystemLog(GameData.PlayerInfo exiled)
+    {
+        SaveSystemLog(GetSystemMessageLog("=================End Meeting Info================="));
+        if (exiled != null && exiled.Object == null) exiled = null;
         SaveSystemLog(GetSystemMessageLog($"{GameCount}回目の試合の {VariableManager.NumberOfMeetings}回目の会議 終了"));
+        if (exiled == null) SaveSystemLog(GetSystemMessageLog($"誰も追放されませんでした。"));
+        else SaveSystemLog(GetSystemMessageLog($"{exiled.Object.name}が追放されました。"));
+        SaveSystemLog(GetSystemMessageLog("=================Task Phase Start================="));
+    }
 }
