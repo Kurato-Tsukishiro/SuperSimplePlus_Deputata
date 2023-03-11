@@ -167,6 +167,17 @@ class ChatLogHarmonyPatch
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MurderPlayer)), HarmonyPostfix]
     public static void MurderPlayerPostfix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target) =>
         SaveSystemLog(GetSystemMessageLog($"{__instance.name} が {target.name}を殺害しました。"));
+
+    // 試合終了
+    [HarmonyPatch(typeof(EndGameManager), nameof(EndGameManager.SetEverythingUp)), HarmonyPostfix]
+    public static void EndGamePostfix()
+    {
+        SaveSystemLog(GetSystemMessageLog("|:===================================================================================:|"));
+        SaveSystemLog(GetSystemMessageLog("=================End Game Info================="));
+        SaveSystemLog(GetSystemMessageLog($"{GameCount}回目の試合 終了"));
+        SaveSystemLog(GetSystemMessageLog("|:===================================================================================:|"));
+    }
+
 }
 
 /// <summary>
