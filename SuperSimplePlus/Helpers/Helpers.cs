@@ -72,6 +72,13 @@ public static class Helpers
     public static PlayerControl GetPlayer(this ClientData client) =>
         PlayerControl.AllPlayerControls.ToArray().Where(pl => pl.PlayerId == client.Character.PlayerId).FirstOrDefault();
 
+    // 参考=>https://github.com/ykundesu/SuperNewRoles/blob/master/SuperNewRoles/Roles/Role/RoleHelper.cs
+    public static bool IsDead(this PlayerControl player) =>
+        player == null || player.Data.Disconnected || player.Data.IsDead;
+
+    public static bool IsAlive(this PlayerControl player) =>
+        player != null && !player.Data.Disconnected && !player.Data.IsDead;
+
     /*
         参考=>https://github.com/tugaru1975/TownOfPlus/blob/main/Helpers.cs
         GetColorName(ClientData client), TryGetPlayerColor(int colorId, out string color), GetTranslation(this StringNames name)

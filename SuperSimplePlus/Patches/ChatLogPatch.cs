@@ -87,6 +87,9 @@ internal static class SaveChatLogPatch
         string chatLog = null;
         string date = DateTime.Now.ToString("HH:mm:ss");
         chatLog = $"[{date}] {sourceClient.PlayerName} ( {GetColorName(sourceClient)} ) :「 {chatText} 」";
+        chatLog = !sourceClient.GetPlayer().IsDead()
+            ? $"[{date}] ({GetColorName(sourceClient)}) {sourceClient.PlayerName} :「 {chatText} 」"
+            : $"[{date}] ( 死者 ) {sourceClient.PlayerName} :「 {chatText} 」";
 
         return chatLog;
     }
@@ -133,6 +136,10 @@ class ChatLogHarmonyPatch
     // 会議開始
     [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.Start)), HarmonyPostfix]
     public static void MeetingStartPostfix(MeetingHud __instance) => MeetingStartSystemLog(__instance);
+
+    // 死体通報(Hostのみ)
+    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.ReportDeadBody)), HarmonyPrefix]
+    public static void ReportDeadBodyPrefix(PlayerControl __instance, [HarmonyArgument(0)] GameData.PlayerInfo target) => ReportDeadBodySystemLog(__instance, target);
 
     // 会議終了(airship以外)
     [HarmonyPatch(typeof(ExileController), nameof(ExileController.WrapUp)), HarmonyPostfix]
@@ -191,8 +198,20 @@ internal static class SystemLogMethodManager
     internal static void MeetingStartSystemLog(MeetingHud __instance)
     {
         VariableManager.NumberOfMeetings++;
+        SaveSystemLog(GetSystemMessageLog("=================Task Phase End=================\n"));
         SaveSystemLog(GetSystemMessageLog("=================Meeting Phase Start================="));
+        SaveSystemLog(GetSystemMessageLog("=================Start Meeting Info================="));
         SaveSystemLog(GetSystemMessageLog($"{GameCount}回目の試合の {VariableManager.NumberOfMeetings}回目の会議 開始"));
+        SaveSystemLog(GetSystemMessageLog("===================================================="));
+    }
+
+    // 死体通報
+    internal static void ReportDeadBodySystemLog(PlayerControl convener, GameData.PlayerInfo target)
+    {
+        Logger.Info("ゲスト生きてる?");
+        if (convener == null) return;
+        if (target == null) SaveSystemLog(GetSystemMessageLog($"[{convener.name}] が 緊急招集しました。"));
+        else SaveSystemLog(GetSystemMessageLog($"[{convener.name}] が [{target.Object.name}] の死体を通報しました。"));
     }
 
     // 会議終了
@@ -202,13 +221,15 @@ internal static class SystemLogMethodManager
         if (exiled != null && exiled.Object == null) exiled = null;
         SaveSystemLog(GetSystemMessageLog($"{GameCount}回目の試合の {VariableManager.NumberOfMeetings}回目の会議 終了"));
         if (exiled == null) SaveSystemLog(GetSystemMessageLog($"誰も追放されませんでした。"));
-        else SaveSystemLog(GetSystemMessageLog($"{exiled.Object.name}が追放されました。"));
+        else SaveSystemLog(GetSystemMessageLog($"[ {exiled.Object.name} ] が追放されました。"));
+        SaveSystemLog(GetSystemMessageLog("===================================================="));
+        SaveSystemLog(GetSystemMessageLog("=================Meeting Phase End=================\n"));
         SaveSystemLog(GetSystemMessageLog("=================Task Phase Start================="));
     }
 
     // キル発生時
     internal static void MurderPlayerSystemLog(PlayerControl Killer, PlayerControl victim) =>
-        SaveSystemLog(GetSystemMessageLog($"{Killer.name} が {victim.name}を殺害しました。"));
+        SaveSystemLog(GetSystemMessageLog($"[ {Killer.name} ] が [ {victim.name} ]を殺害しました。"));
 
     // 試合終了
     internal static void EndGameSystemLog()
