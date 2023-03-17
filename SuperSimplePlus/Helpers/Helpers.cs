@@ -57,12 +57,20 @@ public static class Helpers
         keyCodes.All(x => Input.GetKey(x)) && keyCodes.Any(x => Input.GetKeyDown(x));
 
     /// <summary>
-    /// PlayerControl型のオブジェクトをClientData型に変換する。\n 参考=>https://github.com/ykundesu/SuperNewRoles/blob/master/SuperNewRoles/ModHelpers.cs
+    /// PlayerControl型のオブジェクトをClientData型に変換する。(GetPlayer()の逆) 参考=>https://github.com/ykundesu/SuperNewRoles/blob/master/SuperNewRoles/ModHelpers.cs
     /// </summary>
     /// <param name="player">変換したいPlayerControl型のオブジェクト</param>
     /// <returns>cd : 変換されたClientData型のオブジェクト</returns>
     public static ClientData GetClient(this PlayerControl player) =>
         AmongUsClient.Instance.allClients.ToArray().Where(cd => cd.Character.PlayerId == player.PlayerId).FirstOrDefault();
+
+    /// <summary>
+    ///　ClientData型のオブジェクトをPlayerControl型に変換する。(GetClient()の逆)
+    /// </summary>
+    /// <param name="client">変換したいClientData型のオブジェクト</param>
+    /// <returns>pl : 変換されたPlayerControl型のオブジェクト</returns>
+    public static PlayerControl GetPlayer(this ClientData client) =>
+        PlayerControl.AllPlayerControls.ToArray().Where(pl => pl.PlayerId == client.Character.PlayerId).FirstOrDefault();
 
     /*
         参考=>https://github.com/tugaru1975/TownOfPlus/blob/main/Helpers.cs

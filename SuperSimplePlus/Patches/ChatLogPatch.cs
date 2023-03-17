@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using BepInEx.IL2CPP.Utils;
 using HarmonyLib;
+using InnerNet;
 using UnityEngine;
 using static System.String;
 using static SuperSimplePlus.Helpers;
@@ -26,8 +27,8 @@ class AddChatPatch
     /// <param name="chatText">チャット内容</param>
     public static void Prefix(PlayerControl sourcePlayer, string chatText)
     {
-        if (!sourcePlayer.name.Contains(SNRSystemMessage))
-            SaveChatLog(GetChatLog(sourcePlayer, chatText));
+        if (!sourcePlayer.GetClient().PlayerName.Contains(SNRSystemMessage))
+            SaveChatLog(GetChatLog(sourcePlayer.GetClient(), chatText));
         else
             SaveSystemLog(GetSystemMessageLog(chatText));
     }
@@ -81,11 +82,11 @@ internal static class SaveChatLogPatch
     /// <param name="sourcePlayer">チャット送信者</param>
     /// <param name="chatText">チャット内容</param>
     /// <returns> chatLog : 加工した文字列</returns>
-    internal static string GetChatLog(PlayerControl sourcePlayer, string chatText)
+    internal static string GetChatLog(ClientData sourceClient, string chatText)
     {
         string chatLog = null;
         string date = DateTime.Now.ToString("HH:mm:ss");
-        chatLog = $"[{date}] {sourcePlayer.name} ( {GetColorName(sourcePlayer.GetClient())} ) :「 {chatText} 」";
+        chatLog = $"[{date}] {sourceClient.PlayerName} ( {GetColorName(sourceClient)} ) :「 {chatText} 」";
 
         return chatLog;
     }
@@ -160,7 +161,12 @@ internal static class SystemLogMethodManager
     = "|:===================================================================================:|";
 
     // ゲーム開始時
-    // 参考=> https://github.com/ykundesu/SuperNewRoles/blob/master/SuperNewRoles/Patches/IntroPatch.cs
+
+    /// <summary>
+    /// 参考=> https://github.com/ykundesu/SuperNewRoles/blob/master/SuperNewRoles/Patches/IntroPatch.cs
+    /// 参考元と違い[PlayerControl p] ではなく [ClientData client] を用いているのは、
+    /// 此方を使用しないとSNRでSHR使用時暗転させる為。SHRとの競合回避用。
+    /// </summary>
     internal static void IntroCutsceneCoBeginSystemLog()
     {
         // TODO:確かサクランダーさんが「ログに試合数を記載したい」と言っていたので入れてみた。うまく動けばSNRにも実装したい
@@ -175,8 +181,8 @@ internal static class SystemLogMethodManager
 
         SaveSystemLog(GetSystemMessageLog("=================Player Data================="));
         SaveSystemLog(GetSystemMessageLog($"プレイヤー数：{PlayerControl.AllPlayerControls.Count}人"));
-        foreach (PlayerControl p in PlayerControl.AllPlayerControls)
-            SaveSystemLog(GetSystemMessageLog($"{p.name}(pid:{p.PlayerId})({GetColorName(p.GetClient())})({p.GetClient()?.PlatformData?.Platform})"));
+        foreach (ClientData client in AmongUsClient.Instance.allClients)
+            SaveSystemLog(GetSystemMessageLog($"{client.PlayerName}(cid:{client.Id})(pid:{client.GetPlayer().PlayerId})({GetColorName(client)})({client?.PlatformData?.Platform})"));
 
         SaveSystemLog(GetSystemMessageLog(delimiterLine));
     }
