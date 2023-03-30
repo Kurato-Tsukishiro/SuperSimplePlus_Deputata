@@ -1,8 +1,7 @@
 using System;
 using HarmonyLib;
 using InnerNet;
-using SuperSimplePlus.Modules;
-
+using System.Collections.Generic;
 namespace SuperSimplePlus.Patches;
 [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Update))]
 public class GameStartManagerUpdatePatch
@@ -49,8 +48,16 @@ public class GameStartManagerStartPatch
 public class VariableManager
 {
     public static int NumberOfMeetings;
+
+
+    /// <summary>
+    /// 死亡時刻と死亡者の名前を保存
+    /// 参照 => https://github.com/ykundesu/SuperNewRoles/blob/33647263215a4097066c9f6345e5303fc73b42f3/SuperNewRoles/Roles/CrewMate/DyingMessenger.cs
+    /// </summary>
+    internal static Dictionary<DateTime, (ClientData, ClientData)> CrimeTimeAndKillersAndVictims;
     public static void ClearAndReload()
     {
         NumberOfMeetings = 0;
+        CrimeTimeAndKillersAndVictims = new();
     }
 }

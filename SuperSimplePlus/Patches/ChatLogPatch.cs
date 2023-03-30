@@ -48,6 +48,7 @@ internal static class SaveChatLogPatch
     /// </summary>
     private static string ChatLogFilePath;
     internal static int GameCount;
+
     /// <summary>
     /// SNRのシステムメッセージに含まれる文字列
     /// </summary>
@@ -199,9 +200,21 @@ internal static class SystemLogMethodManager
     {
         VariableManager.NumberOfMeetings++;
         SaveSystemLog(GetSystemMessageLog("=================Task Phase End=================\n"));
+
         SaveSystemLog(GetSystemMessageLog("=================Meeting Phase Start================="));
+
         SaveSystemLog(GetSystemMessageLog("=================Start Meeting Info================="));
+
         SaveSystemLog(GetSystemMessageLog($"{GameCount}回目の試合の {VariableManager.NumberOfMeetings}回目の会議 開始"));
+
+        SaveSystemLog(GetSystemMessageLog("=================Time of the crime and the killers and victims Info Start================="));
+
+        SaveSystemLog(GetSystemMessageLog($"{VariableManager.NumberOfMeetings}ターン目, タスクフェイズ中の 犯行時刻及び 殺害者と犠牲者"));
+        CrimeTimeAndKillerAndVictimLog();
+        VariableManager.CrimeTimeAndKillersAndVictims = new();
+
+        SaveSystemLog(GetSystemMessageLog("=================Time of the crime and the killers and victims Info End================="));
+
         SaveSystemLog(GetSystemMessageLog("===================================================="));
     }
 
@@ -222,14 +235,45 @@ internal static class SystemLogMethodManager
         SaveSystemLog(GetSystemMessageLog($"{GameCount}回目の試合の {VariableManager.NumberOfMeetings}回目の会議 終了"));
         if (exiled == null) SaveSystemLog(GetSystemMessageLog($"誰も追放されませんでした。"));
         else SaveSystemLog(GetSystemMessageLog($"[ {exiled.Object.name} ] が追放されました。"));
+
+        SaveSystemLog(GetSystemMessageLog("=================Time of the crime and the killers and victims Info Start================="));
+
+        SaveSystemLog(GetSystemMessageLog($"{VariableManager.NumberOfMeetings}ターン目, ミーティングフェイズ中の 犯行時刻及び 殺害者と犠牲者"));
+        CrimeTimeAndKillerAndVictimLog();
+        VariableManager.CrimeTimeAndKillersAndVictims = new();
+
+        SaveSystemLog(GetSystemMessageLog("=================Time of the crime and the killers and victims Info End================="));
+
         SaveSystemLog(GetSystemMessageLog("===================================================="));
         SaveSystemLog(GetSystemMessageLog("=================Meeting Phase End=================\n"));
         SaveSystemLog(GetSystemMessageLog("=================Task Phase Start================="));
     }
 
+
+    internal static void CrimeTimeAndKillerAndVictimLog()
+    {
+        foreach (KeyValuePair<DateTime, (ClientData, ClientData)> kvp in VariableManager.CrimeTimeAndKillersAndVictims)
+        {
+            ClientData killerClient = kvp.Value.Item1;
+            ClientData victimClient = kvp.Value.Item2;
+
+            if (kvp.Key == null && killerClient == null && victimClient == null) continue;
+
+            string crimeTime = kvp.Key != null ? kvp.Key.ToString("HH:mm:ss") : "死亡時刻不明";
+            string killerName = killerClient.PlayerName ?? "不明";
+            string victimName = victimClient.PlayerName ?? "身元不明";
+            string victimColor = victimClient != null ? GetColorName(victimClient) : "";
+
+            SaveSystemLog(GetSystemMessageLog($"犯行時刻:[{crimeTime}] 殺害者:[{killerName}] 犠牲者:[{victimName} ({victimColor})]"));
+        }
+    }
+
     // キル発生時
-    internal static void MurderPlayerSystemLog(PlayerControl Killer, PlayerControl victim) =>
+    internal static void MurderPlayerSystemLog(PlayerControl Killer, PlayerControl victim)
+    {
         SaveSystemLog(GetSystemMessageLog($"[ {Killer.name} ] が [ {victim.name} ]を殺害しました。"));
+        VariableManager.CrimeTimeAndKillersAndVictims[DateTime.Now] = (Killer.GetClient(), victim.GetClient());
+    }
 
     // 試合終了
     internal static void EndGameSystemLog()
