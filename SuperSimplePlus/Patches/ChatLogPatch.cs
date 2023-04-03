@@ -12,6 +12,7 @@ using static System.String;
 using static SuperSimplePlus.Helpers;
 using static SuperSimplePlus.Patches.SaveChatLogPatch;
 using static SuperSimplePlus.Patches.SystemLogMethodManager;
+using static SuperSimplePlus.Patches.SystemLogMethodManager.VoteLogMethodManager;
 
 namespace SuperSimplePlus.Patches;
 
@@ -171,7 +172,7 @@ class ChatLogHarmonyPatch
 /// <summary>
 /// チャットログに記載する、システムメッセージに関わるメソッドを纏めている。
 /// </summary>
-internal static class SystemLogMethodManager
+class SystemLogMethodManager
 {
     private const string delimiterLine
     = "|:===================================================================================:|";
@@ -240,83 +241,13 @@ internal static class SystemLogMethodManager
     /// </summary>
     /// <param name="srcPlayerId">投票者のPlayerId</param>
     /// <param name="suspectPlayerId">投票先のPlayerId</param>
-    internal static void MeetingCastVoteSystemLog(byte srcPlayerId, byte suspectPlayerId) => OpenVoteSystemLog(srcPlayerId, suspectPlayerId);
-
-    /// <summary>
-    /// 投票状況を辞書に格納する。
-    /// ClientIdを保存していない理由は, スキップや無投票等がPlayerIdを流用している為、正確な情報を保存できなくなるから。
-    /// 参考=>https://github.com/yukieiji/ExtremeRoles/blob/55b1bb54557cf036de2ec7d64d709dde673e17ec/ExtremeRoles/Patches/Meeting/MeetingHudPatch.cs#L277-L293
-    /// </summary>
-    /// <param name="__instance"></param>
-    internal static void MeetingCastVoteSave(MeetingHud __instance)
+    internal static void MeetingCastVoteSystemLog(byte srcPlayerId, byte suspectPlayerId)
     {
-        foreach (PlayerVoteArea playerVoteArea in __instance.playerStates)
-        {
-            byte srcPlayerId = playerVoteArea.TargetPlayerId;
-            byte suspectPlayerId = playerVoteArea.VotedFor;
-
-            // 投票先を全格納
-            if (VariableManager.ResultsOfTheVoteCount.ContainsKey(srcPlayerId)) // key重複対策
-                VariableManager.ResultsOfTheVoteCount[srcPlayerId] = suspectPlayerId; // key重複時は投票先を上書きする
-            else VariableManager.ResultsOfTheVoteCount.Add(srcPlayerId, suspectPlayerId);
-        }
+        string openVoteMessage = GetOpenVoteMessage(PlayerById(srcPlayerId).GetClient().PlayerName, WhereToVoteInfo(suspectPlayerId), suspectPlayerId);
+        OpenVoteSystemLog(openVoteMessage);
     }
 
-    /// <summary>
-    /// 会議終了時に最終的な投票結果を纏めて記載する為に、辞書を開き投票結果を記載するメソッドに渡す。
-    /// 投票結果を保存している辞書を初期化する。
-    /// </summary>
-    internal static void OpenVoteDecoding()
-    {
-        SaveSystemLog(GetSystemMessageLog("=================Open Votes Info Start================="));
-
-        foreach (KeyValuePair<byte, byte> kvp in VariableManager.ResultsOfTheVoteCount)
-            OpenVoteSystemLog(kvp.Key, kvp.Value);
-
-        SaveSystemLog(GetSystemMessageLog("=================Open Votes Info End================="));
-
-        VariableManager.ResultsOfTheVoteCount = new();
-    }
-
-    /// <summary>
-    /// 投票結果を記載する。
-    /// [suspectPlayerId]にスキップ等の情報が、PlayerIdの流用により乗せられている為、CDを渡す事ができず、このメソッド内でCDを取得している。
-    /// </summary>
-    /// <param name="srcPlayerId">投票者のPlayerId</param>
-    /// <param name="suspectPlayerId">投票先のPlayerId</param>
-    internal static void OpenVoteSystemLog(byte srcPlayerId, byte suspectPlayerId)
-    {
-        PlayerControl srcPC = PlayerById(srcPlayerId);
-        if (srcPC.IsDead()) return; // なんで[MeetingHud.CheckForEndVoting]は死者の投票状態まで送られるねん() 霊界から投票できるのかよ()()()
-
-        string srcName = srcPC.GetClient().PlayerName;
-        string suspectName = "";
-
-        string OpenVoteMessage = $"[{srcName}] が [{suspectName}] に投票しました。";
-
-        switch (suspectPlayerId)
-        {
-            case 252:
-                suspectName = "???";
-                break;
-            case 253:
-                suspectName = "スキップ";
-                break;
-            case 254:
-                suspectName = "無投票";
-                OpenVoteMessage = $"[{srcName}] は [{suspectName}] でした。";
-                break;
-            case 255:
-                suspectName = "未投票";
-                OpenVoteMessage = $"[{srcName}] は [{suspectName}] です。";
-                break;
-            default:
-                suspectName = PlayerById(suspectPlayerId).GetClient().PlayerName;
-                break;
-        }
-
-        SaveSystemLog(GetSystemMessageLog($"{OpenVoteMessage}"));
-    }
+    internal static void OpenVoteSystemLog(string openVoteMessage) => SaveSystemLog(GetSystemMessageLog(openVoteMessage));
 
     // 会議終了
     internal static void DescribeMeetingEndSystemLog(GameData.PlayerInfo exiled)
@@ -376,5 +307,93 @@ internal static class SystemLogMethodManager
         SaveSystemLog(GetSystemMessageLog("=================End Game Info================="));
         SaveSystemLog(GetSystemMessageLog($"{GameCount}回目の試合 終了"));
         SaveSystemLog(GetSystemMessageLog(delimiterLine));
+    }
+
+    /// <summary>
+    /// 投票logを作成するメソッドを纏めている
+    /// </summary>
+    internal static class VoteLogMethodManager
+    {
+        /// <summary>
+        /// 投票状況を辞書に格納する。
+        /// ClientIdを保存していない理由は, スキップや無投票等がPlayerIdを流用している為、正確な情報を保存できなくなるから。
+        /// 参考=>https://github.com/yukieiji/ExtremeRoles/blob/55b1bb54557cf036de2ec7d64d709dde673e17ec/ExtremeRoles/Patches/Meeting/MeetingHudPatch.cs#L277-L293
+        /// </summary>
+        /// <param name="__instance"></param>
+        internal static void MeetingCastVoteSave(MeetingHud __instance)
+        {
+            foreach (PlayerVoteArea playerVoteArea in __instance.playerStates)
+            {
+                byte srcPlayerId = playerVoteArea.TargetPlayerId;
+                byte suspectPlayerId = playerVoteArea.VotedFor;
+
+                // 投票先を全格納
+                if (VariableManager.ResultsOfTheVoteCount.ContainsKey(srcPlayerId)) // key重複対策
+                    VariableManager.ResultsOfTheVoteCount[srcPlayerId] = suspectPlayerId; // key重複時は投票先を上書きする
+                else VariableManager.ResultsOfTheVoteCount.Add(srcPlayerId, suspectPlayerId);
+            }
+        }
+
+        /// <summary>
+        /// 会議終了時に最終的な投票結果を纏めて記載する為に、辞書を開き投票結果を記載するメソッドに渡す。
+        /// 投票結果を保存している辞書を初期化する。
+        /// </summary>
+        internal static void OpenVoteDecoding()
+        {
+            SaveSystemLog(GetSystemMessageLog("=================Open Votes Info Start================="));
+
+            foreach (KeyValuePair<byte, byte> voteResult in VariableManager.ResultsOfTheVoteCount)
+            {
+                byte srcPlayerId = voteResult.Key;
+                byte votedForPlayerId = voteResult.Value;
+                PlayerControl srcPlayerControl = PlayerById(srcPlayerId);
+                if (srcPlayerControl.IsDead()) continue;
+                string srcPlayerName = srcPlayerControl.GetClient().PlayerName;
+                string votedForPlayerName = WhereToVoteInfo(votedForPlayerId);
+                string openVoteMessage = GetOpenVoteMessage(srcPlayerName, votedForPlayerName, votedForPlayerId);
+                OpenVoteSystemLog(openVoteMessage);
+            }
+
+            SaveSystemLog(GetSystemMessageLog("=================Open Votes Info End================="));
+
+            VariableManager.ResultsOfTheVoteCount = new Dictionary<byte, byte>();
+        }
+
+        /// <summary>
+        /// 投票先の情報をplayerIdから解読する。
+        /// </summary>
+        /// <param name="playerId">投票先</param>
+        /// <returns>string : 投票先(名前や投票状況)</returns>
+        internal static string WhereToVoteInfo(byte playerId)
+        {
+            return playerId switch
+            {
+                252 => "???",
+                253 => "スキップ",
+                254 => "無投票",
+                255 => "未投票",
+                _ => PlayerById(playerId).GetClient().PlayerName,
+            };
+        }
+
+        /// <summary>
+        /// バラバラな[投票者の名前]と[投票先の情報]を、投票先PlIdを使用しformatを判定して、文章として構成する。
+        /// </summary>
+        /// <param name="srcPlayerName">投票者の名前</param>
+        /// <param name="whereToVoteInfo">投票先の情報(スキップ等 反映済み)</param>
+        /// <param name="votedForPlayerId">投票先のPlId(format変更判別に使用 投票先の情報はここから取得しない)</param>
+        /// <returns>文章化された投票情報</returns>
+        internal static string GetOpenVoteMessage(string srcPlayerName, string whereToVoteInfo, byte votedForPlayerId)
+        {
+            string messageFormat = "";
+            messageFormat = votedForPlayerId switch
+            {
+                252 or 253 => "[{0}] が [{1}] に投票しました。",
+                254 => "[{0}] は [{1}] でした。",
+                255 => "[{0}] は [{1}] です。",
+                _ => "[{0}] が [{1}] に投票しました。",
+            };
+            return Format(messageFormat, srcPlayerName, whereToVoteInfo);
+        }
     }
 }
