@@ -72,6 +72,31 @@ public static class Helpers
     public static PlayerControl GetPlayer(this ClientData client) =>
         PlayerControl.AllPlayerControls.ToArray().Where(pl => pl.PlayerId == client.Character.PlayerId).FirstOrDefault();
 
+    /// <summary>
+    /// PlayerIdとPlayerControlを紐付ける辞書
+    /// </summary>
+    /// <returns></returns>
+    internal static Dictionary<byte, PlayerControl> IdControlDic = new(); // ClearAndReloadで初期化されます
+
+    /// <summary>
+    /// PlayerIdから, そのidと紐付いているPlayerControlを取得する
+    /// 参考 => https://github.com/ykundesu/SuperNewRoles/blob/a4c1b0fa8f4edd12613491d7d600db8cb994c7ad/SuperNewRoles/ModHelpers.cs#L849-L863
+    /// </summary>
+    /// <param name="id">PlayerId</param>
+    /// <returns>playerControl</returns>
+    public static PlayerControl PlayerById(byte id)
+    {
+        if (!IdControlDic.ContainsKey(id))
+        { // idが辞書にない場合全プレイヤー分のループを回し、辞書に追加する
+            foreach (PlayerControl pc in PlayerControl.AllPlayerControls)
+                if (!IdControlDic.ContainsKey(pc.PlayerId)) // Key重複対策
+                    IdControlDic.Add(pc.PlayerId, pc);
+        }
+        if (IdControlDic.ContainsKey(id)) return IdControlDic[id];
+        Logger.Error($"idと合致するPlayerIdが見つかりませんでした。nullを返却します。id:{id}", "Helpers");
+        return null;
+    }
+
     // 参考=>https://github.com/ykundesu/SuperNewRoles/blob/master/SuperNewRoles/Roles/Role/RoleHelper.cs
     public static bool IsDead(this PlayerControl player) =>
         player == null || player.Data.Disconnected || player.Data.IsDead;

@@ -142,6 +142,14 @@ class ChatLogHarmonyPatch
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.ReportDeadBody)), HarmonyPrefix]
     public static void ReportDeadBodyPrefix(PlayerControl __instance, [HarmonyArgument(0)] GameData.PlayerInfo target) => ReportDeadBodySystemLog(__instance, target);
 
+    // 投票感知&記載(Hostのみ)
+    [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.CastVote)), HarmonyPostfix]
+    public static void MeetingCastVotePostfix(byte srcPlayerId, byte suspectPlayerId) => MeetingCastVoteSystemLog(srcPlayerId, suspectPlayerId);
+
+    // 開票(Hostのみ)
+    [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.CheckForEndVoting)), HarmonyPostfix]
+    public static void CheckForEndVotingPrefix(MeetingHud __instance) => MeetingCastVoteSave(__instance);
+
     // 会議終了(airship以外)
     [HarmonyPatch(typeof(ExileController), nameof(ExileController.WrapUp)), HarmonyPostfix]
     public static void MeetingEndPostfix(ExileController __instance) => DescribeMeetingEndSystemLog(__instance.exiled);
@@ -227,6 +235,89 @@ internal static class SystemLogMethodManager
         else SaveSystemLog(GetSystemMessageLog($"[{convener.name}] が [{target.Object.name}] の死体を通報しました。"));
     }
 
+    /// <summary>
+    /// 投票時にチャットログに投票内容を記載する。
+    /// </summary>
+    /// <param name="srcPlayerId">投票者のPlayerId</param>
+    /// <param name="suspectPlayerId">投票先のPlayerId</param>
+    internal static void MeetingCastVoteSystemLog(byte srcPlayerId, byte suspectPlayerId) => OpenVoteSystemLog(srcPlayerId, suspectPlayerId);
+
+    /// <summary>
+    /// 投票状況を辞書に格納する。
+    /// ClientIdを保存していない理由は, スキップや無投票等がPlayerIdを流用している為、正確な情報を保存できなくなるから。
+    /// 参考=>https://github.com/yukieiji/ExtremeRoles/blob/55b1bb54557cf036de2ec7d64d709dde673e17ec/ExtremeRoles/Patches/Meeting/MeetingHudPatch.cs#L277-L293
+    /// </summary>
+    /// <param name="__instance"></param>
+    internal static void MeetingCastVoteSave(MeetingHud __instance)
+    {
+        foreach (PlayerVoteArea playerVoteArea in __instance.playerStates)
+        {
+            byte srcPlayerId = playerVoteArea.TargetPlayerId;
+            byte suspectPlayerId = playerVoteArea.VotedFor;
+
+            // 投票先を全格納
+            if (VariableManager.ResultsOfTheVoteCount.ContainsKey(srcPlayerId)) // key重複対策
+                VariableManager.ResultsOfTheVoteCount[srcPlayerId] = suspectPlayerId; // key重複時は投票先を上書きする
+            else VariableManager.ResultsOfTheVoteCount.Add(srcPlayerId, suspectPlayerId);
+        }
+    }
+
+    /// <summary>
+    /// 会議終了時に最終的な投票結果を纏めて記載する為に、辞書を開き投票結果を記載するメソッドに渡す。
+    /// 投票結果を保存している辞書を初期化する。
+    /// </summary>
+    internal static void OpenVoteDecoding()
+    {
+        SaveSystemLog(GetSystemMessageLog("=================Open Votes Info Start================="));
+
+        foreach (KeyValuePair<byte, byte> kvp in VariableManager.ResultsOfTheVoteCount)
+            OpenVoteSystemLog(kvp.Key, kvp.Value);
+
+        SaveSystemLog(GetSystemMessageLog("=================Open Votes Info End================="));
+
+        VariableManager.ResultsOfTheVoteCount = new();
+    }
+
+    /// <summary>
+    /// 投票結果を記載する。
+    /// [suspectPlayerId]にスキップ等の情報が、PlayerIdの流用により乗せられている為、CDを渡す事ができず、このメソッド内でCDを取得している。
+    /// </summary>
+    /// <param name="srcPlayerId">投票者のPlayerId</param>
+    /// <param name="suspectPlayerId">投票先のPlayerId</param>
+    internal static void OpenVoteSystemLog(byte srcPlayerId, byte suspectPlayerId)
+    {
+        PlayerControl srcPC = PlayerById(srcPlayerId);
+        if (srcPC.IsDead()) return; // なんで[MeetingHud.CheckForEndVoting]は死者の投票状態まで送られるねん() 霊界から投票できるのかよ()()()
+
+        string srcName = srcPC.GetClient().PlayerName;
+        string suspectName = "";
+
+        string OpenVoteMessage = $"[{srcName}] が [{suspectName}] に投票しました。";
+
+        switch (suspectPlayerId)
+        {
+            case 252:
+                suspectName = "???";
+                break;
+            case 253:
+                suspectName = "スキップ";
+                break;
+            case 254:
+                suspectName = "無投票";
+                OpenVoteMessage = $"[{srcName}] は [{suspectName}] でした。";
+                break;
+            case 255:
+                suspectName = "未投票";
+                OpenVoteMessage = $"[{srcName}] は [{suspectName}] です。";
+                break;
+            default:
+                suspectName = PlayerById(suspectPlayerId).GetClient().PlayerName;
+                break;
+        }
+
+        SaveSystemLog(GetSystemMessageLog($"{OpenVoteMessage}"));
+    }
+
     // 会議終了
     internal static void DescribeMeetingEndSystemLog(GameData.PlayerInfo exiled)
     {
@@ -235,6 +326,9 @@ internal static class SystemLogMethodManager
         SaveSystemLog(GetSystemMessageLog($"{GameCount}回目の試合の {VariableManager.NumberOfMeetings}回目の会議 終了"));
         if (exiled == null) SaveSystemLog(GetSystemMessageLog($"誰も追放されませんでした。"));
         else SaveSystemLog(GetSystemMessageLog($"[ {exiled.Object.name} ] が追放されました。"));
+
+        // 投票情報記載
+        OpenVoteDecoding();
 
         SaveSystemLog(GetSystemMessageLog("=================Time of the crime and the killers and victims Info Start================="));
 

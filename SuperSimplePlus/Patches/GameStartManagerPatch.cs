@@ -47,17 +47,26 @@ public class GameStartManagerStartPatch
 /// </summary>
 public class VariableManager
 {
+    /// <summary>
+    /// 会議階位数を保存
+    /// </summary>
     public static int NumberOfMeetings;
-
 
     /// <summary>
     /// 死亡時刻と死亡者の名前を保存
     /// 参照 => https://github.com/ykundesu/SuperNewRoles/blob/33647263215a4097066c9f6345e5303fc73b42f3/SuperNewRoles/Roles/CrewMate/DyingMessenger.cs
     /// </summary>
     internal static Dictionary<DateTime, (ClientData, ClientData)> CrimeTimeAndKillersAndVictims;
+
+    /// <summary>
+    /// 投票者と投票先を保存
+    /// </summary>
+    internal static Dictionary<byte, byte> ResultsOfTheVoteCount;
     public static void ClearAndReload()
     {
         NumberOfMeetings = 0;
         CrimeTimeAndKillersAndVictims = new();
+        ResultsOfTheVoteCount = new();
+        Helpers.IdControlDic = new();
     }
 }
