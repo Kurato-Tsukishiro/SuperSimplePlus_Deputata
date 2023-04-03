@@ -89,8 +89,8 @@ internal static class SaveChatLogPatch
         string date = DateTime.Now.ToString("HH:mm:ss");
         chatLog = $"[{date}] {sourceClient.PlayerName} ( {GetColorName(sourceClient)} ) :「 {chatText} 」";
         chatLog = !sourceClient.GetPlayer().IsDead()
-            ? $"[{date}] ({GetColorName(sourceClient)}) {sourceClient.PlayerName} :「 {chatText} 」"
-            : $"[{date}] ( 死者 ) {sourceClient.PlayerName} :「 {chatText} 」";
+            ? $"[{date}]        {sourceClient.PlayerName} :「 {chatText} 」"
+            : $"[{date}] (死者) {sourceClient.PlayerName} :「 {chatText} 」";
 
         return chatLog;
     }
