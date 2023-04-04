@@ -99,7 +99,7 @@ internal static class SaveChatLogPatch
     }
 
     /// <summary>
-    /// sシステムメッセージをChatLogに記載する為に加工する。
+    /// システムメッセージをChatLogに記載する為に加工する。
     /// </summary>
     /// <param name="systemMessageText">システムメッセージ</param>
     /// <returns></returns>
