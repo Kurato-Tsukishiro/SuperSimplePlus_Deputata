@@ -76,7 +76,7 @@ public static class Helpers
     /// PlayerIdとPlayerControlを紐付ける辞書
     /// </summary>
     /// <returns></returns>
-    internal static Dictionary<byte, PlayerControl> IdControlDic = new(); // ClearAndReloadで初期化されます
+    internal static Dictionary<byte, PlayerControl> IdControlDic = new(); // ClearAndReloadと[IntroCutscene.CoBegin]で初期化されます
 
     /// <summary>
     /// PlayerIdから, そのidと紐付いているPlayerControlを取得する
@@ -95,6 +95,58 @@ public static class Helpers
         if (IdControlDic.ContainsKey(id)) return IdControlDic[id];
         Logger.Error($"idと合致するPlayerIdが見つかりませんでした。nullを返却します。id:{id}", "Helpers");
         return null;
+    }
+
+    /// <summary>
+    /// ClientIdと名前 (ChatLogで名前の表示位置を揃える為に, 半角spaceを加えて半角20文字になるように調整した物)を紐づけて保存している辞書
+    /// </summary>
+    internal static Dictionary<int, string> CDToNameDic = new(); // ClearAndReloadで初期化されます
+
+    /// <summary>
+    /// ClientDataに紐づく 調整された名前を取得する。
+    /// 調整された名前 : ChatLogで 発言者として記載する時の表示位置を揃える為に 加工した物。
+    /// 参考 => https://github.com/ykundesu/SuperNewRoles/blob/a4c1b0fa8f4edd12613491d7d600db8cb994c7ad/SuperNewRoles/ModHelpers.cs#L849-L863
+    /// </summary>
+    /// <param name="cd">調整された名前を取得したい ClientData</param>
+    /// <returns>string : 調整済みの名前</returns>
+    internal static string SaveNamesToUseChatLogInDic(ClientData cd)
+    {
+        // 調整済みの名前がない場合全プレイヤー分のループを回し、辞書に追加する
+        if (!CDToNameDic.ContainsKey(cd.Id)) WriteForCDToNameDic();
+
+        // 上記のループを回した後はcd.Idに対応する名前が必ずあるはずなので、上記判定後に取得している。
+        // 従って、「上記の反転ifの前に以下の処理を行う事」や「下記を上記とelseでつなぐ事」はやってはならない。
+        if (CDToNameDic.ContainsKey(cd.Id)) return CDToNameDic[cd.Id];
+
+        string nonCD = "                 ???";
+        Logger.Error($"cd.idと合致するClientIdが見つかりませんでした。{nonCD}を返却します。", "Helpers");
+        return nonCD;
+    }
+
+    /// <summary>
+    /// 名前の文字数を20文字になるよう調整して、ClientIdと紐づけ辞書に格納する。
+    /// </summary>
+    public static void WriteForCDToNameDic()
+    {
+        foreach (ClientData cd in AmongUsClient.Instance.allClients)
+        {
+            int clId = cd.Id;
+            if (CDToNameDic.ContainsKey(clId)) return; // Key重複対策
+
+            string name = cd.PlayerName;
+            int nameCount = Encoding.UTF8.GetByteCount(name);
+
+            int missingStrNum = 20 - nameCount;
+            string blank = "";
+
+            if (missingStrNum != 0) blank = new(' ', missingStrNum);
+
+            string name2 = blank + name;
+
+            Logger.Info($"[{blank}] + [{name}] => [{name2}] ... [nameCount : {nameCount} ], [missingStrNum : {missingStrNum} ]");
+
+            CDToNameDic.Add(clId, name2);
+        }
     }
 
     // 参考=>https://github.com/ykundesu/SuperNewRoles/blob/master/SuperNewRoles/Roles/Role/RoleHelper.cs

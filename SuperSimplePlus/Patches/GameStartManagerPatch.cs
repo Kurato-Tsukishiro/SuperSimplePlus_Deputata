@@ -68,5 +68,6 @@ public class VariableManager
         CrimeTimeAndKillersAndVictims = new();
         ResultsOfTheVoteCount = new();
         Helpers.IdControlDic = new();
+        Helpers.CDToNameDic = new();
     }
 }

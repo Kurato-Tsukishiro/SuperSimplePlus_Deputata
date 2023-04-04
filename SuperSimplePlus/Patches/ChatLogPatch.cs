@@ -88,10 +88,12 @@ internal static class SaveChatLogPatch
     {
         string chatLog = null;
         string date = DateTime.Now.ToString("HH:mm:ss");
-        chatLog = $"[{date}] {sourceClient.PlayerName} ( {GetColorName(sourceClient)} ) :「 {chatText} 」";
+        bool duringGamePlay = AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Started;
+        string name = duringGamePlay ? SaveNamesToUseChatLogInDic(sourceClient) : sourceClient.PlayerName;
+
         chatLog = !sourceClient.GetPlayer().IsDead()
-            ? $"[{date}]        {sourceClient.PlayerName} :「 {chatText} 」"
-            : $"[{date}] (死者) {sourceClient.PlayerName} :「 {chatText} 」";
+            ? $"[{date}]        {name} :「 {chatText} 」"
+            : $"[{date}] (死者) {name} :「 {chatText} 」";
 
         return chatLog;
     }
@@ -200,6 +202,9 @@ class SystemLogMethodManager
         SaveSystemLog(GetSystemMessageLog($"プレイヤー数：{PlayerControl.AllPlayerControls.Count}人"));
         foreach (ClientData client in AmongUsClient.Instance.allClients)
             SaveSystemLog(GetSystemMessageLog($"{client.PlayerName}(cid:{client.Id})(pid:{client.GetPlayer().PlayerId})({GetColorName(client)})({client?.PlatformData?.Platform})"));
+
+        CDToNameDic = new(); // 試合開始時に, 文字数調整した名前とClientIdと紐づけた辞書を初期化する。
+        WriteForCDToNameDic(); // そして書き込む
 
         SaveSystemLog(GetSystemMessageLog(delimiterLine));
     }
