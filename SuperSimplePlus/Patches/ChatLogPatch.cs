@@ -207,6 +207,8 @@ class SystemLogMethodManager
         WriteForCDToNameDic(); // そして書き込む
 
         SaveSystemLog(GetSystemMessageLog(delimiterLine));
+        SaveSystemLog("\n");
+        SaveSystemLog(GetSystemMessageLog("=================Task Phase Start================="));
     }
 
     // 会議開始
@@ -228,6 +230,7 @@ class SystemLogMethodManager
         VariableManager.CrimeTimeAndKillersAndVictims = new();
 
         SaveSystemLog(GetSystemMessageLog("=================Time of the crime and the killers and victims Info End================="));
+        SaveSystemLog("\n");
 
         SaveSystemLog(GetSystemMessageLog("===================================================="));
     }
@@ -275,7 +278,9 @@ class SystemLogMethodManager
         SaveSystemLog(GetSystemMessageLog("=================Time of the crime and the killers and victims Info End================="));
 
         SaveSystemLog(GetSystemMessageLog("===================================================="));
-        SaveSystemLog(GetSystemMessageLog("=================Meeting Phase End=================\n"));
+        SaveSystemLog(GetSystemMessageLog("=================Meeting Phase End================="));
+        SaveSystemLog("\n");
+
         SaveSystemLog(GetSystemMessageLog("=================Task Phase Start================="));
     }
 
@@ -360,6 +365,7 @@ class SystemLogMethodManager
             }
 
             SaveSystemLog(GetSystemMessageLog("=================Open Votes Info End================="));
+        SaveSystemLog("\n");
 
             VariableManager.ResultsOfTheVoteCount = new Dictionary<byte, byte>();
         }
