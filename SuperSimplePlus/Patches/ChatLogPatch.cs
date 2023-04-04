@@ -213,7 +213,7 @@ class SystemLogMethodManager
     internal static void MeetingStartSystemLog(MeetingHud __instance)
     {
         VariableManager.NumberOfMeetings++;
-        SaveSystemLog(GetSystemMessageLog("=================Task Phase End=================\n"));
+        SaveSystemLog(GetSystemMessageLog("=================Task Phase End================="));
 
         SaveSystemLog(GetSystemMessageLog("=================Meeting Phase Start================="));
 
