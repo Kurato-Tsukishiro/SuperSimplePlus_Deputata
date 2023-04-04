@@ -133,20 +133,27 @@ public static class Helpers
             int clId = cd.Id;
             if (CDToNameDic.ContainsKey(clId)) return; // Key重複対策
 
-            string name = cd.PlayerName;
-            int nameCount = Encoding.UTF8.GetByteCount(name);
+            string preName = cd.PlayerName;
+            int nameByteCount_UTF8 = Encoding.UTF8.GetByteCount(preName); // 英数字のエンコードはUTF-8
+            int nameByteCount_Unicode = Encoding.Unicode.GetByteCount(preName); // 日本語のエンコードはUnicode
 
-            int missingStrNum = 20 - nameCount;
+            //
+            int blankCount = preName.Length == nameByteCount_UTF8 ? 20 - nameByteCount_UTF8 : 20 - nameByteCount_Unicode;
             string blank = "";
 
-            if (missingStrNum != 0) blank = new(' ', missingStrNum);
+            if (blankCount != 0) blank = new(' ', blankCount);
 
-            string name2 = blank + name;
+            string postName = blank + preName;
 
-            Logger.Info($"[{blank}] + [{name}] => [{name2}] ... [nameCount : {nameCount} ], [missingStrNum : {missingStrNum} ]");
-
-            CDToNameDic.Add(clId, name2);
+            CDToNameDic.Add(clId, postName);
         }
+
+        // 参考=>https://atmarkit.itmedia.co.jp/fdotnet/dotnettips/012strcount/strcount.html
+        // 参考=>https://dobon.net/vb/dotnet/string/concat.html
+        // 参考=>https://dobon.net/vb/dotnet/string/insert.html
+        // 参考=>https://dobon.net/vb/dotnet/string/repeat.html
+        // 参考=>https://dobon.net/vb/dotnet/vb6/lenb.html
+        // 参考=>https://hacknote.jp/archives/18350/
     }
 
     // 参考=>https://github.com/ykundesu/SuperNewRoles/blob/master/SuperNewRoles/Roles/Role/RoleHelper.cs
