@@ -216,6 +216,7 @@ class SystemLogMethodManager
     {
         VariableManager.NumberOfMeetings++;
         SaveSystemLog(GetSystemMessageLog("=================Task Phase End================="));
+        SaveSystemLog("\n");
 
         SaveSystemLog(GetSystemMessageLog("=================Meeting Phase Start================="));
 
@@ -223,16 +224,14 @@ class SystemLogMethodManager
 
         SaveSystemLog(GetSystemMessageLog($"{GameCount}回目の試合の {VariableManager.NumberOfMeetings}回目の会議 開始"));
 
-        SaveSystemLog(GetSystemMessageLog("=================Time of the crime and the killers and victims Info Start================="));
+        SaveSystemLog(GetSystemMessageLog("=================Time of the crime and the killers and victims Info================="));
 
         SaveSystemLog(GetSystemMessageLog($"{VariableManager.NumberOfMeetings}ターン目, タスクフェイズ中の 犯行時刻及び 殺害者と犠牲者"));
         CrimeTimeAndKillerAndVictimLog();
         VariableManager.CrimeTimeAndKillersAndVictims = new();
 
-        SaveSystemLog(GetSystemMessageLog("=================Time of the crime and the killers and victims Info End================="));
-        SaveSystemLog("\n");
-
         SaveSystemLog(GetSystemMessageLog("===================================================="));
+        SaveSystemLog("\n");
     }
 
     // 死体通報
@@ -260,6 +259,7 @@ class SystemLogMethodManager
     // 会議終了
     internal static void DescribeMeetingEndSystemLog(GameData.PlayerInfo exiled)
     {
+        SaveSystemLog("\n");
         SaveSystemLog(GetSystemMessageLog("=================End Meeting Info================="));
         if (exiled != null && exiled.Object == null) exiled = null;
         SaveSystemLog(GetSystemMessageLog($"{GameCount}回目の試合の {VariableManager.NumberOfMeetings}回目の会議 終了"));
@@ -269,14 +269,11 @@ class SystemLogMethodManager
         // 投票情報記載
         OpenVoteDecoding();
 
-        SaveSystemLog(GetSystemMessageLog("=================Time of the crime and the killers and victims Info Start================="));
+        SaveSystemLog(GetSystemMessageLog("=================Time of the crime and the killers and victims Info================="));
 
         SaveSystemLog(GetSystemMessageLog($"{VariableManager.NumberOfMeetings}ターン目, ミーティングフェイズ中の 犯行時刻及び 殺害者と犠牲者"));
         CrimeTimeAndKillerAndVictimLog();
         VariableManager.CrimeTimeAndKillersAndVictims = new();
-
-        SaveSystemLog(GetSystemMessageLog("=================Time of the crime and the killers and victims Info End================="));
-
         SaveSystemLog(GetSystemMessageLog("===================================================="));
         SaveSystemLog(GetSystemMessageLog("=================Meeting Phase End================="));
         SaveSystemLog("\n");
