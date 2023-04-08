@@ -28,6 +28,8 @@ class AddChatPatch
     /// <param name="chatText">チャット内容</param>
     public static void Prefix(PlayerControl sourcePlayer, string chatText)
     {
+        if (!SSPPlugin.ChatLog.Value) return; // ChatLogを作成しない設定だったら読まないようにする。
+
         if (!sourcePlayer.GetClient().PlayerName.Contains(SNRSystemMessage))
             SaveChatLog(GetChatLog(sourcePlayer.GetClient(), chatText));
         else
@@ -73,6 +75,8 @@ internal static class SaveChatLogPatch
         string folderPath = Path.GetDirectoryName(UnityEngine.Application.dataPath) + @"\SSP_Deputata\SaveChatLogFolder\";
         Directory.CreateDirectory(folderPath);
         ChatLogFilePath = @$"{folderPath}" + @$"{fileName}";
+
+        if (!SSPPlugin.ChatLog.Value) return;
 
         Logger.Info($"{string.Format(ModTranslation.getString("ChatLogFileCreate"), fileName)}");
         SaveSystemLog(GetSystemMessageLog($"{string.Format(ModTranslation.getString("ChatLogFileCreate"), fileName)}"));
@@ -133,42 +137,50 @@ internal static class SaveChatLogPatch
 [HarmonyPatch]
 class ChatLogHarmonyPatch
 {
-    // ゲーム開始時に情報を記載する
-    [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.CoBegin)), HarmonyPostfix]
-    public static void IntroCutsceneCoBeginPostfix() => IntroCutsceneCoBeginSystemLog();
+    #pragma warning disable 8321
+    // HarmonyPatchはローカル宣言で呼び出していなくても動くのに「ローカル関数 '関数名' は宣言されていますが、一度も使用されていません」と警告が出る為
+    // このメソッドでは警告を表示しないようにしている
+    public static void ChatLogHarmony()
+    {
+        if (!SSPPlugin.ChatLog.Value) return; // ChatLogを作成しない設定だったら読まないようにする。
 
-    // 会議開始
-    [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.Start)), HarmonyPostfix]
-    public static void MeetingStartPostfix(MeetingHud __instance) => MeetingStartSystemLog(__instance);
+        // ゲーム開始時に情報を記載する
+        [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.CoBegin)), HarmonyPostfix]
+        static void IntroCutsceneCoBeginPostfix() => IntroCutsceneCoBeginSystemLog();
 
-    // 死体通報(Hostのみ)
-    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.ReportDeadBody)), HarmonyPrefix]
-    public static void ReportDeadBodyPrefix(PlayerControl __instance, [HarmonyArgument(0)] GameData.PlayerInfo target) => ReportDeadBodySystemLog(__instance, target);
+        // 会議開始
+        [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.Start)), HarmonyPostfix]
+        static void MeetingStartPostfix(MeetingHud __instance) => MeetingStartSystemLog(__instance);
 
-    // 投票感知&記載(Hostのみ)
-    [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.CastVote)), HarmonyPostfix]
-    public static void MeetingCastVotePostfix(byte srcPlayerId, byte suspectPlayerId) => MeetingCastVoteSystemLog(srcPlayerId, suspectPlayerId);
+        // 死体通報(Hostのみ)
+        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.ReportDeadBody)), HarmonyPrefix]
+        static void ReportDeadBodyPrefix(PlayerControl __instance, [HarmonyArgument(0)] GameData.PlayerInfo target) => ReportDeadBodySystemLog(__instance, target);
 
-    // 開票(Hostのみ)
-    [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.CheckForEndVoting)), HarmonyPostfix]
-    public static void CheckForEndVotingPrefix(MeetingHud __instance) => MeetingCastVoteSave(__instance);
+        // 投票感知&記載(Hostのみ)
+        [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.CastVote)), HarmonyPostfix]
+        static void MeetingCastVotePostfix(byte srcPlayerId, byte suspectPlayerId) => MeetingCastVoteSystemLog(srcPlayerId, suspectPlayerId);
 
-    // 会議終了(airship以外)
-    [HarmonyPatch(typeof(ExileController), nameof(ExileController.WrapUp)), HarmonyPostfix]
-    public static void MeetingEndPostfix(ExileController __instance) => DescribeMeetingEndSystemLog(__instance.exiled);
+        // 開票(Hostのみ)
+        [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.CheckForEndVoting)), HarmonyPostfix]
+        static void CheckForEndVotingPrefix(MeetingHud __instance) => MeetingCastVoteSave(__instance);
 
-    // 会議終了(airship)
-    [HarmonyPatch(typeof(AirshipExileController), nameof(AirshipExileController.WrapUpAndSpawn)), HarmonyPostfix]
-    public static void AirshipMeetingEndPostfix(ExileController __instance) => DescribeMeetingEndSystemLog(__instance.exiled);
+        // 会議終了(airship以外)
+        [HarmonyPatch(typeof(ExileController), nameof(ExileController.WrapUp)), HarmonyPostfix]
+        static void MeetingEndPostfix(ExileController __instance) => DescribeMeetingEndSystemLog(__instance.exiled);
 
-    // キル発生時
-    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MurderPlayer)), HarmonyPostfix]
-    public static void MurderPlayerPostfix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target) => MurderPlayerSystemLog(__instance, target);
+        // 会議終了(airship)
+        [HarmonyPatch(typeof(AirshipExileController), nameof(AirshipExileController.WrapUpAndSpawn)), HarmonyPostfix]
+        static void AirshipMeetingEndPostfix(ExileController __instance) => DescribeMeetingEndSystemLog(__instance.exiled);
 
-    // 試合終了
-    [HarmonyPatch(typeof(EndGameManager), nameof(EndGameManager.SetEverythingUp)), HarmonyPostfix]
-    public static void EndGamePostfix() => EndGameSystemLog();
+        // キル発生時
+        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MurderPlayer)), HarmonyPostfix]
+        static void MurderPlayerPostfix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target) => MurderPlayerSystemLog(__instance, target);
 
+        // 試合終了
+        [HarmonyPatch(typeof(EndGameManager), nameof(EndGameManager.SetEverythingUp)), HarmonyPostfix]
+        static void EndGamePostfix() => EndGameSystemLog();
+    }
+    #pragma warning restore 8321
 }
 
 /// <summary>
@@ -188,6 +200,8 @@ class SystemLogMethodManager
     /// </summary>
     internal static void IntroCutsceneCoBeginSystemLog()
     {
+        if (!SSPPlugin.ChatLog.Value) return;
+
         // TODO:確かサクランダーさんが「ログに試合数を記載したい」と言っていたので入れてみた。うまく動けばSNRにも実装したい
         GameCount++;
         SaveSystemLog(GetSystemMessageLog(delimiterLine));
@@ -214,6 +228,8 @@ class SystemLogMethodManager
     // 会議開始
     internal static void MeetingStartSystemLog(MeetingHud __instance)
     {
+        if (!SSPPlugin.ChatLog.Value) return;
+
         VariableManager.NumberOfMeetings++;
         SaveSystemLog(GetSystemMessageLog("=================Task Phase End================="));
         SaveSystemLog("\n");
@@ -237,6 +253,8 @@ class SystemLogMethodManager
     // 死体通報
     internal static void ReportDeadBodySystemLog(PlayerControl convener, GameData.PlayerInfo target)
     {
+        if (!SSPPlugin.ChatLog.Value) return;
+
         Logger.Info("ゲスト生きてる?");
         if (convener == null) return;
         if (target == null) SaveSystemLog(GetSystemMessageLog($"[{convener.name}] が 緊急招集しました。"));
@@ -250,6 +268,8 @@ class SystemLogMethodManager
     /// <param name="suspectPlayerId">投票先のPlayerId</param>
     internal static void MeetingCastVoteSystemLog(byte srcPlayerId, byte suspectPlayerId)
     {
+        if (!SSPPlugin.ChatLog.Value) return;
+
         string openVoteMessage = GetOpenVoteMessage(PlayerById(srcPlayerId).GetClient().PlayerName, WhereToVoteInfo(suspectPlayerId), suspectPlayerId);
         OpenVoteSystemLog(openVoteMessage);
     }
@@ -259,6 +279,8 @@ class SystemLogMethodManager
     // 会議終了
     internal static void DescribeMeetingEndSystemLog(GameData.PlayerInfo exiled)
     {
+        if (!SSPPlugin.ChatLog.Value) return;
+
         SaveSystemLog("\n");
         SaveSystemLog(GetSystemMessageLog("=================End Meeting Info================="));
         if (exiled != null && exiled.Object == null) exiled = null;
@@ -284,6 +306,8 @@ class SystemLogMethodManager
 
     internal static void CrimeTimeAndKillerAndVictimLog()
     {
+        if (!SSPPlugin.ChatLog.Value) return;
+
         foreach (KeyValuePair<DateTime, (ClientData, ClientData)> kvp in VariableManager.CrimeTimeAndKillersAndVictims)
         {
             ClientData killerClient = kvp.Value.Item1;
@@ -303,6 +327,8 @@ class SystemLogMethodManager
     // キル発生時
     internal static void MurderPlayerSystemLog(PlayerControl Killer, PlayerControl victim)
     {
+        if (!SSPPlugin.ChatLog.Value) return;
+
         SaveSystemLog(GetSystemMessageLog($"[ {Killer.name} ] が [ {victim.name} ]を殺害しました。"));
         VariableManager.CrimeTimeAndKillersAndVictims[DateTime.Now] = (Killer.GetClient(), victim.GetClient());
     }
@@ -310,6 +336,8 @@ class SystemLogMethodManager
     // 試合終了
     internal static void EndGameSystemLog()
     {
+        if (!SSPPlugin.ChatLog.Value) return;
+
         SaveSystemLog(GetSystemMessageLog(delimiterLine));
         SaveSystemLog(GetSystemMessageLog("=================End Game Info================="));
         SaveSystemLog(GetSystemMessageLog($"{GameCount}回目の試合 終了"));
@@ -329,6 +357,8 @@ class SystemLogMethodManager
         /// <param name="__instance"></param>
         internal static void MeetingCastVoteSave(MeetingHud __instance)
         {
+            if (!SSPPlugin.ChatLog.Value) return;
+
             foreach (PlayerVoteArea playerVoteArea in __instance.playerStates)
             {
                 byte srcPlayerId = playerVoteArea.TargetPlayerId;
@@ -362,7 +392,7 @@ class SystemLogMethodManager
             }
 
             SaveSystemLog(GetSystemMessageLog("=================Open Votes Info End================="));
-        SaveSystemLog("\n");
+            SaveSystemLog("\n");
 
             VariableManager.ResultsOfTheVoteCount = new Dictionary<byte, byte>();
         }
