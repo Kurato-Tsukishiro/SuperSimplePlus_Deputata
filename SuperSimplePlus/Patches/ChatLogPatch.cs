@@ -255,7 +255,6 @@ class SystemLogMethodManager
     {
         if (!SSPPlugin.ChatLog.Value) return;
 
-        Logger.Info("ゲスト生きてる?");
         if (convener == null) return;
         if (target == null) SaveSystemLog(GetSystemMessageLog($"[{convener.name}] が 緊急招集しました。"));
         else SaveSystemLog(GetSystemMessageLog($"[{convener.name}] が [{target.Object.name}] の死体を通報しました。"));
