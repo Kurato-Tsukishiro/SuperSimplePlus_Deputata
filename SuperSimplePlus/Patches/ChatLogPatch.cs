@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using BepInEx.IL2CPP.Utils;
+using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using InnerNet;
 using UnityEngine;
@@ -137,7 +137,7 @@ internal static class SaveChatLogPatch
 [HarmonyPatch]
 class ChatLogHarmonyPatch
 {
-    #pragma warning disable 8321
+#pragma warning disable 8321
     // HarmonyPatchはローカル宣言で呼び出していなくても動くのに「ローカル関数 '関数名' は宣言されていますが、一度も使用されていません」と警告が出る為
     // このメソッドでは警告を表示しないようにしている
     public static void ChatLogHarmony()
@@ -180,7 +180,7 @@ class ChatLogHarmonyPatch
         [HarmonyPatch(typeof(EndGameManager), nameof(EndGameManager.SetEverythingUp)), HarmonyPostfix]
         static void EndGamePostfix() => EndGameSystemLog();
     }
-    #pragma warning restore 8321
+#pragma warning restore 8321
 }
 
 /// <summary>

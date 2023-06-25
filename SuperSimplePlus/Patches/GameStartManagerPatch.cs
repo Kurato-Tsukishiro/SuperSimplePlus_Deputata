@@ -1,7 +1,7 @@
 using System;
+using System.Collections.Generic;
 using HarmonyLib;
 using InnerNet;
-using System.Collections.Generic;
 namespace SuperSimplePlus.Patches;
 [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Update))]
 public class GameStartManagerUpdatePatch

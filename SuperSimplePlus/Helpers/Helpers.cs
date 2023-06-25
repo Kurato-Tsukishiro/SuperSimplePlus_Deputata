@@ -5,13 +5,15 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using Hazel;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using InnerNet;
 using SuperSimplePlus.Modules;
 using SuperSimplePlus.Patches;
-using UnhollowerBaseLib;
 using UnityEngine;
+
 
 namespace SuperSimplePlus;
 public static class Helpers
