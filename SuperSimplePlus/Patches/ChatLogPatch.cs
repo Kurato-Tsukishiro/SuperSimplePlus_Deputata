@@ -40,19 +40,27 @@ class AddChatPatch
 [HarmonyPatch(typeof(ChatController), nameof(ChatController.SendChat))]
 class SendChatPatch
 {
+    private static bool ResetedMemo = false;
+    private static readonly string LogMemoFilePath = Path.GetDirectoryName(Application.dataPath) + @"\SSP_Deputata\AmongUs_ChatMemo.log";
+
     static bool Prefix(ChatController __instance)
     {
         if (!SSPPlugin.ChatLog.Value) return true; // ChatLogを作成しない設定だったら判定しないようにする。
 
-        string text = __instance.TextArea.text;
+        string text = __instance.TextArea.text, addChatMemo = __instance.TextArea.text;
         bool handled = false;
 
         if (text.ToLower().StartsWith("/cm") || text.ToLower().StartsWith("/memo"))
         {
             handled = true;
             string soliloquy = text.ToLower().Replace("/cm ", "").Replace("/memo ", "");
-            __instance.AddChat(PlayerControl.LocalPlayer, $"『 {soliloquy} 』");
+            soliloquy = $"『 {soliloquy} 』";
+
+            addChatMemo = soliloquy;
+            __instance.AddChat(PlayerControl.LocalPlayer, soliloquy);
         }
+
+        SaveChatMemo(addChatMemo);
 
         if (handled)
         {
@@ -62,6 +70,28 @@ class SendChatPatch
         }
         return !handled;
     }
+
+    /// <summary>
+    /// AmongUs_ChatMemo.logに自分のチャットと自視点メモを記載する。
+    /// </summary>
+    /// <param name="chatMemo">string : 記載する内容</param>
+    /// <param name="processingRequired">true : 自分の発言, 要加工 / false : システムログ </param>
+    internal static void SaveChatMemo(string chatMemo, bool processingRequired = true)
+    {
+        if (!SSPPlugin.ChatLog.Value) return;
+
+        string date = DateTime.Now.ToString("[HH:mm:ss]");
+        string name = PlayerControl.LocalPlayer.GetClient().PlayerName;
+        string outChatMemo = processingRequired ? $"{date} {name} : {chatMemo}" : $"{date} {chatMemo}";
+
+        if (ResetedMemo)
+            File.AppendAllText(LogMemoFilePath, $"{outChatMemo}" + Environment.NewLine);
+        else
+        {
+            ResetedMemo = true;
+            File.WriteAllText(LogMemoFilePath, $"{outChatMemo}" + Environment.NewLine);
+        }
+    }
 }
 
 internal static class SaveChatLogPatch
@@ -69,7 +99,6 @@ internal static class SaveChatLogPatch
     internal static void Load()
     {
         ChatLogFileCreate();
-        GameCount = 0;
     }
 
     /// <summary>
@@ -77,7 +106,7 @@ internal static class SaveChatLogPatch
     /// ModLoad時に一回だけChatLogFileCreate()により作成している。
     /// </summary>
     private static string ChatLogFilePath;
-    internal static int GameCount;
+    internal static int GameCount = 0;
 
     /// <summary>
     /// SNRのシステムメッセージに含まれる文字列
@@ -96,7 +125,7 @@ internal static class SaveChatLogPatch
         string date = DateTime.Now.ToString("yyMMdd_HHmm");
 
         // ファイル名作成
-        string fileName = $"{date}_AmongUs_ChatLog.log";
+        string fileName = $"{date}_AmongUs_GameLog.log";
 
         // 出力先のパス作成
         string folderPath = Path.GetDirectoryName(UnityEngine.Application.dataPath) + @"\SSP_Deputata\SaveChatLogFolder\";
@@ -250,6 +279,12 @@ class SystemLogMethodManager
         SaveSystemLog(GetSystemMessageLog(delimiterLine));
         SaveSystemLog("\n");
         SaveSystemLog(GetSystemMessageLog("=================Task Phase Start================="));
+
+        SendChatPatch.SaveChatMemo(delimiterLine, false);
+        SendChatPatch.SaveChatMemo("", false);
+        SendChatPatch.SaveChatMemo("=================Game Info=================", false);
+        SendChatPatch.SaveChatMemo($"{GameCount}回目の試合 開始", false);
+        SendChatPatch.SaveChatMemo("", false);
     }
 
     // 会議開始
@@ -368,6 +403,10 @@ class SystemLogMethodManager
         SaveSystemLog(GetSystemMessageLog("=================End Game Info================="));
         SaveSystemLog(GetSystemMessageLog($"{GameCount}回目の試合 終了"));
         SaveSystemLog(GetSystemMessageLog(delimiterLine));
+
+        SendChatPatch.SaveChatMemo("=================End Game Info=================", false);
+        SendChatPatch.SaveChatMemo($"{GameCount}回目の試合 終了", false);
+        SendChatPatch.SaveChatMemo(delimiterLine, false);
     }
 
     /// <summary>
