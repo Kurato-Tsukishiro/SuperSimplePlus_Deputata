@@ -21,18 +21,10 @@
     - 共存先のModのデバック時、このModの機能が必要ない場合は、抜く事をお勧めします。
     - このModの機能がデバックに必要で共存させる場合は、Host機のみに入れる事を推奨します。
 
-## dllの違いについて
-- SuperSimplePlus.dll
-  - 共存先のmodの.NETバージョンが``netstandard2.1``の時に使用してください。
-  - 共存先のmodが[SuperNewRoles](https://github.com/ykundesu/SuperNewRoles)は此方になります。
-  - 対応branch : [master_.NET6ver](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/tree/master_.NET6ver)
-- SuperSimplePlus_dotnet6.dll
-  - 共存先のmodの.NETバージョンが``.NET6.0``の時に使用してください。
-    - 共存先のmodが[ExtremeRoles](https://github.com/yukieiji/ExtremeRoles)の場合はこちらになります。
-    - 共存先のmodが[Nebula on the Ship](https://github.com/Dolly1016/Nebula)の場合はこちらになります。
-    - **テストはしていますが、SNR以外のmodとの共存の動作は完全な保証はできません。**
-  - 対応branch : [main](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata)
+# .NETバージョンについて
 
+## 等Modの.NETバージョンについて
+- .Net6を使用しております。
 ## .NETバージョンの確認の仕方
 - 共存先のModの``モッド名.csrroj``ファイルの``<TargetFramework>○○</TargetFramework>``を確認してください。
   - ○○の部分が.NETバージョンになります
