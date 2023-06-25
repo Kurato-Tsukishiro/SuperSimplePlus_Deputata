@@ -37,6 +37,33 @@ class AddChatPatch
     }
 }
 
+[HarmonyPatch(typeof(ChatController), nameof(ChatController.SendChat))]
+class SendChatPatch
+{
+    static bool Prefix(ChatController __instance)
+    {
+        if (!SSPPlugin.ChatLog.Value) return true; // ChatLogを作成しない設定だったら判定しないようにする。
+
+        string text = __instance.TextArea.text;
+        bool handled = false;
+
+        if (text.ToLower().StartsWith("/cm") || text.ToLower().StartsWith("/memo"))
+        {
+            handled = true;
+            string soliloquy = text.ToLower().Replace("/cm ", "").Replace("/memo ", "");
+            __instance.AddChat(PlayerControl.LocalPlayer, $"『 {soliloquy} 』");
+        }
+
+        if (handled)
+        {
+            __instance.TextArea.Clear();
+            FastDestroyableSingleton<HudManager>.Instance.Chat.TimeSinceLastMessage = 0f;
+            __instance.quickChatMenu.ResetGlyphs();
+        }
+        return !handled;
+    }
+}
+
 internal static class SaveChatLogPatch
 {
     internal static void Load()
