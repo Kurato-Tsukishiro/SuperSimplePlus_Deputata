@@ -208,9 +208,9 @@ class ChatLogHarmonyPatch
         [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.Start)), HarmonyPostfix]
         static void MeetingStartPostfix(MeetingHud __instance) => MeetingStartSystemLog(__instance);
 
-        // 死体通報(Hostのみ)
-        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.ReportDeadBody)), HarmonyPrefix]
-        static void ReportDeadBodyPrefix(PlayerControl __instance, [HarmonyArgument(0)] GameData.PlayerInfo target) => ReportDeadBodySystemLog(__instance, target);
+        // 死体通報
+        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.ReportDeadBody)), HarmonyPostfix]
+        static void ReportDeadBodyPostfix(PlayerControl __instance, [HarmonyArgument(0)] GameData.PlayerInfo target) => ReportDeadBodySystemLog(__instance, target);
 
         // 投票感知&記載(Hostのみ)
         [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.CastVote)), HarmonyPostfix]
@@ -218,7 +218,7 @@ class ChatLogHarmonyPatch
 
         // 開票(Hostのみ)
         [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.CheckForEndVoting)), HarmonyPostfix]
-        static void CheckForEndVotingPrefix(MeetingHud __instance) => MeetingCastVoteSave(__instance);
+        static void CheckForEndVotingPostfix(MeetingHud __instance) => MeetingCastVoteSave(__instance);
 
         // 会議終了(airship以外)
         [HarmonyPatch(typeof(ExileController), nameof(ExileController.WrapUp)), HarmonyPostfix]
