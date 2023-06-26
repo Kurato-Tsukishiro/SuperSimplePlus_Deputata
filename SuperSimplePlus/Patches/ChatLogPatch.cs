@@ -37,6 +37,7 @@ class AddChatPatch
     }
 }
 
+// 参照 => https://github.com/ykundesu/SuperNewRoles/blob/1.8.1.0/SuperNewRoles/Patches/ChatCommandPatch.cs
 [HarmonyPatch(typeof(ChatController), nameof(ChatController.SendChat))]
 class SendChatPatch
 {
@@ -58,6 +59,17 @@ class SendChatPatch
 
             addChatMemo = soliloquy;
             __instance.AddChat(PlayerControl.LocalPlayer, soliloquy);
+        }
+
+        if (AmongUsClient.Instance.GameState != InnerNetClient.GameStates.Started)
+        {
+            if (text.ToLower().StartsWith("/sgl ") || text.ToLower().StartsWith("/savegamelog "))
+            {
+                handled = true;
+                string name = ReplaceUnusableStringsAsFileNames(text.Replace("/sgl ", "").Replace("/savegamelog ", ""));
+                string status = GemeLogSaveAs(name);
+                __instance.AddChat(PlayerControl.LocalPlayer, status);
+            }
         }
 
         SaveChatMemo(addChatMemo);
@@ -92,6 +104,54 @@ class SendChatPatch
             File.WriteAllText(LogMemoFilePath, $"{outChatMemo}" + Environment.NewLine);
         }
     }
+
+    /// <summary>
+    /// 一個前の試合のGameLogのみを任意のファイル名で保存する
+    /// </summary>
+    /// <param name="name">任意のfile名</param>
+    /// <returns>string : 保存処理の結果</returns>
+    private static string GemeLogSaveAs(string name)
+    {
+        string date = DateTime.Now.ToString("yyMMdd");
+        string fileName = $"{date}_The{GameCount}RoundGameLog_{name}" + ".log";
+        string newFilePath = @$"{RoundGameLogFilePath}/{fileName}";
+
+        try
+        {
+            using (StreamReader sr = new(ChatLogFilePath))
+            {
+                string allLog = sr.ReadToEnd();
+                string target = $"『 {GameCount}回目の試合 開始 』";
+                string log = allLog[allLog.IndexOf(target)..];
+
+                using StreamWriter sw = new(newFilePath, false);
+                sw.WriteLine(log);
+            }
+
+            return $"[ {fileName} ] に ゲームログを抜き出しました。";
+        }
+        catch (Exception e)
+        {
+            Logger.Error($"ゲームログの抜き出し保存に失敗しました : {e}");
+            return "[Error] ゲームログの抜き出し保存に失敗しました。";
+        }
+    }
+
+    /// <summary>
+    /// stringsに含まれるファイル名に使用不可能な文字を"_"に置換する
+    /// </summary>
+    /// <param name="strings">ファイル名に使用したい未編集の文字列</param>
+    /// <returns>ファイル名に使用できるように加工した文字列を返す</returns>
+    // 参考? => https://github.com/ykundesu/SuperNewRoles/blob/1.8.1.0/SuperNewRoles/Modules/Logger.cs#L118-L131
+    private static string ReplaceUnusableStringsAsFileNames(string strings)
+    {
+        var invalidChars = Path.GetInvalidFileNameChars();
+        string fileName = strings;
+        foreach (var invalid in invalidChars)
+            fileName = fileName.Replace($"{invalid}", "_");
+        fileName = fileName.Replace($".", "_");
+        return fileName;
+    }
 }
 
 internal static class SaveChatLogPatch
@@ -102,10 +162,14 @@ internal static class SaveChatLogPatch
     }
 
     /// <summary>
-    /// ChatLogを出力するファイルのパス。
-    /// ModLoad時に一回だけChatLogFileCreate()により作成している。
+    /// ChatLogを出力するファイルのパス 読み取り専用
+    /// 書き込みはModLoad時に一度のみChatLogFileCreate()で行い、_chatLogFilePathに保存している。
     /// </summary>
-    private static string ChatLogFilePath;
+    internal static string ChatLogFilePath { get { return _chatLogFilePath; } }
+    private static string _chatLogFilePath;
+    internal static string RoundGameLogFilePath { get { return _roundGameLogFilePath; } }
+    private static string _roundGameLogFilePath;
+
     internal static int GameCount = 0;
 
     /// <summary>
@@ -121,21 +185,24 @@ internal static class SaveChatLogPatch
     /// </summary>
     private static void ChatLogFileCreate()
     {
+        // 出力先のパス作成
+        string SSPDPath = Path.GetDirectoryName(Application.dataPath) + @"\SSP_Deputata\";
+        string chatLogFolderPath = @$"{SSPDPath}\SaveChatAllLogFolder\";
+        _roundGameLogFilePath = @$"{SSPDPath}\RoundGameLogFolder\";
+        Directory.CreateDirectory(chatLogFolderPath);
+        Directory.CreateDirectory(RoundGameLogFilePath);
+
         // ファイル名に使用する変数作成
         string date = DateTime.Now.ToString("yyMMdd_HHmm");
 
         // ファイル名作成
         string fileName = $"{date}_AmongUs_GameLog.log";
-
-        // 出力先のパス作成
-        string folderPath = Path.GetDirectoryName(UnityEngine.Application.dataPath) + @"\SSP_Deputata\SaveChatLogFolder\";
-        Directory.CreateDirectory(folderPath);
-        ChatLogFilePath = @$"{folderPath}" + @$"{fileName}";
+        _chatLogFilePath = @$"{chatLogFolderPath}" + @$"{fileName}";
 
         if (!SSPPlugin.ChatLog.Value) return;
 
-        Logger.Info($"{string.Format(ModTranslation.getString("ChatLogFileCreate"), fileName)}");
-        SaveSystemLog(GetSystemMessageLog($"{string.Format(ModTranslation.getString("ChatLogFileCreate"), fileName)}"));
+        Logger.Info($"{Format(ModTranslation.getString("ChatLogFileCreate"), fileName)}");
+        SaveSystemLog(GetSystemMessageLog($"{Format(ModTranslation.getString("ChatLogFileCreate"), fileName)}"));
     }
 
     /// <summary>
