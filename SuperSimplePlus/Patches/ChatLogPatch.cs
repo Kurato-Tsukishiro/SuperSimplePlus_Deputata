@@ -63,10 +63,11 @@ class SendChatPatch
 
         if (AmongUsClient.Instance.GameState != InnerNetClient.GameStates.Started)
         {
-            if (text.ToLower().StartsWith("/sgl ") || text.ToLower().StartsWith("/savegamelog "))
+            if (text.ToLower().StartsWith("/sgl") || text.ToLower().StartsWith("/savegamelog"))
             {
                 handled = true;
-                string name = ReplaceUnusableStringsAsFileNames(text.Replace("/sgl ", "").Replace("/savegamelog ", ""));
+                string name =
+                    ReplaceUnusableStringsAsFileNames(text.Replace("/sgl ", "").Replace("/sgl", "").Replace("/savegamelog ", "").Replace("/savegamelog", ""));
                 string status = GemeLogSaveAs(name);
                 __instance.AddChat(PlayerControl.LocalPlayer, status);
             }
