@@ -69,6 +69,8 @@ class SendChatPatch
                 string name =
                     ReplaceUnusableStringsAsFileNames(text.Replace("/sgl ", "").Replace("/sgl", "").Replace("/savegamelog ", "").Replace("/savegamelog", ""));
                 string status = GemeLogSaveAs(name);
+
+                addChatMemo = status;
                 __instance.AddChat(PlayerControl.LocalPlayer, status);
             }
         }
