@@ -18,7 +18,7 @@
 
     <ItemGroup>
         <Reference Include="$(AmongUsSSP)/BepInEx/core/*.dll" />
-        <Reference Include="$(AmongUsSSP)/BepInEx/unhollowed/*.dll" />
+        <Reference Include="$(AmongUs)/BepInEx/unhollowed/*.dll" />
         <EmbeddedResource Include=".\Resources\**" />
     </ItemGroup>
 
@@ -37,6 +37,6 @@
 
     <Target Name="CopyCustomContent" AfterTargets="AfterBuild">
         <Message Text="Second occurrence" />
-        <Copy SourceFiles="$(ProjectDir)bin\$(Configuration)\netstandard2.1\SuperSimplePlus.dll" DestinationFolder="$(AmongUsSSP)/BepInEx/plugins/" />
+        <Copy SourceFiles="$(ProjectDir)bin\$(Configuration)\netstandard2.1\SuperSimplePlus.dll" DestinationFolder="$(AmongUs)/BepInEx/plugins/" />
     </Target>
 </Project>
