@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using BepInEx.Unity.IL2CPP;
+using BepInEx.IL2CPP.Utils;
 using HarmonyLib;
 using InnerNet;
 using UnityEngine;
