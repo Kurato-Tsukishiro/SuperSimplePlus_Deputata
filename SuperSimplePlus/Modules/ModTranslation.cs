@@ -60,7 +60,7 @@ public class ModTranslation
         Logger.Info($"Language: {stringData.Keys}", "ModTranslation");
     }
 
-    public static string getString(string key, string def = null)
+    public static string GetString(string key, string def = null)
     {
         // Strip out color tags.
         string keyClean = Regex.Replace(key, "<.*?>", "");

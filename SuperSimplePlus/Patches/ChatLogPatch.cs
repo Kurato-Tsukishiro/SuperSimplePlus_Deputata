@@ -204,8 +204,8 @@ internal static class SaveChatLogPatch
 
         if (!SSPPlugin.ChatLog.Value) return;
 
-        Logger.Info($"{Format(ModTranslation.getString("ChatLogFileCreate"), fileName)}");
-        SaveSystemLog(GetSystemMessageLog($"{Format(ModTranslation.getString("ChatLogFileCreate"), fileName)}"));
+        Logger.Info($"{Format(ModTranslation.GetString("ChatLogFileCreate"), fileName)}");
+        SaveSystemLog(GetSystemMessageLog($"{Format(ModTranslation.GetString("ChatLogFileCreate"), fileName)}"));
     }
 
     /// <summary>
