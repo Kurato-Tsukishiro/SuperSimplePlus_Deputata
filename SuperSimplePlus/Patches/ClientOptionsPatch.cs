@@ -13,9 +13,10 @@ namespace SuperSimplePlus.Patches;
 public static class ClientOptionsPatch
 {
     private static readonly SelectionBehaviour[] AllOptions =
-    {
+        {
             new(ModTranslation.getString("NotPCKick"),()=> SSPPlugin.NotPCKick.Value = !SSPPlugin.NotPCKick.Value,SSPPlugin.NotPCKick.Value),
             new(ModTranslation.getString("NotPCBan"),()=> SSPPlugin.NotPCBan.Value = !SSPPlugin.NotPCBan.Value,SSPPlugin.NotPCBan.Value),
+            new(ModTranslation.getString("ChatLog"),()=> SSPPlugin.ChatLog.Value = !SSPPlugin.ChatLog.Value,SSPPlugin.ChatLog.Value),
         };
 
     public static PassiveButton SSPSettingButton;

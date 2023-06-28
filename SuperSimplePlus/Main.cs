@@ -18,6 +18,7 @@ public class SSPPlugin : BasePlugin
     public static ConfigEntry<bool> debugTool { get; set; }
     public static ConfigEntry<bool> NotPCKick { get; set; }
     public static ConfigEntry<bool> NotPCBan { get; set; }
+    public static ConfigEntry<bool> ChatLog { get; set; }
 
     public Harmony Harmony = new(Id);
     internal static BepInEx.Logging.ManualLogSource Logger;
@@ -33,11 +34,14 @@ public class SSPPlugin : BasePlugin
         debugTool = Config.Bind("Client Options", "Debug Tool", false);
         NotPCKick = Config.Bind("Client Options", "NotPCKick", false);
         NotPCBan = Config.Bind("Client Options", "NotPCBan", false);
+        ChatLog = Config.Bind("Client Options", "ChatLog", true);
 
         //Load
         ModTranslation.Load();
 
         Harmony.PatchAll();
+
+        Patches.SaveChatLogPatch.Load();
 
         SuperSimplePlus.Logger.Info("SuperSimplePlus_Deputata 読み込み終了", shortModName);
     }
