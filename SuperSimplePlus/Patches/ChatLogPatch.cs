@@ -376,7 +376,6 @@ class SystemLogMethodManager
 
         SaveSystemLog(GetSystemMessageLog($"{VariableManager.NumberOfMeetings}ターン目, タスクフェイズ中の 犯行時刻及び 殺害者と犠牲者"));
         CrimeTimeAndKillerAndVictimLog();
-        VariableManager.CrimeTimeAndKillersAndVictims = new();
 
         SaveSystemLog(GetSystemMessageLog("===================================================="));
         SaveSystemLog("\n");
@@ -417,7 +416,12 @@ class SystemLogMethodManager
         if (exiled != null && exiled.Object == null) exiled = null;
         SaveSystemLog(GetSystemMessageLog($"{GameCount}回目の試合の {VariableManager.NumberOfMeetings}回目の会議 終了"));
         if (exiled == null) SaveSystemLog(GetSystemMessageLog($"誰も追放されませんでした。"));
-        else SaveSystemLog(GetSystemMessageLog($"[ {exiled.Object.name} ] が追放されました。"));
+        else
+        {
+            SaveSystemLog(GetSystemMessageLog($"[ {exiled.Object.name} ] が追放されました。"));
+            if (!VariableManager.AllladyVictimDic.ContainsKey(exiled.Object.PlayerId))
+                VariableManager.AllladyVictimDic.Add(exiled.Object.PlayerId, exiled.Object); // 追放された人を死亡者辞書に追加する
+        }
 
         // 投票情報記載
         OpenVoteDecoding();
@@ -426,7 +430,6 @@ class SystemLogMethodManager
 
         SaveSystemLog(GetSystemMessageLog($"{VariableManager.NumberOfMeetings}ターン目, ミーティングフェイズ中の 犯行時刻及び 殺害者と犠牲者"));
         CrimeTimeAndKillerAndVictimLog();
-        VariableManager.CrimeTimeAndKillersAndVictims = new();
         SaveSystemLog(GetSystemMessageLog("===================================================="));
         SaveSystemLog(GetSystemMessageLog("=================Meeting Phase End================="));
         SaveSystemLog("\n");
@@ -443,6 +446,8 @@ class SystemLogMethodManager
         {
             ClientData killerClient = kvp.Value.Item1;
             ClientData victimClient = kvp.Value.Item2;
+            PlayerControl victimPlayer = victimClient.GetPlayer();
+            byte plId = victimPlayer.PlayerId;
 
             if (kvp.Key == null && killerClient == null && victimClient == null) continue;
 
@@ -452,6 +457,24 @@ class SystemLogMethodManager
             string victimColor = victimClient != null ? GetColorName(victimClient) : "";
 
             SaveSystemLog(GetSystemMessageLog($"犯行時刻:[{crimeTime}] 殺害者:[{killerName}] 犠牲者:[{victimName} ({victimColor})]"));
+
+            if (!VariableManager.AllladyVictimDic.ContainsKey(plId)) VariableManager.AllladyVictimDic.Add(plId, victimPlayer);
+        }
+        VariableManager.CrimeTimeAndKillersAndVictims = new();
+
+        foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+        {
+            if (player.IsAlive()) { VariableManager.AllladyVictimDic.Remove(player.PlayerId); continue; } // 生きているなら死亡者辞書から削除し, 次のプレイヤー処理へ
+            if (VariableManager.AllladyVictimDic.ContainsKey(player.PlayerId)) { Logger.Info("うごいてる?"); continue; } // (死んでいて, )死亡者辞書に含まれているなら, 次のプレイヤー処理へ
+
+            // 以下 死んでいて, 死亡者辞書に含まれていない時 の処理
+            try { VariableManager.AllladyVictimDic.Add(player.PlayerId, player); } // 死亡者辞書に追加する
+            catch (Exception e) { Logger.Error($"死亡者辞書に保存する際, エラーが発生しました。 : {e}"); }
+
+            ClientData victimClient = player.GetClient();
+            string victimName = victimClient.PlayerName ?? "身元不明";
+            string victimColor = victimClient != null ? GetColorName(victimClient) : "";
+            SaveSystemLog(GetSystemMessageLog($"犯行時刻:[死亡時刻不明] 殺害者:[不明] 犠牲者:[{victimName} ({victimColor})]"));
         }
     }
 

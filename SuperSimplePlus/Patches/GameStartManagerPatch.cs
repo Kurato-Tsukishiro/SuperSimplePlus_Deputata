@@ -57,6 +57,7 @@ public class VariableManager
     /// 参照 => https://github.com/ykundesu/SuperNewRoles/blob/33647263215a4097066c9f6345e5303fc73b42f3/SuperNewRoles/Roles/CrewMate/DyingMessenger.cs
     /// </summary>
     internal static Dictionary<DateTime, (ClientData, ClientData)> CrimeTimeAndKillersAndVictims;
+    internal static Dictionary<byte, PlayerControl> AllladyVictimDic;
 
     /// <summary>
     /// 投票者と投票先を保存
@@ -66,6 +67,7 @@ public class VariableManager
     {
         NumberOfMeetings = 0;
         CrimeTimeAndKillersAndVictims = new();
+        AllladyVictimDic = new();
         ResultsOfTheVoteCount = new();
         Helpers.IdControlDic = new();
         Helpers.CDToNameDic = new();
