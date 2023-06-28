@@ -64,20 +64,20 @@
 
 | コマンド | 引数 | 説明 |
 | :-- | :-- | :-- |
-| ``/memo``<br>``/cm`` | 自視点のみで表示されるチャットの内容 | ``/cm 黄色 時間的に私のベント移動アドミン見ている 告発しない マッド?``<br>[機能詳細：自視点のみで表示されるチャット](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%A9%9F%E8%83%BD-:-%5B-%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%E3%83%AD%E3%82%B0%E3%82%92%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B-%5D#1%E8%87%AA%E8%A6%96%E7%82%B9%E3%81%AE%E3%81%BF%E3%81%A7%E8%A1%A8%E7%A4%BA%E3%81%95%E3%82%8C%E3%82%8B%E3%83%81%E3%83%A3%E3%83%83%E3%83%88) |
+| ``/memo``<br>``/cm`` | 自視点のみで表示されるチャットの内容 | ``/cm 黄色 時間的に私のベント移動アドミン見ている 告発しない マッド?``<br>[機能詳細：自視点のみで表示されるチャット](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%A9%9F%E8%83%BD-:-%5B-%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0%E3%82%92%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B-%5D#3%E8%87%AA%E8%A6%96%E7%82%B9%E3%81%AE%E3%81%BF%E3%81%A7%E8%A1%A8%E7%A4%BA%E3%81%95%E3%82%8C%E3%82%8B%E3%83%81%E3%83%A3%E3%83%83%E3%83%88) |
 
 ##### 全員 [ ロビー ]
 
 | コマンド | 引数 | 説明 |
 | :-- | :-- | :-- |
-| ``/savegamelog``<br>``/sgl`` | ファイル名(全角可)<br>未入力でも使用可能 |  記入例： ``/sgl マッドてるてる_位置偽装成功_追報勝利回``<br>[機能詳細 : 前試合のゲームログを切り出す](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%A9%9F%E8%83%BD-:-%5B-%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%E3%83%AD%E3%82%B0%E3%82%92%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B-%5D#2-%E5%89%8D%E8%A9%A6%E5%90%88%E3%81%AE%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0%E3%82%92%E5%88%87%E3%82%8A%E5%87%BA%E3%81%99-) |
+| ``/savegamelog``<br>``/sgl`` | ファイル名(全角可)<br>未入力でも使用可能 |  記入例： ``/sgl マッドてるてる_位置偽装成功_追報勝利回``<br>[機能詳細 : 前試合のゲームログを切り出す](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%A9%9F%E8%83%BD-:-%5B-%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0%E3%82%92%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B-%5D#4%E5%89%8D%E8%A9%A6%E5%90%88%E3%81%AE%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0%E3%82%92%E5%88%87%E3%82%8A%E5%87%BA%E3%81%99) |
 
 ##### 設定
 | 機能 | 説明 |
 | :-- | :-- |
 | PC以外をキックする | 有効時 入室した或いは既に入室している steam及びEpic以外のプレイヤーをキックする。  |
 | PC以外をバンする | 有効時 入室した或いは既に入室している steam及びEpic以外のプレイヤーをBANする。 |
-| チャットログを作成する | 有効時 チャットログを作成する。<br>[機能詳細:チャットログを作成する](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%A9%9F%E8%83%BD-:-%5B-%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%E3%83%AD%E3%82%B0%E3%82%92%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B-%5D#%E6%A6%82%E8%A6%81) |
+| ゲームログを作成する | 有効時 以下の機能が有効になる ( [機能詳細:チャットログを作成する](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%A9%9F%E8%83%BD-:-%5B-%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0%E3%82%92%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B-%5D) )<br>・[1. ゲームログの作成 ](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%A9%9F%E8%83%BD-:-%5B-%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0%E3%82%92%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B-%5D#1%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0yymmdd_hhmm_amongus_gameloglog%E3%81%AE%E4%BD%9C%E6%88%90)<br>・[2. 自身のチャットのみのlogの作成 ](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%A9%9F%E8%83%BD-:-%5B-%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0%E3%82%92%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B-%5D#2%E8%87%AA%E8%BA%AB%E3%81%AE%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%E3%81%AE%E3%81%BF%E3%81%AElogamongus_chatmemolog%E3%81%AE%E4%BD%9C%E6%88%90)<br>・[3. 自視点のみで表示されるチャット ](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%A9%9F%E8%83%BD-:-%5B-%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0%E3%82%92%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B-%5D#3%E8%87%AA%E8%A6%96%E7%82%B9%E3%81%AE%E3%81%BF%E3%81%A7%E8%A1%A8%E7%A4%BA%E3%81%95%E3%82%8C%E3%82%8B%E3%83%81%E3%83%A3%E3%83%83%E3%83%88)<br>・[4. 前試合のゲームログを切り出す ](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%A9%9F%E8%83%BD-:-%5B-%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0%E3%82%92%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B-%5D#4%E5%89%8D%E8%A9%A6%E5%90%88%E3%81%AE%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0%E3%82%92%E5%88%87%E3%82%8A%E5%87%BA%E3%81%99)|
 
 #### その他機能
 | 機能             | 操作                                                       |
