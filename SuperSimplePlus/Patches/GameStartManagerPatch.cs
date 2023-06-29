@@ -11,10 +11,10 @@ public class GameStartManagerUpdatePatch
         if (AmongUsClient.Instance.AmHost) return;
         if (!(SSPPlugin.NotPCKick.Value || SSPPlugin.NotPCBan.Value)) return;
 
-        foreach (ClientData p in AmongUsClient.Instance.allClients)
+        foreach (ClientData c in AmongUsClient.Instance.allClients)
         {
-            if (p.PlatformData.Platform is not Platforms.StandaloneEpicPC and not Platforms.StandaloneSteamPC)
-                AmongUsClient.Instance.KickPlayer(p.Id, ban: SSPPlugin.NotPCBan.Value); // 第2引数が trueの時 BAN / falseの時Kick
+            if (c.PlatformData.Platform is not Platforms.StandaloneEpicPC and not Platforms.StandaloneSteamPC)
+                AmongUsClient.Instance.KickPlayer(c.Id, ban: SSPPlugin.NotPCBan.Value); // 第2引数が trueの時 BAN / falseの時Kick
         }
     }
 
