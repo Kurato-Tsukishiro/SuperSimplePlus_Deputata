@@ -87,6 +87,7 @@ public static class ImmigrationCheck
                     }
                     catch { Logger.Error($"Error: Loading Translate.csv Line:{i}", "ModTranslation"); }
                 }
+                Logger.Info($"{i + 1} 個のFriendCodeが 登録されています。");
             }
         }
         catch (Exception e) { Logger.Error($"[BANFriendCodeList.txt]のロードに失敗しました : {e}", "ImmigrationCheck"); }
