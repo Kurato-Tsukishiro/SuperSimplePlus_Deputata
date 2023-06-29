@@ -1,4 +1,6 @@
 using System;
+using System.Net.Http;
+using System.Net.Http;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.IO;
@@ -27,21 +29,41 @@ public static class ImmigrationCheck
         return false;
     }
 
-    internal static void LoadFriendCodeList()
+    internal static async void LoadFriendCodeList()
     {
         // ChatLogPatchの変数を使用せず 直接取得しているのは、こちらが読み込まれるのが早くて 正確にpathが取得できない事がある為
-        string fileName = Path.GetDirectoryName(Application.dataPath) + @"\SSP_Deputata\" + @"BanFriendCodeList.txt";
-        if (!File.Exists(fileName))
+        string filePath = Path.GetDirectoryName(Application.dataPath) + @"\SSP_Deputata\" + @"BanFriendCodeList.txt";
+
+        // [ BanFriendCodeList.txt ] が存在しない場合は, デフォルトの文章をmainブランチから取得し作成する。
+        if (!File.Exists(filePath))
         {
-            // [ ]MEMO:ファイル強制作成にする(できればファイルがないなら? => 説明書きありのファイルを作成が良い)
-            FileStream fs = File.Create(fileName);
-            fs.Close();
-            Logger.Info("BANFriendCodeList.txtを作成しました。");
+            const string remoteUri = "https://raw.githubusercontent.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/main/SuperSimplePlus/Resources/BanFriendCodeList.txt";
+            const string fileName = "BanFriendCodeList.txt";
+            HttpClient client = new();
+
+            try
+            {
+                using (HttpResponseMessage response = await client.GetAsync(remoteUri))
+                {
+                    response.EnsureSuccessStatusCode();
+
+                    using var pullStream = await response.Content.ReadAsStreamAsync();
+                    response.EnsureSuccessStatusCode();
+
+                    using var outStream = File.Create(filePath);
+                    using var writeStream = await response.Content.ReadAsStreamAsync();
+                    writeStream.CopyTo(outStream);
+                    response.EnsureSuccessStatusCode();
+
+                    Logger.Info($"{fileName}を作成しました。");
+                }
+            }
+            catch (Exception e) { Logger.Error($"{fileName}の作成に失敗しました。 : {e}"); }
         }
 
         try
         {
-            using (StreamReader sr = new(fileName))
+            using (StreamReader sr = new(filePath))
             {
                 uint i = 0;
                 //1行ずつ処理
