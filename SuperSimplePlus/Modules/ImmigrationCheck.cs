@@ -72,7 +72,7 @@ public static class ImmigrationCheck
                     try
                     {
                         // 行ごとの文字列
-                        string line = sr.ReadLine().Replace(" ", "");
+                        string line = sr.ReadLine().Replace(" ", "").Replace("　", "");
 
                         // 行が空白 戦闘が#なら次の行に
                         if (line == "" || line[0] == '#') continue;
