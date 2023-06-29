@@ -29,6 +29,9 @@ public class AmongUsClientOnPlayerJoindPatch
     {
         string friendCode = client?.FriendCode;
         Logger.Info($"{client.PlayerName} が入室しました。[PlayerInfo] \"ID:{client.Id} Platform:{client.PlatformData.Platform} FriendCode:{(!SSPPlugin.DisplayFriendCode.Value ? friendCode : "**********#****")}\"", "OnPlayerJoined");
+
+        if (SSPPlugin.FriendCodeBan.Value)
+            ImmigrationCheck.DenyEntryToFriendCode(client, friendCode);
     }
 }
 
