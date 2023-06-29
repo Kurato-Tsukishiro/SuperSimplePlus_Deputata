@@ -8,7 +8,7 @@ public class GameStartManagerUpdatePatch
 {
     public static void Postfix(GameStartManager __instance)
     {
-        if (AmongUsClient.Instance.AmHost) return;
+        if (!AmongUsClient.Instance.AmHost) return;
         if (!(SSPPlugin.NotPCKick.Value || SSPPlugin.NotPCBan.Value)) return;
 
         foreach (ClientData c in AmongUsClient.Instance.allClients)
