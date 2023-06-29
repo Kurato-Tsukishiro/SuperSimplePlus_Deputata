@@ -17,6 +17,7 @@ public static class ClientOptionsPatch
             new(ModTranslation.GetString("NotPCKick"),()=> SSPPlugin.NotPCKick.Value = !SSPPlugin.NotPCKick.Value,SSPPlugin.NotPCKick.Value),
             new(ModTranslation.GetString("NotPCBan"),()=> SSPPlugin.NotPCBan.Value = !SSPPlugin.NotPCBan.Value,SSPPlugin.NotPCBan.Value),
             new(ModTranslation.GetString("ChatLog"),()=> SSPPlugin.ChatLog.Value = !SSPPlugin.ChatLog.Value,SSPPlugin.ChatLog.Value),
+            new(ModTranslation.GetString("DisplayFriendCode"),()=> SSPPlugin.DisplayFriendCode.Value = !SSPPlugin.DisplayFriendCode.Value,SSPPlugin.DisplayFriendCode.Value),
             new(ModTranslation.GetString("FriendCodeBan"),()=> SSPPlugin.FriendCodeBan.Value = !SSPPlugin.FriendCodeBan.Value,SSPPlugin.FriendCodeBan.Value),
         };
 

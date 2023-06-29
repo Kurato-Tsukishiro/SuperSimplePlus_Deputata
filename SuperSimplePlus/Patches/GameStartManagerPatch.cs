@@ -21,6 +21,17 @@ public class GameStartManagerUpdatePatch
     //参考=>https://github.com/ykundesu/SuperNewRoles/blob/master/SuperNewRoles/Patches/ShareGameVersionPatch.cs
     public static void Prefix(GameStartManager __instance) => __instance.MinPlayers = 1;
 }
+
+[HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerJoined))]
+public class AmongUsClientOnPlayerJoindPatch
+{
+    public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client)
+    {
+        string friendCode = client?.FriendCode;
+        Logger.Info($"{client.PlayerName} が入室しました。[PlayerInfo] \"ID:{client.Id} Platform:{client.PlatformData.Platform} FriendCode:{(!SSPPlugin.DisplayFriendCode.Value ? friendCode : "**********#****")}\"", "OnPlayerJoined");
+    }
+}
+
 //参考=>https://github.com/haoming37/TheOtherRoles-GM-Haoming/blob/haoming-main/TheOtherRoles/Patches/GameStartManagerPatch.cs
 [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerLeft))]
 public class AmongUsClientOnPlayerLeftPatch

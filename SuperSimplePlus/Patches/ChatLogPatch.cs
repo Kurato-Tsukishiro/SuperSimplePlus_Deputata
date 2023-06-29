@@ -346,7 +346,7 @@ class SystemLogMethodManager
             string friendCode;
             if (client?.FriendCode is not null and not "") friendCode = client?.FriendCode; // フレンドコードを所持している場合
             else friendCode = "未所持"; // クライアントデータやフレンドコードがない場合, フレンドコードがブランクだった場合
-            if (AmongUs.Data.DataManager.Settings.Gameplay.StreamerMode) friendCode = "**********#****"; // バニラ設定[配信者モード]が有効時フレンドコードを伏字風にする
+            if (SSPPlugin.DisplayFriendCode.Value) friendCode = "**********#****"; // バニラ設定[配信者モード]が有効時フレンドコードを伏字風にする
 
             SaveSystemLog(GetSystemMessageLog($"{client.PlayerName}(pid:{client.GetPlayer().PlayerId})(FriendCode:{friendCode})({GetColorName(client)})({client?.PlatformData?.Platform})"));
         }

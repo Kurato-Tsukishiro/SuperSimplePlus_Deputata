@@ -8,7 +8,7 @@ public static class ModTranslation
 {
     // 一番左と一行全部
     private static Dictionary<string, string[]> dictionary = new();
-    public static string GetString(string key)
+    internal static string GetString(string key)
     {
         // アモアス側の言語読み込みが完了しているか ? 今の言語 : 最後の言語
         SupportedLangs langId = TranslationController.InstanceExists ? TranslationController.Instance.currentLanguage.languageID : DataManager.Settings.Language.CurrentLanguage;
@@ -23,7 +23,7 @@ public static class ModTranslation
         };
     }
 
-    public static void LoadCsv()
+    internal static void LoadCsv()
     {
         var fileName = Assembly.GetExecutingAssembly().GetManifestResourceStream("SuperSimplePlus.Resources.Translate.csv");
 
