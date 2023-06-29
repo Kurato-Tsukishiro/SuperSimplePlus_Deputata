@@ -30,11 +30,6 @@
         </PackageReference>
     </ItemGroup>
 
-    <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-        <Exec Command="pip install openpyxl" />
-        <Exec Command="py &quot;$(SolutionDir)convertToJson.py&quot;" />
-    </Target>
-
     <Target Name="CopyCustomContent" AfterTargets="AfterBuild">
         <Message Text="Second occurrence" />
         <Copy SourceFiles="$(ProjectDir)bin\$(Configuration)\netstandard2.1\SuperSimplePlus.dll" DestinationFolder="$(AmongUs)/BepInEx/plugins/" />

@@ -14,9 +14,9 @@ public static class ClientOptionsPatch
 {
     private static readonly SelectionBehaviour[] AllOptions =
         {
-            new(ModTranslation.getString("NotPCKick"),()=> SSPPlugin.NotPCKick.Value = !SSPPlugin.NotPCKick.Value,SSPPlugin.NotPCKick.Value),
-            new(ModTranslation.getString("NotPCBan"),()=> SSPPlugin.NotPCBan.Value = !SSPPlugin.NotPCBan.Value,SSPPlugin.NotPCBan.Value),
-            new(ModTranslation.getString("ChatLog"),()=> SSPPlugin.ChatLog.Value = !SSPPlugin.ChatLog.Value,SSPPlugin.ChatLog.Value),
+            new(ModTranslation.GetString("NotPCKick"),()=> SSPPlugin.NotPCKick.Value = !SSPPlugin.NotPCKick.Value,SSPPlugin.NotPCKick.Value),
+            new(ModTranslation.GetString("NotPCBan"),()=> SSPPlugin.NotPCBan.Value = !SSPPlugin.NotPCBan.Value,SSPPlugin.NotPCBan.Value),
+            new(ModTranslation.GetString("ChatLog"),()=> SSPPlugin.ChatLog.Value = !SSPPlugin.ChatLog.Value,SSPPlugin.ChatLog.Value),
         };
 
     public static PassiveButton SSPSettingButton;
@@ -101,7 +101,7 @@ public static class ClientOptionsPatch
         title.GetComponent<RectTransform>().localPosition = Vector3.up * 2.0f;
         title.gameObject.layer = 5;
         title.gameObject.SetActive(true);
-        title.text = ModTranslation.getString("SSPSettings");
+        title.text = ModTranslation.GetString("SSPSettings");
         title.name = "TitleText";
 
         SetUpOptions();
@@ -123,7 +123,7 @@ public static class ClientOptionsPatch
             button.onState = info.DefaultValue;
             button.Background.color = button.onState ? Color.green : Palette.ImpostorRed;
 
-            button.Text.text = ModTranslation.getString(info.Title);
+            button.Text.text = ModTranslation.GetString(info.Title);
             button.Text.fontSizeMin = button.Text.fontSizeMax = 2.5f;
             button.Text.font = Object.Instantiate(titleText.font);
             button.Text.GetComponent<RectTransform>().sizeDelta = new Vector2(2, 2);

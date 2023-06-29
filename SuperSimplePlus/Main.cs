@@ -37,7 +37,7 @@ public class SSPPlugin : BasePlugin
         ChatLog = Config.Bind("Client Options", "ChatLog", true);
 
         //Load
-        ModTranslation.Load();
+        ModTranslation.LoadCsv();
 
         Harmony.PatchAll();
 
