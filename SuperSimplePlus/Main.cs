@@ -19,7 +19,7 @@ public class SSPPlugin : BasePlugin
     public static ConfigEntry<bool> NotPCKick { get; set; }
     public static ConfigEntry<bool> NotPCBan { get; set; }
     public static ConfigEntry<bool> ChatLog { get; set; }
-    public static ConfigEntry<bool> DisplayFriendCode { get; set; }
+    public static ConfigEntry<bool> HideFriendCode { get; set; }
     public static ConfigEntry<bool> FriendCodeBan { get; set; }
 
     public Harmony Harmony = new(Id);
@@ -37,7 +37,7 @@ public class SSPPlugin : BasePlugin
         NotPCKick = Config.Bind("Client Options", "NotPCKick", false);
         NotPCBan = Config.Bind("Client Options", "NotPCBan", false);
         ChatLog = Config.Bind("Client Options", "ChatLog", true);
-        DisplayFriendCode = Config.Bind("Client Options", "DisplayFriendCode", true);
+        HideFriendCode = Config.Bind("Client Options", "HideFriendCode", true);
         FriendCodeBan = Config.Bind("Client Options", "FriendCodeBan", false);
 
         //Load

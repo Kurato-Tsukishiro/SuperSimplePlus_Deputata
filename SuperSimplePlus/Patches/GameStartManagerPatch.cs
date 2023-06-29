@@ -28,10 +28,17 @@ public class AmongUsClientOnPlayerJoindPatch
     public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client)
     {
         string friendCode = client?.FriendCode;
-        Logger.Info($"{client.PlayerName} が入室しました。[PlayerInfo] \"ID:{client.Id} Platform:{client.PlatformData.Platform} FriendCode:{(!SSPPlugin.DisplayFriendCode.Value ? friendCode : "**********#****")}\"", "OnPlayerJoined");
+        Logger.Info($"{client.PlayerName} が入室しました。[PlayerInfo] \"ID:{client.Id} Platform:{client.PlatformData.Platform} FriendCode:{(SSPPlugin.HideFriendCode.Value ? "**********#****" : friendCode)}\"", "OnPlayerJoined");
+
+        if (!AmongUsClient.Instance.AmHost) return;
+        if (friendCode is null or "" or " ") return;
 
         if (SSPPlugin.FriendCodeBan.Value)
-            ImmigrationCheck.DenyEntryToFriendCode(client, friendCode);
+        {
+            bool isTaregt = ImmigrationCheck.DenyEntryToFriendCode(client, friendCode);
+            if (isTaregt) Logger.Info($"{client.PlayerName}は, FriendCodeによるBAN対象でした。");
+            else Logger.Info($"{client.PlayerName}は, FriendCodeによるBAN対象ではありませんでした。");
+        }
     }
 }
 
