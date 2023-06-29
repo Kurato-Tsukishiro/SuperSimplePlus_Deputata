@@ -71,7 +71,7 @@ public static class ImmigrationCheck
                 {
                     try
                     {
-                        // 行ごとの文字列
+                        // 行ごとの文字列 ' 'と'　'は 消去する。
                         string line = sr.ReadLine().Replace(" ", "").Replace("　", "");
 
                         // 行が空白 戦闘が#なら次の行に
@@ -85,7 +85,7 @@ public static class ImmigrationCheck
                         dictionary.Add(i, FriendCode);
                         i++;
                     }
-                    catch { Logger.Error($"Error: Loading Translate.csv Line:{i}", "ModTranslation"); }
+                    catch (Exception e) { Logger.Error($"{i} 個目の取得に失敗しました。 : {e}", "ImmigrationCheck"); }
                 }
                 Logger.Info($"{i + 1} 個のFriendCodeが 登録されています。");
             }
