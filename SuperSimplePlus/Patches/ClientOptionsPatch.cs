@@ -89,55 +89,62 @@ internal static class ClientOptionsPatch
 
     private static void InitializeMoreButton(OptionsMenuBehaviour __instance)
     {
-        modOption = Object.Instantiate(buttonPrefab, __instance.CensorChatButton.transform.parent);
-        Vector3 originPosition = new(-1.4f, -0.5f, -1.0f);
-        modOption.transform.localPosition = originPosition + new Vector3(3.7f, 3.25f, 0.0f);
-        var trans = modOption.transform.localPosition;
-        modOption.gameObject.SetActive(true);
-        trans = modOption.transform.position;
-        var buttonSpriteRenderer = modOption.gameObject.AddComponent<SpriteRenderer>();
-        buttonSpriteRenderer.sprite = Helpers.loadSpriteFromResources("SuperSimplePlus.Resources.SettingButton.png", 115f);
-        modOption.Text.text = "<color=#FFFFFF00> </color>";
-        var modOptionButton = modOption.GetComponent<PassiveButton>();
-
-        var backColor = new Color(1f, 1f, 1f);
-        var backSize = new Vector2(0.74f, 0.74f);
-
-        modOption.Background.color = backColor;
-        modOption.Background.size = backSize;
-
-        modOptionButton.OnMouseOver = new UnityEvent();
-        modOptionButton.OnMouseOver.AddListener((Action)(() =>
+        try
         {
-            modOption.Background.color = new Color32(150, 81, 77, byte.MaxValue);
-            modOption.Background.size = backSize;
-        }));
+            modOption = Object.Instantiate(buttonPrefab, __instance.CensorChatButton.transform.parent);
+            Vector3 originPosition = new(-1.4f, -0.5f, -1.0f);
+            modOption.transform.localPosition = originPosition + new Vector3(3.7f, 3.25f, 0.0f);
+            var trans = modOption.transform.localPosition;
+            modOption.gameObject.SetActive(true);
+            trans = modOption.transform.position;
+            var buttonSpriteRenderer = modOption.gameObject.AddComponent<SpriteRenderer>();
+            buttonSpriteRenderer.sprite = Helpers.loadSpriteFromResources("SuperSimplePlus.Resources.SettingButton.png", 115f);
+            modOption.Text.text = "<color=#FFFFFF00> </color>";
+            var modOptionButton = modOption.GetComponent<PassiveButton>();
 
-        modOptionButton.OnMouseOut = new UnityEvent();
-        modOptionButton.OnMouseOut.AddListener((Action)(() =>
-        {
+            var backColor = new Color(1f, 1f, 1f);
+            var backSize = new Vector2(0.74f, 0.74f);
+
             modOption.Background.color = backColor;
             modOption.Background.size = backSize;
-        }));
 
-        modOptionButton.OnClick = new ButtonClickedEvent();
-
-        modOptionButton.OnClick.AddListener((Action)(() =>
+            modOptionButton.OnMouseOver = new UnityEvent();
+            modOptionButton.OnMouseOver.AddListener((Action)(() =>
             {
-                if (!popUp) return;
-                if (__instance.transform.parent && __instance.transform.parent == FastDestroyableSingleton<HudManager>.Instance.transform)
-                {
-                    popUp.transform.SetParent(FastDestroyableSingleton<HudManager>.Instance.transform);
-                    popUp.transform.localPosition = new Vector3(0, 0, -800f);
-                }
-                else
-                {
-                    popUp.transform.SetParent(null);
-                    Object.DontDestroyOnLoad(popUp);
-                }
-                CheckSetTitle();
-                RefreshOpen();
+                modOption.Background.color = new Color32(150, 81, 77, byte.MaxValue);
+                modOption.Background.size = backSize;
             }));
+
+            modOptionButton.OnMouseOut = new UnityEvent();
+            modOptionButton.OnMouseOut.AddListener((Action)(() =>
+            {
+                modOption.Background.color = backColor;
+                modOption.Background.size = backSize;
+            }));
+
+            modOptionButton.OnClick = new ButtonClickedEvent();
+
+            modOptionButton.OnClick.AddListener((Action)(() =>
+                {
+                    if (!popUp) return;
+                    if (__instance.transform.parent && __instance.transform.parent == FastDestroyableSingleton<HudManager>.Instance.transform)
+                    {
+                        popUp.transform.SetParent(FastDestroyableSingleton<HudManager>.Instance.transform);
+                        popUp.transform.localPosition = new Vector3(0, 0, -800f);
+                    }
+                    else
+                    {
+                        popUp.transform.SetParent(null);
+                        Object.DontDestroyOnLoad(popUp);
+                    }
+                    CheckSetTitle();
+                    RefreshOpen();
+                }));
+        }
+        catch (Exception e)
+        {
+            Logger.Error($"SSPの設定ボタンの表示に失敗しました。 Error : {e}");
+        }
     }
 
     private static void RefreshOpen()
