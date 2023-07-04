@@ -6,26 +6,42 @@ namespace SuperSimplePlus.Patches;
 [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Update))]
 public class GameStartManagerUpdatePatch
 {
-    // FIXME : ネスト深すぎ() LINQ形式に変えられない? あるいは early return & break形式()
     public static void Postfix(GameStartManager __instance)
     {
-        if (AmongUsClient.Instance.AmHost && (SSPPlugin.NotPCKick.Value || SSPPlugin.NotPCBan.Value))
+        if (!AmongUsClient.Instance.AmHost) return;
+        if (!(SSPPlugin.NotPCKick.Value || SSPPlugin.NotPCBan.Value)) return;
+
+        foreach (ClientData c in AmongUsClient.Instance.allClients)
         {
-            foreach (InnerNet.ClientData p in AmongUsClient.Instance.allClients)
-            {
-                if (p.PlatformData.Platform is not Platforms.StandaloneEpicPC and not Platforms.StandaloneSteamPC)
-                {
-                    //[NotPCBan.Value] が <true> の時はバン、 [NotPCBan.Value] が <false> の時はキックをするコードに変わる。
-                    //kickにするコードに変わっても [NotPCKick.Value] が <true> でない時はここのコードに入らない
-                    AmongUsClient.Instance.KickPlayer(p.Id, SSPPlugin.NotPCBan.Value);
-                }
-            }
+            if (c.PlatformData.Platform is not Platforms.StandaloneEpicPC and not Platforms.StandaloneSteamPC)
+                AmongUsClient.Instance.KickPlayer(c.Id, ban: SSPPlugin.NotPCBan.Value); // 第2引数が trueの時 BAN / falseの時Kick
         }
     }
 
     //参考=>https://github.com/ykundesu/SuperNewRoles/blob/master/SuperNewRoles/Patches/ShareGameVersionPatch.cs
     public static void Prefix(GameStartManager __instance) => __instance.MinPlayers = 1;
 }
+
+[HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerJoined))]
+public class AmongUsClientOnPlayerJoindPatch
+{
+    public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client)
+    {
+        string friendCode = client?.FriendCode;
+        Logger.Info($"{client.PlayerName} が入室しました。[PlayerInfo] \"ID:{client.Id} Platform:{client.PlatformData.Platform} FriendCode:{(SSPPlugin.HideFriendCode.Value ? "**********#****" : friendCode)}\"", "OnPlayerJoined");
+
+        if (!AmongUsClient.Instance.AmHost) return;
+        if (friendCode is null or "" or " ") return;
+
+        if (SSPPlugin.FriendCodeBan.Value)
+        {
+            bool isTaregt = ImmigrationCheck.DenyEntryToFriendCode(client, friendCode);
+            if (isTaregt) Logger.Info($"{client.PlayerName}は, FriendCodeによるBAN対象でした。");
+            else Logger.Info($"{client.PlayerName}は, FriendCodeによるBAN対象ではありませんでした。");
+        }
+    }
+}
+
 //参考=>https://github.com/haoming37/TheOtherRoles-GM-Haoming/blob/haoming-main/TheOtherRoles/Patches/GameStartManagerPatch.cs
 [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerLeft))]
 public class AmongUsClientOnPlayerLeftPatch
