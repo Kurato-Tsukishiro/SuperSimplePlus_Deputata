@@ -164,6 +164,8 @@ internal static class SaveChatLogPatch
         ChatLogFileCreate();
     }
 
+    internal static string SSPDFolderPath { get { return _SSPDFolderPath; } }
+    private static string _SSPDFolderPath;
     /// <summary>
     /// ChatLogを出力するファイルのパス 読み取り専用
     /// 書き込みはModLoad時に一度のみChatLogFileCreate()で行い、_chatLogFilePathに保存している。
@@ -189,9 +191,11 @@ internal static class SaveChatLogPatch
     private static void ChatLogFileCreate()
     {
         // 出力先のパス作成
-        string SSPDPath = Path.GetDirectoryName(Application.dataPath) + @"\SSP_Deputata\";
-        string chatLogFolderPath = @$"{SSPDPath}\SaveChatAllLogFolder\";
-        _roundGameLogFilePath = @$"{SSPDPath}\RoundGameLogFolder\";
+        _SSPDFolderPath = Path.GetDirectoryName(Application.dataPath) + @"\SSP_Deputata\";
+        Directory.CreateDirectory(_SSPDFolderPath);
+
+        string chatLogFolderPath = @$"{_SSPDFolderPath}\SaveChatAllLogFolder\";
+        _roundGameLogFilePath = @$"{_SSPDFolderPath}\RoundGameLogFolder\";
         Directory.CreateDirectory(chatLogFolderPath);
         Directory.CreateDirectory(RoundGameLogFilePath);
 
@@ -346,7 +350,7 @@ class SystemLogMethodManager
             string friendCode;
             if (client?.FriendCode is not null and not "") friendCode = client?.FriendCode; // フレンドコードを所持している場合
             else friendCode = "未所持"; // クライアントデータやフレンドコードがない場合, フレンドコードがブランクだった場合
-            if (AmongUs.Data.DataManager.Settings.Gameplay.StreamerMode) friendCode = "**********#****"; // バニラ設定[配信者モード]が有効時フレンドコードを伏字風にする
+            if (SSPPlugin.HideFriendCode.Value) friendCode = "**********#****"; // バニラ設定[配信者モード]が有効時フレンドコードを伏字風にする
 
             SaveSystemLog(GetSystemMessageLog($"{client.PlayerName}(pid:{client.GetPlayer().PlayerId})(FriendCode:{friendCode})({GetColorName(client)})({client?.PlatformData?.Platform})"));
         }
