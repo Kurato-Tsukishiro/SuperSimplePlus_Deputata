@@ -175,6 +175,9 @@ internal static class SaveChatLogPatch
     internal static string RoundGameLogFilePath { get { return _roundGameLogFilePath; } }
     private static string _roundGameLogFilePath;
 
+    private static Dictionary<int, string> GameLogDic = new();
+    private static StringBuilder NowGameLog = new();
+
     internal static int GameCount = 0;
 
     /// <summary>
@@ -248,17 +251,38 @@ internal static class SaveChatLogPatch
 
     /// <summary>
     /// チャットログをファイルに出力する
-    /// 存在しないファイルに出力しようとした場合、エラーとしてLogOutput.logにチャットログを記載する。
-    /// error対策を入れると正常に動かなくなった為、行っていない。必要なら方法を考える…
     /// </summary>
-    /// <param name="chatLog"></param>
-    internal static void SaveChatLog(string chatLog) => File.AppendAllText(ChatLogFilePath, $"{chatLog}" + Environment.NewLine);
+    /// <param name="chatLog">出力するチャットログ</param>
+    internal static void SaveChatLog(string chatLog)
+    {
+        if ((AmongUsClient.Instance?.GameState) == InnerNetClient.GameStates.Started) NowGameLog.AppendLine(chatLog);
+        else File.AppendAllText(ChatLogFilePath, chatLog + Environment.NewLine);
+    }
 
     /// <summary>
     /// システムログをファイルに出力する
     /// </summary>
-    /// <param name="systemMessageLog"></param>
-    internal static void SaveSystemLog(string systemMessageLog) => File.AppendAllText(ChatLogFilePath, $"{systemMessageLog}" + Environment.NewLine);
+    /// <param name="systemMessageLog">出力するシステムログ</param>
+    /// <param name="autoFiling"> true : 辞書保存か直接的にログファイルに出力するか自動で判断する。 / false : 辞書保存にする。</param>
+    internal static void SaveSystemLog(string systemMessageLog, bool autoFiling = true)
+    {
+        if (autoFiling)
+        {
+            if ((AmongUsClient.Instance?.GameState) == InnerNetClient.GameStates.Started) NowGameLog.AppendLine(systemMessageLog);
+            else File.AppendAllText(ChatLogFilePath, systemMessageLog + Environment.NewLine);
+        }
+        else NowGameLog.AppendLine(systemMessageLog);
+    }
+
+    internal static async void AddGameLog()
+    {
+        string useLogString = NowGameLog.ToString();
+        NowGameLog = new();
+
+        using (StreamWriter sw = new(ChatLogFilePath, true)) await sw.WriteLineAsync(useLogString);
+
+        if (!GameLogDic.ContainsKey(GameCount)) GameLogDic.Add(GameCount, useLogString);
+    }
 }
 
 /// <summary>
@@ -504,10 +528,12 @@ class SystemLogMethodManager
     {
         if (!SSPPlugin.ChatLog.Value) return;
 
-        SaveSystemLog(GetSystemMessageLog(delimiterLine));
-        SaveSystemLog(GetSystemMessageLog("=================End Game Info================="));
-        SaveSystemLog(GetSystemMessageLog($"{GameCount}回目の試合 終了"));
-        SaveSystemLog(GetSystemMessageLog(delimiterLine));
+        SaveSystemLog(GetSystemMessageLog(delimiterLine), false);
+        SaveSystemLog(GetSystemMessageLog("=================End Game Info================="), false);
+        SaveSystemLog(GetSystemMessageLog($"{GameCount}回目の試合 終了"), false);
+        SaveSystemLog(GetSystemMessageLog(delimiterLine), false);
+
+        AddGameLog();
 
         SendChatPatch.SaveChatMemo("=================End Game Info=================", false);
         SendChatPatch.SaveChatMemo($"{GameCount}回目の試合 終了", false);
