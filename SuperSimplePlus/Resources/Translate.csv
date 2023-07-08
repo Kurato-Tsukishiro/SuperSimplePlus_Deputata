@@ -29,6 +29,8 @@ UpdateInProgress,Updating {0}\nPlease wait...,{0}をアップデート中\nし�
 
 # GameLog
 ChatLogFileCreate,\n|:===================================================================================:|\n    Created file [ {0} ] to store chat logs.\n|:===================================================================================:|,\n|:===================================================================================:|\nチャットログを保存するファイル [ {0} ] を作成しました。\n|:===================================================================================:|
+NowGameCountAnnounce,Current game play : {0} times,現在のゲームプレイ回数 : {0} 回
+GetGameLogDicError,Failed to retrieve game log for {0} times.,{0}回目のゲームログの取得に失敗しました。
 
 # Others
 SSPSettings,<color=#96514d>SuperSimplePlus_Deputata</color> Settings,<color=#96514d>SuperSimplePlus_Deputata</color>の設定

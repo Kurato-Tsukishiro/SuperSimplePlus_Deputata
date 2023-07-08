@@ -60,15 +60,39 @@ class SendChatPatch
             addChatMemo = soliloquy;
             __instance.AddChat(PlayerControl.LocalPlayer, soliloquy);
         }
+        else if (text.ToLower().StartsWith("/ngc") || text.ToLower().StartsWith("/nowgamecount"))
+        {
+            handled = true;
+            string gameCountAnnounce = addChatMemo = Format(ModTranslation.GetString("NowGameCountAnnounce"), GameCount);
+            __instance.AddChat(PlayerControl.LocalPlayer, gameCountAnnounce);
+        }
 
         if (AmongUsClient.Instance.GameState != InnerNetClient.GameStates.Started)
         {
             if (text.ToLower().StartsWith("/sgl") || text.ToLower().StartsWith("/savegamelog"))
             {
+                // 参照 => https://github.com/ykundesu/SuperNewRoles/blob/1.8.1.2/SuperNewRoles/Modules/ModTranslation.cs
+
                 handled = true;
-                string name =
+
+                string comReplaceStr =
                     ReplaceUnusableStringsAsFileNames(text.Replace("/sgl ", "").Replace("/sgl", "").Replace("/savegamelog ", "").Replace("/savegamelog", ""));
-                string status = GemeLogSaveAs(name);
+
+                string[] nameArray = comReplaceStr.Split(',');
+                int count = GameCount; // Logを取得したい回 (初期値:最終のlog)
+                string status = $"[Error(SaveGameLog)] : 有効なコマンド列でなかった為,抜き出しに失敗しました。\n( {text} )"; // 返答の初期値をエラー表記にしている
+
+                foreach (string name in nameArray)
+                {
+                    if (int.TryParse(name, out int parse))
+                    {
+                        count = parse; // 取得したいゲームの回数が指定されていた場合, 取得する。
+                        continue;
+                    }
+
+                    status = GemeLogSaveAs(name, count); // ゲームログを取得する。
+                    break;
+                }
 
                 addChatMemo = status;
                 __instance.AddChat(PlayerControl.LocalPlayer, status);
@@ -109,29 +133,35 @@ class SendChatPatch
     }
 
     /// <summary>
-    /// 一個前の試合のGameLogのみを任意のファイル名で保存する
+    /// 一個前の試合のGameLogのみを任意のファイル名で保存する。　
+    /// getCountを省略した(引数として`0`を渡した)場合、「最終のログ」を取得する
     /// </summary>
     /// <param name="name">任意のfile名</param>
+    /// <param name="getCount">ログを取得したいゲームの回数</param>
     /// <returns>string : 保存処理の結果</returns>
-    private static string GemeLogSaveAs(string name)
+    private static string GemeLogSaveAs(string name, int getCount)
     {
-        string date = DateTime.Now.ToString("yyMMdd");
-        string fileName = $"{date}_The{GameCount}RoundGameLog_{name}" + ".log";
+        string date = DateTime.Now.ToString("yyMMdd_HHmm");
+        string fileName = $"{date}_{getCount}_{name}_GameLog" + ".log";
         string newFilePath = @$"{RoundGameLogFilePath}/{fileName}";
 
         try
         {
-            using (StreamReader sr = new(ChatLogFilePath))
-            {
-                string allLog = sr.ReadToEnd();
-                string target = $"『 {GameCount}回目の試合 開始 』";
-                string log = allLog[allLog.IndexOf(target)..];
+            string log;
+            bool success;
+            (log, success) = GetGameLogDic(getCount);
 
+            if (success)
+            {
                 using StreamWriter sw = new(newFilePath, false);
                 sw.WriteLine(log);
+                return $"[ {fileName} ] に ゲームログを抜き出しました。";
             }
-
-            return $"[ {fileName} ] に ゲームログを抜き出しました。";
+            else
+            {
+                Logger.Error(log);
+                return $"[Error] {log}";
+            }
         }
         catch (Exception e)
         {
@@ -283,6 +313,8 @@ internal static class SaveChatLogPatch
 
         if (!GameLogDic.ContainsKey(GameCount)) GameLogDic.Add(GameCount, useLogString);
     }
+    internal static (string log, bool success) GetGameLogDic(int count) =>
+        GameLogDic.ContainsKey(count) ? (GameLogDic[count], true) : (Format(ModTranslation.GetString("GetGameLogDicError"), count), false);
 }
 
 /// <summary>

@@ -1,3 +1,4 @@
+//参考 => https://github.com/ykundesu/SuperNewRoles/blob/1.8.1.2/SuperNewRoles/Modules/ModTranslation.cs
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
