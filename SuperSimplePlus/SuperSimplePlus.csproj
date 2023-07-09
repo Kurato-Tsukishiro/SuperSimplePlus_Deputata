@@ -18,7 +18,7 @@
 
     <ItemGroup>
         <Reference Include="$(AmongUsSSP)/BepInEx/core/*.dll" />
-        <Reference Include="$(AmongUs)/BepInEx/unhollowed/*.dll" />
+        <Reference Include="$(AmongUsSSP)/BepInEx/unhollowed/*.dll" />
         <EmbeddedResource Include=".\Resources\**" />
     </ItemGroup>
 
