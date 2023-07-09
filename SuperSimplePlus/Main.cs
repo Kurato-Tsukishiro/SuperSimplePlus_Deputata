@@ -2,7 +2,7 @@
 using System;
 using BepInEx;
 using BepInEx.Configuration;
-using BepInEx.IL2CPP;
+using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 
 namespace SuperSimplePlus;
@@ -10,7 +10,7 @@ namespace SuperSimplePlus;
 public class SSPPlugin : BasePlugin
 {
     public const String Id = "jp.Kurato-Tsukishiro.SuperSimplePlus_Deputata";
-    public const String Version = "1.0.0.0";
+    public const String Version = "2.0.0.0";
 
     public const String ColoredModName = "<color=#96514d>SSP_Deputata</color>";
     public const String shortModName = "SSP_Deputata";
@@ -18,6 +18,9 @@ public class SSPPlugin : BasePlugin
     public static ConfigEntry<bool> debugTool { get; set; }
     public static ConfigEntry<bool> NotPCKick { get; set; }
     public static ConfigEntry<bool> NotPCBan { get; set; }
+    public static ConfigEntry<bool> ChatLog { get; set; }
+    public static ConfigEntry<bool> HideFriendCode { get; set; }
+    public static ConfigEntry<bool> FriendCodeBan { get; set; }
 
     public Harmony Harmony = new(Id);
     internal static BepInEx.Logging.ManualLogSource Logger;
@@ -33,11 +36,17 @@ public class SSPPlugin : BasePlugin
         debugTool = Config.Bind("Client Options", "Debug Tool", false);
         NotPCKick = Config.Bind("Client Options", "NotPCKick", false);
         NotPCBan = Config.Bind("Client Options", "NotPCBan", false);
+        ChatLog = Config.Bind("Client Options", "ChatLog", true);
+        HideFriendCode = Config.Bind("Client Options", "HideFriendCode", true);
+        FriendCodeBan = Config.Bind("Client Options", "FriendCodeBan", false);
 
         //Load
-        ModTranslation.Load();
+        ModTranslation.LoadCsv();
+        ImmigrationCheck.LoadFriendCodeList();
 
         Harmony.PatchAll();
+
+        Patches.SaveChatLogPatch.Load();
 
         SuperSimplePlus.Logger.Info("SuperSimplePlus_Deputata 読み込み終了", shortModName);
     }

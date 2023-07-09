@@ -1,0 +1,36 @@
+Key,English,Japanese
+
+# 参考 => https://github.com/ykundesu/SuperNewRoles/blob/1.8.1.0/SuperNewRoles/Resources/Translate.csv
+
+# This file is for mod translation
+# Lines with "#" as the first character are not recognized
+# A one-byte comma "," may not be used except for delimitation.
+# So，please use a full-width comma "，".
+
+# このファイルはmodの翻訳をするためのファイルです
+# 最初の文字が「#」の行は認識されません
+# また、半角のカンマ「,」を用いることはできません。
+# 代わりに「，」を使用してください。
+
+# config
+NotPCKick,Kick non-PC,PC以外をキックする
+NotPCBan,Ban non-PC,PC以外をバンする
+ChatLog,Create GameLog,ゲームログを作成する
+HideFriendCode,An display Friendcode,フレンドコード非表示
+FriendCodeBan,Registrant bans upon entry,登録者入室時バンする
+
+# features Translate
+
+# ModUpdate
+UpdateButton,Update {0},{0}\nをアップデートする
+UpdateSuccess,{0} has been successfully updated. Please restart the game,{0}が正常に更新されました。\nゲームを再起動してください
+UpdateFailed,Update failed.\n Please retry later. Or update manually.,アップデートに失敗しました\n後で再試行してください。\nまたは手動でアップデートしてください。
+UpdateInProgress,Updating {0}\nPlease wait...,{0}をアップデート中\nしばらくお待ちください....
+
+# GameLog
+ChatLogFileCreate,\n|:===================================================================================:|\n    Created file [ {0} ] to store chat logs.\n|:===================================================================================:|,\n|:===================================================================================:|\nチャットログを保存するファイル [ {0} ] を作成しました。\n|:===================================================================================:|
+NowGameCountAnnounce,Current game play : {0} times,現在のゲームプレイ回数 : {0} 回
+GetGameLogDicError,Failed to retrieve game log for {0} times.,{0}回目のゲームログの取得に失敗しました。
+
+# Others
+SSPSettings,<color=#96514d>SuperSimplePlus_Deputata</color> Settings,<color=#96514d>SuperSimplePlus_Deputata</color>の設定
