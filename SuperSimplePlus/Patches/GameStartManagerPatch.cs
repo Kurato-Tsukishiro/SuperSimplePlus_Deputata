@@ -87,5 +87,6 @@ public class VariableManager
         ResultsOfTheVoteCount = new();
         Helpers.IdControlDic = new();
         Helpers.CDToNameDic = new();
+        SaveChatLogPatch.AddGameLog();
     }
 }
