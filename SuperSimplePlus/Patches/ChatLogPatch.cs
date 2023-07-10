@@ -205,7 +205,7 @@ internal static class SaveChatLogPatch
     internal static string RoundGameLogFilePath { get { return _roundGameLogFilePath; } }
     private static string _roundGameLogFilePath;
 
-    private static Dictionary<int, string> GameLogDic = new();
+    private static readonly Dictionary<int, string> GameLogDic = new();
     private static StringBuilder NowGameLog = new();
 
     internal static int GameCount = 0;
@@ -309,9 +309,11 @@ internal static class SaveChatLogPatch
         string useLogString = NowGameLog.ToString();
         NowGameLog = new();
 
-        using (StreamWriter sw = new(ChatLogFilePath, true)) await sw.WriteLineAsync(useLogString);
+        if (GameLogDic.ContainsKey(GameCount)) return;
 
-        if (!GameLogDic.ContainsKey(GameCount)) GameLogDic.Add(GameCount, useLogString);
+        GameLogDic.Add(GameCount, useLogString);
+        using StreamWriter sw = new(ChatLogFilePath, true);
+        await sw.WriteLineAsync(useLogString);
     }
     internal static (string log, bool success) GetGameLogDic(int count) =>
         GameLogDic.ContainsKey(count) ? (GameLogDic[count], true) : (Format(ModTranslation.GetString("GetGameLogDicError"), count), false);
