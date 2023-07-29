@@ -48,7 +48,7 @@ class SendChatPatch
     {
         if (!SSPPlugin.ChatLog.Value) return true; // ChatLogを作成しない設定だったら判定しないようにする。
 
-        string text = __instance.TextArea.text, addChatMemo = __instance.TextArea.text;
+        string text = __instance.freeChatField.textArea.text, addChatMemo = __instance.freeChatField.textArea.text;
         bool handled = false;
 
         if (text.ToLower().StartsWith("/cm") || text.ToLower().StartsWith("/memo"))
@@ -103,9 +103,8 @@ class SendChatPatch
 
         if (handled)
         {
-            __instance.TextArea.Clear();
-            FastDestroyableSingleton<HudManager>.Instance.Chat.TimeSinceLastMessage = 0f;
-            __instance.quickChatMenu.ResetGlyphs();
+            __instance.freeChatField.textArea.Clear();
+            FastDestroyableSingleton<HudManager>.Instance.Chat.timeSinceLastMessage = 0f;
         }
         return !handled;
     }
