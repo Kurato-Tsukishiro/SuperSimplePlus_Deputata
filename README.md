@@ -25,17 +25,12 @@
 ## dllの違いについて
 - SuperSimplePlus.dll
   - 共存先のmodの.NETバージョンが``.NET6.0``の時に使用してください。
-    - 共存先のmodが v1.8.0.0(AmongUs2023.6.13以降対応バージョン)以降の[SuperNewRoles](https://github.com/ykundesu/SuperNewRoles)の場合は此方になります。
+    - 共存先のmodが v1.8.0.0以降の[SuperNewRoles](https://github.com/ykundesu/SuperNewRoles)の場合は此方になります。
       - 最新版のSNRを使用している場合は此方を使用して下さい。
     - **テストはしていますが、SNR以外のmodとの共存の動作は完全な保証はできません。**
-    - 共存先のmodが[ExtremeRoles](https://github.com/yukieiji/ExtremeRoles)の場合はこちらになります。
-    - 共存先のmodが[Nebula on the Ship](https://github.com/Dolly1016/Nebula)の場合はこちらになります。
-  - 対応branch : [main](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata)
-- SuperSimplePlus_netstandard21.dll
-  - 共存先のmodの.NETバージョンが``netstandard2.1``の時に使用してください。
-    - 共存先のmodが v1.7.0.0 ~ v1.7.2.0の[SuperNewRoles](https://github.com/ykundesu/SuperNewRoles)の場合は此方になります。
-      - SNRをSHRモードで使用している場合は此方を使用して下さい。
-  - 対応branch : [master_standard2.1](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/tree/master_standard2.1)
+      - 共存先のmodが[ExtremeRoles](https://github.com/yukieiji/ExtremeRoles)の場合はこちらになります。
+      - 共存先のmodが[Nebula on the Ship](https://github.com/Dolly1016/Nebula)の場合はこちらになります。
+
 ## .NETバージョンの確認の仕方
 - 共存先のModの``モッド名.csrroj``ファイルの``<TargetFramework>○○</TargetFramework>``を確認してください。
   - ○○の部分が.NETバージョンになります
