@@ -30,14 +30,21 @@ public class AmongUsClientOnPlayerJoindPatch
         string friendCode = client?.FriendCode;
         Logger.Info($"{client.PlayerName} が入室しました。[PlayerInfo] \"ID:{client.Id} Platform:{client.PlatformData.Platform} FriendCode:{(SSPPlugin.HideFriendCode.Value ? "**********#****" : friendCode)}\"", "OnPlayerJoined");
 
-        if (!AmongUsClient.Instance.AmHost) return;
         if (friendCode is null or "" or " ") return;
 
-        if (SSPPlugin.FriendCodeBan.Value)
+        bool isTaregt = ImmigrationCheck.DenyEntryToFriendCode(client, friendCode);
+
+        if (AmongUsClient.Instance.AmHost && SSPPlugin.FriendCodeBan.Value)
         {
-            bool isTaregt = ImmigrationCheck.DenyEntryToFriendCode(client, friendCode);
             if (isTaregt) Logger.Info($"{client.PlayerName}は, FriendCodeによるBAN対象でした。");
             else Logger.Info($"{client.PlayerName}は, FriendCodeによるBAN対象ではありませんでした。");
+        }
+        else
+        {
+            if (!isTaregt) return;
+            Logger.Info($"{client.PlayerName}は, FriendCodeによるBAN対象でした。");
+            string warning = $"<align={"left"}><color=#><size=150%>警告!</size></color>\n{client.PlayerName}は, BAN対象のコード{(SSPPlugin.HideFriendCode.Value ? "" : $"({friendCode})")}を所持しています。</align>";
+            FastDestroyableSingleton<HudManager>.Instance?.Chat?.AddChat(PlayerControl.LocalPlayer, warning);
         }
     }
 }
