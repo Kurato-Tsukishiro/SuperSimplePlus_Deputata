@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using HarmonyLib;
 using InnerNet;
@@ -34,27 +35,45 @@ public class AmongUsClientOnPlayerJoindPatch
 
         bool isTaregt = ImmigrationCheck.DenyEntryToFriendCode(client, friendCode);
 
-        if (AmongUsClient.Instance.AmHost && SSPPlugin.FriendCodeBan.Value)
+        if (AmongUsClient.Instance.AmHost && SSPPlugin.FriendCodeBan.Value) // ホスト且つ, 機能が有効なら
         {
             if (isTaregt) Logger.Info($"{client.PlayerName}は, FriendCodeによるBAN対象でした。");
             else Logger.Info($"{client.PlayerName}は, FriendCodeによるBAN対象ではありませんでした。");
         }
-        else
+        else //ゲスト 又は, ホストで機能が無効な場合
         {
             if (!isTaregt) return;
             Logger.Info($"{client.PlayerName}は, FriendCodeによるBAN対象でした。");
-            string warning = $"<align={"left"}><color=#><size=150%>警告!</size></color>\n{client.PlayerName}は, BAN対象のコード{(SSPPlugin.HideFriendCode.Value ? "" : $"({friendCode})")}を所持しています。</align>";
+            string warning = $"<align={"left"}><color=#F2E700><size=150%>警告!</size></color>\n{client.PlayerName}は, BAN対象のコード{(SSPPlugin.HideFriendCode.Value ? "" : $"({friendCode})")}を所持しています。</align>";
             FastDestroyableSingleton<HudManager>.Instance?.Chat?.AddChat(PlayerControl.LocalPlayer, warning);
         }
     }
 }
 
-//参考=>https://github.com/haoming37/TheOtherRoles-GM-Haoming/blob/haoming-main/TheOtherRoles/Patches/GameStartManagerPatch.cs
 [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerLeft))]
 public class AmongUsClientOnPlayerLeftPatch
 {
-    public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client, [HarmonyArgument(1)] DisconnectReasons reason) =>
+    //参考=>https://github.com/haoming37/TheOtherRoles-GM-Haoming/blob/haoming-main/TheOtherRoles/Patches/GameStartManagerPatch.cs
+    public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client, [HarmonyArgument(1)] DisconnectReasons reason)
+    {
         Logger.Info($"PlayerName: \"{client.PlayerName}(ID:{client.Id})({client.PlatformData.Platform})\" Left (Reason: {reason})", "OnPlayerLeft");
+
+        if (!AmongUsClient.Instance.AmHost) return;
+        if (reason == DisconnectReasons.Banned)
+            WriteBunReport(client, client?.FriendCode);
+    }
+
+    private static void WriteBunReport(ClientData client, string friendCode)
+    {
+        bool isAllladyTaregt = ImmigrationCheck.DenyEntryToFriendCode(client, friendCode);
+
+        if (isAllladyTaregt) return; // 既にBunListに登録されている場合は記載しない。
+        string bunReportPath = @$"{SaveChatLogPatch.SSPDFolderPath}" + @$"BenReport.log";
+
+        Logger.Info($"BANListに登録していない人の手動BANを行った為, 保存します。 => {client.PlayerName} : {(SSPPlugin.HideFriendCode.Value ? "**********#****" : friendCode)}");
+        string log = $"登録日時 : {DateTime.Now:yyMMdd_HHmm}, 登録者 : {client.PlayerName} ( {friendCode} ), プラットフォーム : {client.PlatformData.Platform}";
+        File.AppendAllText(bunReportPath, log + Environment.NewLine);
+    }
 }
 
 [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Start))]
