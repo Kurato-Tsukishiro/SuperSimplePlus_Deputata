@@ -68,6 +68,8 @@ public class AmongUsClientOnPlayerLeftPatch
         bool isAllladyTaregt = ImmigrationCheck.DenyEntryToFriendCode(client, friendCode);
 
         if (isAllladyTaregt) return; // 既にBunListに登録されている場合は記載しない。
+        // PC以外BANが有効で, Steam・Epic でない場合, 自動BANなので記載しない。
+        if (SSPPlugin.NotPCBan.Value && (client.PlatformData.Platform is not Platforms.StandaloneEpicPC and not Platforms.StandaloneSteamPC)) return;
         string bunReportPath = @$"{SaveChatLogPatch.SSPDFolderPath}" + @$"BenReport.log";
 
         Logger.Info($"BANListに登録していない人の手動BANを行った為, 保存します。 => {client.PlayerName} : {(SSPPlugin.HideFriendCode.Value ? "**********#****" : friendCode)}");
