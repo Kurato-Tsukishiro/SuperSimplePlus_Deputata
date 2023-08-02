@@ -23,30 +23,55 @@ public class GameStartManagerUpdatePatch
     public static void Prefix(GameStartManager __instance) => __instance.MinPlayers = 1;
 }
 
-[HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerJoined))]
-public class AmongUsClientOnPlayerJoindPatch
+[HarmonyPatch]
+internal class JoindPatch
 {
-    public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client)
+    [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnGameJoined)), HarmonyPostfix]
+    internal static void OnGameJoined_Postfix(AmongUsClient __instance)
     {
-        string friendCode = client?.FriendCode;
-        Logger.Info($"{client.PlayerName} が入室しました。[PlayerInfo] \"ID:{client.Id} Platform:{client.PlatformData.Platform} FriendCode:{(SSPPlugin.HideFriendCode.Value ? "**********#****" : friendCode)}\"", "OnPlayerJoined");
+        if (AmongUsClient.Instance.AmHost) return;
 
-        if (friendCode is null or "" or " ") return;
+        Dictionary<int, string> participantDic = new();
 
-        bool isTaregt = ImmigrationCheck.DenyEntryToFriendCode(client, friendCode);
-
-        if (AmongUsClient.Instance.AmHost && SSPPlugin.FriendCodeBan.Value) // ホスト且つ, 機能が有効なら
+        foreach (ClientData cd in AmongUsClient.Instance.allClients)
         {
-            if (isTaregt) Logger.Info($"{client.PlayerName}は, FriendCodeによるBAN対象でした。");
-            else Logger.Info($"{client.PlayerName}は, FriendCodeによるBAN対象ではありませんでした。");
+            var friendCode = cd?.FriendCode;
+
+            var isTaregt = ImmigrationCheck.DenyEntryToFriendCode(cd, friendCode);
+            var writeFriendCode = SSPPlugin.HideFriendCode.Value ? "**********#****" : friendCode;
+            var isCodeOK = isTaregt ? '×' : '〇';
+            var dicPage = $"[{cd.PlayerName}], ClientId : {cd.Id}, Platform:{cd.PlatformData.Platform}, FriendCode : {writeFriendCode}({isCodeOK})";
+
+            if (participantDic.ContainsKey(cd.Id)) participantDic.Add(cd.Id, dicPage);
+            else participantDic[cd.Id] = dicPage;
+
+            if (isTaregt)
+            {
+                string warning = $"<align={"left"}><color=#F2E700><size=150%>警告!</size></color>\n{cd.PlayerName}は, BAN対象のコード{writeFriendCode}を所持しています。</align>";
+                FastDestroyableSingleton<HudManager>.Instance?.Chat?.AddChat(PlayerControl.LocalPlayer, warning);
+            }
         }
-        else //ゲスト 又は, ホストで機能が無効な場合
-        {
-            if (!isTaregt) return;
-            Logger.Info($"{client.PlayerName}は, FriendCodeによるBAN対象でした。");
-            string warning = $"<align={"left"}><color=#F2E700><size=150%>警告!</size></color>\n{client.PlayerName}は, BAN対象のコード{(SSPPlugin.HideFriendCode.Value ? "" : $"({friendCode})")}を所持しています。</align>";
-            FastDestroyableSingleton<HudManager>.Instance?.Chat?.AddChat(PlayerControl.LocalPlayer, warning);
-        }
+
+        Logger.Info($"|:========== 既入室者の記録 Start ==========:|", "AmongUsClientOnPlayerJoindPatch");
+        foreach (KeyValuePair<int, string> kvp in participantDic) Logger.Info(kvp.Value, "OnPlayerJoined");
+        Logger.Info($"|:========== 既入室者の記録 End ==========:|", "AmongUsClientOnPlayerJoindPatch");
+    }
+
+    [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerJoined)), HarmonyPostfix]
+    internal static void OnPlayerJoined_Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client)
+    {
+        var friendCode = client?.FriendCode;
+
+        var isTaregt = ImmigrationCheck.DenyEntryToFriendCode(client, friendCode);
+        var writeFriendCode = SSPPlugin.HideFriendCode.Value ? "**********#****" : friendCode;
+        var isCodeOK = isTaregt ? '×' : '〇';
+
+        Logger.Info($"[{client.PlayerName}], ClientId : {client.Id}, Platform:{client.PlatformData.Platform}, FriendCode : {writeFriendCode}({isCodeOK})", "OnPlayerJoined");
+
+        if (!isTaregt) return;
+
+        if (!(AmongUsClient.Instance.AmHost && SSPPlugin.FriendCodeBan.Value)) //ゲスト 又は, ホストで機能が無効な場合
+            FastDestroyableSingleton<HudManager>.Instance?.Chat?.AddChat(PlayerControl.LocalPlayer, $"<align={"left"}><color=#F2E700><size=150%>警告!</size></color>\n{client.PlayerName}は, BAN対象のコード{writeFriendCode}を所持しています。</align>");
     }
 }
 
