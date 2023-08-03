@@ -13,19 +13,30 @@ namespace SuperSimplePlus;
 public static class ImmigrationCheck
 {
     // 一番左と一行全部
-    private static Dictionary<uint, string> dictionary = new(); //keyを行番号, valueをフレンドコードに
-    internal static bool DenyEntryToFriendCode(ClientData client, string entryFriendCode)
-    {
-        if (!AmongUsClient.Instance.AmHost) return false;
-        if (!SSPPlugin.FriendCodeBan.Value) return false;
+    private static readonly Dictionary<uint, string> dictionary = new(); //keyを行番号, valueをフレンドコードに
 
-        // 入室者のコードが辞書に乗っていたら BAN をする
-        if (dictionary.ContainsValue(entryFriendCode))
+    /// <summary>
+    /// BANListの照会を行う。ranがtrueの時対象者のBANも実行する。
+    /// </summary>
+    /// <param name="client">照会対象</param>
+    /// <param name="ran">BANを実行する。</param>
+    /// <returns>>true / 対象者である, false / 対象者でない</returns>
+    internal static bool DenyEntryToFriendCode(ClientData client, bool ran = false)
+    {
+        var result = dictionary.ContainsValue(client?.FriendCode);
+
+        if (ran && result)
         {
-            AmongUsClient.Instance.KickPlayer(client.Id, ban: true);
-            return true;
+            if (AmongUsClient.Instance.AmHost && SSPPlugin.FriendCodeBan.Value)
+            {
+                AmongUsClient.Instance.KickPlayer(client.Id, ban: true); // 入室者のコードが辞書に乗っていたら BAN をする
+
+                var message = $"BANList対象者 : {client?.PlayerName}{(SSPPlugin.HideFriendCode.Value ? "" : $"( {client?.FriendCode} )")} のBANを実行しました。";
+                FastDestroyableSingleton<HudManager>.Instance?.Chat?.AddChat(PlayerControl.LocalPlayer, message);
+                Logger.Info(message);
+            }
         }
-        return false;
+        return result;
     }
 
     internal static async void LoadFriendCodeList()

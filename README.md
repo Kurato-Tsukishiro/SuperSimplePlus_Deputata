@@ -21,21 +21,22 @@
     - 共存先のModのデバック時、このModの機能が必要ない場合は、抜く事をお勧めします。
     - このModの機能がデバックに必要で共存させる場合は、Host機のみに入れる事を推奨します。
 
+## ChangeLog
+- [更新履歴及びAmongUsバージョン対応表](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%9B%B4%E6%96%B0%E5%B1%A5%E6%AD%B4%E5%8F%8A%E3%81%B3AmongUs%E3%83%90%E3%83%BC%E3%82%B8%E3%83%A7%E3%83%B3%E5%AF%BE%E5%BF%9C%E8%A1%A8)
+  - [更新履歴](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%9B%B4%E6%96%B0%E5%B1%A5%E6%AD%B4%E5%8F%8A%E3%81%B3AmongUs%E3%83%90%E3%83%BC%E3%82%B8%E3%83%A7%E3%83%B3%E5%AF%BE%E5%BF%9C%E8%A1%A8#%E6%9B%B4%E6%96%B0%E5%B1%A5%E6%AD%B4)(GitHub Wikiに移動)<br><br>
+  - [AmongUsバージョン対応表](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%9B%B4%E6%96%B0%E5%B1%A5%E6%AD%B4%E5%8F%8A%E3%81%B3AmongUs%E3%83%90%E3%83%BC%E3%82%B8%E3%83%A7%E3%83%B3%E5%AF%BE%E5%BF%9C%E8%A1%A8#amongus%E3%83%90%E3%83%BC%E3%82%B8%E3%83%A7%E3%83%B3%E5%AF%BE%E5%BF%9C%E8%A1%A8)(GitHub Wikiに移動)<br><br>
+  - [旧SSP時代のリリース履歴, バージョン対応, 対応コードの表](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%9B%B4%E6%96%B0%E5%B1%A5%E6%AD%B4%E5%8F%8A%E3%81%B3AmongUs%E3%83%90%E3%83%BC%E3%82%B8%E3%83%A7%E3%83%B3%E5%AF%BE%E5%BF%9C%E8%A1%A8#%E6%97%A7ssp%E6%99%82%E4%BB%A3%E3%81%AE%E3%83%AA%E3%83%AA%E3%83%BC%E3%82%B9%E5%B1%A5%E6%AD%B4-%E3%83%90%E3%83%BC%E3%82%B8%E3%83%A7%E3%83%B3%E5%AF%BE%E5%BF%9C-%E5%AF%BE%E5%BF%9C%E3%82%B3%E3%83%BC%E3%83%89%E3%81%AE%E8%A1%A8)(GitHub Wikiに移動)<br><br>
+
 # .NETバージョンについて
 ## dllの違いについて
 - SuperSimplePlus.dll
   - 共存先のmodの.NETバージョンが``.NET6.0``の時に使用してください。
-    - 共存先のmodが v1.8.0.0(AmongUs2023.6.13以降対応バージョン)以降の[SuperNewRoles](https://github.com/ykundesu/SuperNewRoles)の場合は此方になります。
+    - 共存先のmodが v1.8.0.0以降の[SuperNewRoles](https://github.com/ykundesu/SuperNewRoles)の場合は此方になります。
       - 最新版のSNRを使用している場合は此方を使用して下さい。
     - **テストはしていますが、SNR以外のmodとの共存の動作は完全な保証はできません。**
-    - 共存先のmodが[ExtremeRoles](https://github.com/yukieiji/ExtremeRoles)の場合はこちらになります。
-    - 共存先のmodが[Nebula on the Ship](https://github.com/Dolly1016/Nebula)の場合はこちらになります。
-  - 対応branch : [main](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata)
-- SuperSimplePlus_netstandard21.dll
-  - 共存先のmodの.NETバージョンが``netstandard2.1``の時に使用してください。
-    - 共存先のmodが v1.7.0.0 ~ v1.7.2.0の[SuperNewRoles](https://github.com/ykundesu/SuperNewRoles)の場合は此方になります。
-      - SNRをSHRモードで使用している場合は此方を使用して下さい。
-  - 対応branch : [master_standard2.1](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/tree/master_standard2.1)
+      - 共存先のmodが[ExtremeRoles](https://github.com/yukieiji/ExtremeRoles)の場合はこちらになります。
+      - 共存先のmodが[Nebula on the Ship](https://github.com/Dolly1016/Nebula)の場合はこちらになります。
+
 ## .NETバージョンの確認の仕方
 - 共存先のModの``モッド名.csrroj``ファイルの``<TargetFramework>○○</TargetFramework>``を確認してください。
   - ○○の部分が.NETバージョンになります
@@ -73,10 +74,12 @@
 <hr>
 
 ## その他の機能
-| 機能             | 操作                                                       |
-| ---------------- | ---------------------------------------------------------- |
-| アップデート機能 | タイトル画面の右上のアップデートボタンを押してアップデート |
-| 一人からゲームを開始できる<br>(共存先Modが[Nebula on the Ship](https://github.com/Dolly1016/Nebula)の場合機能が動いていない) | ロビーで常時発動 |
+| 機能 | 説明 | 操作 |
+| :-- | :-- | :-- |
+| アップデート機能 | SSPのアップデートがあった時更新ボタンが表示され, それを押すことでアップデートすることができる。 | タイトル画面の右上のアップデートボタンを押してアップデート |
+| 一人からゲームを開始できる | 共存先Modが[Nebula on the Ship](https://github.com/Dolly1016/Nebula)の場合機能が動かない | ロビーで常時発動 |
+| 対象者がいた場合警告する | BANListに登録済みのプレイヤーが参加している場合, チャットで警告する。 | - 自身の入室時 (ゲスト参加)<br> - 対象者入室時 (ゲスト参加時 又は ホストで[登録者入室時バンする](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%A9%9F%E8%83%BD-:-%5B-%E7%99%BB%E9%8C%B2%E8%80%85%E5%85%A5%E5%AE%A4%E6%99%82%E3%83%90%E3%83%B3%E3%81%99%E3%82%8B-%5D)機能無効時。) |
+| BANを行ったプレイヤーを記録する | BANを手動で行った時 BenReport.logに 登録日時, 登録時のプレイヤー名, フレンドコードを記載する。 | ホストで手動BANを実行した時 |
 
 <hr>
 

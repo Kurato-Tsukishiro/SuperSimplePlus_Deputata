@@ -48,7 +48,7 @@ class SendChatPatch
     {
         if (!SSPPlugin.ChatLog.Value) return true; // ChatLogを作成しない設定だったら判定しないようにする。
 
-        string text = __instance.TextArea.text, addChatMemo = __instance.TextArea.text;
+        string text = __instance.freeChatField.textArea.text, addChatMemo = __instance.freeChatField.textArea.text;
         bool handled = false;
 
         if (text.ToLower().StartsWith("/cm") || text.ToLower().StartsWith("/memo"))
@@ -103,9 +103,8 @@ class SendChatPatch
 
         if (handled)
         {
-            __instance.TextArea.Clear();
-            FastDestroyableSingleton<HudManager>.Instance.Chat.TimeSinceLastMessage = 0f;
-            __instance.quickChatMenu.ResetGlyphs();
+            __instance.freeChatField.textArea.Clear();
+            FastDestroyableSingleton<HudManager>.Instance.Chat.timeSinceLastMessage = 0f;
         }
         return !handled;
     }
@@ -535,7 +534,7 @@ class SystemLogMethodManager
         foreach (PlayerControl player in PlayerControl.AllPlayerControls)
         {
             if (player.IsAlive()) { VariableManager.AllladyVictimDic.Remove(player.PlayerId); continue; } // 生きているなら死亡者辞書から削除し, 次のプレイヤー処理へ
-            if (VariableManager.AllladyVictimDic.ContainsKey(player.PlayerId)) { Logger.Info("うごいてる?"); continue; } // (死んでいて, )死亡者辞書に含まれているなら, 次のプレイヤー処理へ
+            if (VariableManager.AllladyVictimDic.ContainsKey(player.PlayerId)) continue; // (死んでいて, )死亡者辞書に含まれているなら, 次のプレイヤー処理へ
 
             // 以下 死んでいて, 死亡者辞書に含まれていない時 の処理
             try { VariableManager.AllladyVictimDic.Add(player.PlayerId, player); } // 死亡者辞書に追加する
