@@ -21,6 +21,12 @@
     - 共存先のModのデバック時、このModの機能が必要ない場合は、抜く事をお勧めします。
     - このModの機能がデバックに必要で共存させる場合は、Host機のみに入れる事を推奨します。
 
+## ChangeLog
+- [更新履歴及びAmongUsバージョン対応表](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%9B%B4%E6%96%B0%E5%B1%A5%E6%AD%B4%E5%8F%8A%E3%81%B3AmongUs%E3%83%90%E3%83%BC%E3%82%B8%E3%83%A7%E3%83%B3%E5%AF%BE%E5%BF%9C%E8%A1%A8)
+  - [更新履歴](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%9B%B4%E6%96%B0%E5%B1%A5%E6%AD%B4%E5%8F%8A%E3%81%B3AmongUs%E3%83%90%E3%83%BC%E3%82%B8%E3%83%A7%E3%83%B3%E5%AF%BE%E5%BF%9C%E8%A1%A8#%E6%9B%B4%E6%96%B0%E5%B1%A5%E6%AD%B4)(GitHub Wikiに移動)<br><br>
+  - [AmongUsバージョン対応表](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%9B%B4%E6%96%B0%E5%B1%A5%E6%AD%B4%E5%8F%8A%E3%81%B3AmongUs%E3%83%90%E3%83%BC%E3%82%B8%E3%83%A7%E3%83%B3%E5%AF%BE%E5%BF%9C%E8%A1%A8#amongus%E3%83%90%E3%83%BC%E3%82%B8%E3%83%A7%E3%83%B3%E5%AF%BE%E5%BF%9C%E8%A1%A8)(GitHub Wikiに移動)<br><br>
+  - [旧SSP時代のリリース履歴, バージョン対応, 対応コードの表](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%9B%B4%E6%96%B0%E5%B1%A5%E6%AD%B4%E5%8F%8A%E3%81%B3AmongUs%E3%83%90%E3%83%BC%E3%82%B8%E3%83%A7%E3%83%B3%E5%AF%BE%E5%BF%9C%E8%A1%A8#%E6%97%A7ssp%E6%99%82%E4%BB%A3%E3%81%AE%E3%83%AA%E3%83%AA%E3%83%BC%E3%82%B9%E5%B1%A5%E6%AD%B4-%E3%83%90%E3%83%BC%E3%82%B8%E3%83%A7%E3%83%B3%E5%AF%BE%E5%BF%9C-%E5%AF%BE%E5%BF%9C%E3%82%B3%E3%83%BC%E3%83%89%E3%81%AE%E8%A1%A8)(GitHub Wikiに移動)<br><br>
+
 # .NETバージョンについて
 ## dllの違いについて
 - SuperSimplePlus.dll
