@@ -35,19 +35,17 @@ internal class JoindPatch
 
         foreach (ClientData cd in AmongUsClient.Instance.allClients)
         {
-            var friendCode = cd?.FriendCode;
-
-            var isTaregt = ImmigrationCheck.DenyEntryToFriendCode(cd, friendCode);
-            var writeFriendCode = SSPPlugin.HideFriendCode.Value ? "**********#****" : friendCode;
+            var isTaregt = ImmigrationCheck.DenyEntryToFriendCode(cd);
+            var friendCode = SSPPlugin.HideFriendCode.Value ? "**********#****" : cd?.FriendCode;
             var isCodeOK = isTaregt ? '×' : '〇';
-            var dicPage = $"[{cd.PlayerName}], ClientId : {cd.Id}, Platform:{cd.PlatformData.Platform}, FriendCode : {writeFriendCode}({isCodeOK})";
+            var dicPage = $"[{cd.PlayerName}], ClientId : {cd.Id}, Platform:{cd.PlatformData.Platform}, FriendCode : {friendCode}({isCodeOK})";
 
             if (participantDic.ContainsKey(cd.Id)) participantDic.Add(cd.Id, dicPage);
             else participantDic[cd.Id] = dicPage;
 
             if (isTaregt)
             {
-                string warning = $"<align={"left"}><color=#F2E700><size=150%>警告!</size></color>\n{cd.PlayerName}は, BAN対象のコード{writeFriendCode}を所持しています。</align>";
+                string warning = $"<align={"left"}><color=#F2E700><size=150%>警告!</size></color>\n{cd.PlayerName}は, BAN対象のコード{friendCode}を所持しています。</align>";
                 FastDestroyableSingleton<HudManager>.Instance?.Chat?.AddChat(PlayerControl.LocalPlayer, warning);
             }
         }
@@ -60,18 +58,16 @@ internal class JoindPatch
     [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerJoined)), HarmonyPostfix]
     internal static void OnPlayerJoined_Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client)
     {
-        var friendCode = client?.FriendCode;
-
-        var isTaregt = ImmigrationCheck.DenyEntryToFriendCode(client, friendCode);
-        var writeFriendCode = SSPPlugin.HideFriendCode.Value ? "**********#****" : friendCode;
+        var isTaregt = ImmigrationCheck.DenyEntryToFriendCode(client, true);
+        var friendCode = SSPPlugin.HideFriendCode.Value ? "**********#****" : client?.FriendCode;
         var isCodeOK = isTaregt ? '×' : '〇';
 
-        Logger.Info($"[{client.PlayerName}], ClientId : {client.Id}, Platform:{client.PlatformData.Platform}, FriendCode : {writeFriendCode}({isCodeOK})", "OnPlayerJoined");
+        Logger.Info($"[{client.PlayerName}], ClientId : {client.Id}, Platform:{client.PlatformData.Platform}, FriendCode : {friendCode}({isCodeOK})", "OnPlayerJoined");
 
         if (!isTaregt) return;
 
         if (!(AmongUsClient.Instance.AmHost && SSPPlugin.FriendCodeBan.Value)) //ゲスト 又は, ホストで機能が無効な場合
-            FastDestroyableSingleton<HudManager>.Instance?.Chat?.AddChat(PlayerControl.LocalPlayer, $"<align={"left"}><color=#F2E700><size=150%>警告!</size></color>\n{client.PlayerName}は, BAN対象のコード{writeFriendCode}を所持しています。</align>");
+            FastDestroyableSingleton<HudManager>.Instance?.Chat?.AddChat(PlayerControl.LocalPlayer, $"<align={"left"}><color=#F2E700><size=150%>警告!</size></color>\n{client.PlayerName}は, BAN対象のコード{friendCode}を所持しています。</align>");
     }
 }
 
@@ -84,21 +80,20 @@ public class AmongUsClientOnPlayerLeftPatch
         Logger.Info($"PlayerName: \"{client.PlayerName}(ID:{client.Id})({client.PlatformData.Platform})\" Left (Reason: {reason})", "OnPlayerLeft");
 
         if (!AmongUsClient.Instance.AmHost) return;
-        if (reason == DisconnectReasons.Banned)
-            WriteBunReport(client, client?.FriendCode);
+        if (reason == DisconnectReasons.Banned) WriteBunReport(client);
     }
 
-    private static void WriteBunReport(ClientData client, string friendCode)
+    private static void WriteBunReport(ClientData client)
     {
-        bool isAllladyTaregt = ImmigrationCheck.DenyEntryToFriendCode(client, friendCode);
+        bool isAllladyTaregt = ImmigrationCheck.DenyEntryToFriendCode(client);
 
         if (isAllladyTaregt) return; // 既にBunListに登録されている場合は記載しない。
         // PC以外BANが有効で, Steam・Epic でない場合, 自動BANなので記載しない。
         if (SSPPlugin.NotPCBan.Value && (client.PlatformData.Platform is not Platforms.StandaloneEpicPC and not Platforms.StandaloneSteamPC)) return;
         string bunReportPath = @$"{SaveChatLogPatch.SSPDFolderPath}" + @$"BenReport.log";
 
-        Logger.Info($"BANListに登録していない人の手動BANを行った為, 保存します。 => {client.PlayerName} : {(SSPPlugin.HideFriendCode.Value ? "**********#****" : friendCode)}");
-        string log = $"登録日時 : {DateTime.Now:yyMMdd_HHmm}, 登録者 : {client.PlayerName} ( {friendCode} ), プラットフォーム : {client.PlatformData.Platform}";
+        Logger.Info($"BANListに登録していない人の手動BANを行った為, 保存します。 => {client.PlayerName} : {(SSPPlugin.HideFriendCode.Value ? "**********#****" : client?.FriendCode)}");
+        string log = $"登録日時 : {DateTime.Now:yyMMdd_HHmm}, 登録者 : {client.PlayerName} ( {client?.FriendCode} ), プラットフォーム : {client.PlatformData.Platform}";
         File.AppendAllText(bunReportPath, log + Environment.NewLine);
     }
 }
