@@ -13,7 +13,7 @@ namespace SuperSimplePlus;
 public static class ImmigrationCheck
 {
     // 一番左と一行全部
-    private static Dictionary<uint, string> dictionary = new(); //keyを行番号, valueをフレンドコードに
+    private static readonly Dictionary<uint, string> dictionary = new(); //keyを行番号, valueをフレンドコードに
 
     /// <summary>
     /// BANListの照会を行う。ranがtrueの時対象者のBANも実行する。
@@ -28,9 +28,14 @@ public static class ImmigrationCheck
         if (ran && result)
         {
             if (AmongUsClient.Instance.AmHost && SSPPlugin.FriendCodeBan.Value)
+            {
                 AmongUsClient.Instance.KickPlayer(client.Id, ban: true); // 入室者のコードが辞書に乗っていたら BAN をする
-        }
 
+                var message = $"BANList対象者 : {client?.PlayerName}{(SSPPlugin.HideFriendCode.Value ? "" : $"( {client?.FriendCode} )")} のBANを実行しました。";
+                FastDestroyableSingleton<HudManager>.Instance?.Chat?.AddChat(PlayerControl.LocalPlayer, message);
+                Logger.Info(message);
+            }
+        }
         return result;
     }
 
