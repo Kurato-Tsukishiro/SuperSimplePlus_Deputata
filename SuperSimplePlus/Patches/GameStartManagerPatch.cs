@@ -1,4 +1,5 @@
 using System;
+using System.Timers;
 using System.IO;
 using System.Collections.Generic;
 using HarmonyLib;
@@ -32,25 +33,34 @@ internal class JoindPatch
         if (AmongUsClient.Instance.AmHost) return;
 
         Dictionary<int, string> participantDic = new();
+        Dictionary<int, string> warningTextDic = new();
 
         foreach (ClientData cd in AmongUsClient.Instance.allClients)
         {
             (var isTaregt, var friendCode) = ImmigrationCheck.DenyEntryToFriendCode(cd);
             var isCodeOK = isTaregt ? '×' : '〇';
             var dicPage = $"[{cd.PlayerName}], ClientId : {cd.Id}, Platform:{cd.PlatformData.Platform}, FriendCode : {friendCode}({isCodeOK})";
+            var warningText = "";
 
             if (participantDic.ContainsKey(cd.Id)) participantDic.Add(cd.Id, dicPage);
             else participantDic[cd.Id] = dicPage;
 
             if (isTaregt)
             {
-                string warning = $"<align={"left"}><color=#F2E700><size=150%>警告!</size></color>\n{cd.PlayerName}は, {(friendCode != "未所持" ? $"BAN対象のコード{friendCode}を所持しています" : "フレンドコードを所持していません")}。</align>";
-                FastDestroyableSingleton<HudManager>.Instance?.Chat?.AddChat(PlayerControl.LocalPlayer, warning);
+                warningText = $"{cd.PlayerName}は, {(friendCode != "未所持" ? $"BAN対象のコード{friendCode}を所持しています" : "フレンドコードを所持していません")}。";
+
+                if (warningTextDic.ContainsKey(cd.Id)) participantDic.Add(cd.Id, warningText);
+                else warningTextDic[cd.Id] = warningText;
             }
         }
 
         Logger.Info($"|:========== 既入室者の記録 Start ==========:|", "AmongUsClientOnPlayerJoindPatch");
         foreach (KeyValuePair<int, string> kvp in participantDic) Logger.Info(kvp.Value, "OnPlayerJoined");
+
+        string warningMessage = "";
+        foreach (KeyValuePair<int, string> kvp in warningTextDic) { warningMessage += $"{kvp.Value}\n\n"; }
+        FastDestroyableSingleton<HudManager>.Instance?.Chat?.AddChat(PlayerControl.LocalPlayer, $"<align={"left"}><color=#F2E700><size=150%>警告!</size></color><size=80%>\n{warningMessage}</size></align>");
+
         Logger.Info($"|:========== 既入室者の記録 End ==========:|", "AmongUsClientOnPlayerJoindPatch");
     }
 
