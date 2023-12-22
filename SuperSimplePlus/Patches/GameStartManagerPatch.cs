@@ -49,17 +49,13 @@ internal class JoindPatch
             {
                 warningText = $"{cd.PlayerName}は, {(friendCode != "未所持" ? $"BAN対象のコード{friendCode}を所持しています" : "フレンドコードを所持していません")}。";
 
-                if (warningTextDic.ContainsKey(cd.Id)) participantDic.Add(cd.Id, warningText);
+                if (warningTextDic.ContainsKey(cd.Id)) warningTextDic.Add(cd.Id, warningText);
                 else warningTextDic[cd.Id] = warningText;
             }
         }
 
         Logger.Info($"|:========== 既入室者の記録 Start ==========:|", "AmongUsClientOnPlayerJoindPatch");
         foreach (KeyValuePair<int, string> kvp in participantDic) Logger.Info(kvp.Value, "OnPlayerJoined");
-
-        string warningMessage = "";
-        foreach (KeyValuePair<int, string> kvp in warningTextDic) { warningMessage += $"{kvp.Value}\n\n"; }
-        FastDestroyableSingleton<HudManager>.Instance?.Chat?.AddChat(PlayerControl.LocalPlayer, $"<align={"left"}><color=#F2E700><size=150%>警告!</size></color><size=80%>\n{warningMessage}</size></align>");
 
         Logger.Info($"|:========== 既入室者の記録 End ==========:|", "AmongUsClientOnPlayerJoindPatch");
     }
@@ -75,7 +71,7 @@ internal class JoindPatch
         if (!isTaregt) return;
 
         if (!(AmongUsClient.Instance.AmHost && SSPPlugin.FriendCodeBan.Value)) //ゲスト 又は, ホストで機能が無効な場合
-            FastDestroyableSingleton<HudManager>.Instance?.Chat?.AddChat(PlayerControl.LocalPlayer, $"<align={"left"}><color=#F2E700><size=150%>警告!</size></color>\n{client.PlayerName}は, {(friendCode != "未所持" ? $"BAN対象のコード{friendCode}を所持しています" : "フレンドコードを所持していません")}。</align>");
+            FastDestroyableSingleton<HudManager>.Instance?.Chat?.AddChat(PlayerControl.LocalPlayer, $"<align={"left"}><color=#F2E700><size=150%>警告!</size></color><size=80%>\n{client.PlayerName}は, {(friendCode != "未所持" ? $"BAN対象のコード{friendCode}を所持しています" : "フレンドコードを所持していません")}。</size></align>");
     }
 }
 

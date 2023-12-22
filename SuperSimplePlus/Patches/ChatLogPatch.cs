@@ -46,11 +46,42 @@ class SendChatPatch
 
     static bool Prefix(ChatController __instance)
     {
-        if (!SSPPlugin.ChatLog.Value) return true; // ChatLogを作成しない設定だったら判定しないようにする。
 
         string text = __instance.freeChatField.textArea.text, addChatMemo = __instance.freeChatField.textArea.text;
         bool handled = false;
 
+        // 通常command
+        if (text.ToLower().StartsWith("/checkbantarget") || text.ToLower().StartsWith("/cbt"))
+        {
+            handled = true;
+            Dictionary<int, string> warningTextDic = new();
+
+            foreach (ClientData cd in AmongUsClient.Instance.allClients)
+            {
+                (var isTaregt, var friendCode) = ImmigrationCheck.DenyEntryToFriendCode(cd);
+
+                if (isTaregt)
+                {
+                    var warningText = $"{cd.PlayerName}は, {(friendCode != "未所持" ? $"BAN対象のコード{friendCode}を所持しています" : "フレンドコードを所持していません")}。";
+
+                    if (warningTextDic.ContainsKey(cd.Id)) warningTextDic.Add(cd.Id, warningText);
+                    else warningTextDic[cd.Id] = warningText;
+                }
+            }
+
+            string warningMessage = "";
+            foreach (KeyValuePair<int, string> kvp in warningTextDic) { warningMessage += $"{kvp.Value}\n"; }
+            if (warningMessage == "")
+            {
+                __instance.AddChat(PlayerControl.LocalPlayer, $"<align={"left"}><color=#89c3eb><size=150%>Infomation</size></color><size=80%>\n現在, BANList対象者は入室しておりません。</size></align>");
+            }
+            else
+            {
+                __instance.AddChat(PlayerControl.LocalPlayer, $"<align={"left"}><color=#F2E700><size=150%>警告!</size></color><size=80%>\n{warningMessage}</size></align>");
+            }
+        }
+
+        if (!SSPPlugin.ChatLog.Value) return true; // ChatLogを作成しない設定だったら判定しないようにする。
         if (text.ToLower().StartsWith("/cm") || text.ToLower().StartsWith("/memo"))
         {
             handled = true;
