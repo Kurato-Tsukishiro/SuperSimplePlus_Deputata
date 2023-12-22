@@ -35,8 +35,7 @@ internal class JoindPatch
 
         foreach (ClientData cd in AmongUsClient.Instance.allClients)
         {
-            var isTaregt = ImmigrationCheck.DenyEntryToFriendCode(cd);
-            var friendCode = SSPPlugin.HideFriendCode.Value ? "**********#****" : cd?.FriendCode;
+            (var isTaregt, var friendCode) = ImmigrationCheck.DenyEntryToFriendCode(cd);
             var isCodeOK = isTaregt ? '×' : '〇';
             var dicPage = $"[{cd.PlayerName}], ClientId : {cd.Id}, Platform:{cd.PlatformData.Platform}, FriendCode : {friendCode}({isCodeOK})";
 
@@ -58,8 +57,7 @@ internal class JoindPatch
     [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerJoined)), HarmonyPostfix]
     internal static void OnPlayerJoined_Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client)
     {
-        var isTaregt = ImmigrationCheck.DenyEntryToFriendCode(client, true);
-        var friendCode = SSPPlugin.HideFriendCode.Value ? "**********#****" : client?.FriendCode;
+        (var isTaregt, var friendCode) = ImmigrationCheck.DenyEntryToFriendCode(client, true);
         var isCodeOK = isTaregt ? '×' : '〇';
 
         Logger.Info($"[{client.PlayerName}], ClientId : {client.Id}, Platform:{client.PlatformData.Platform}, FriendCode : {friendCode}({isCodeOK})", "OnPlayerJoined");
@@ -85,14 +83,14 @@ public class AmongUsClientOnPlayerLeftPatch
 
     private static void WriteBunReport(ClientData client)
     {
-        bool isAllladyTaregt = ImmigrationCheck.DenyEntryToFriendCode(client);
+        (var isAllladyTaregt, var friendCode) = ImmigrationCheck.DenyEntryToFriendCode(client);
 
         if (isAllladyTaregt) return; // 既にBunListに登録されている場合は記載しない。
         // PC以外BANが有効で, Steam・Epic でない場合, 自動BANなので記載しない。
         if (SSPPlugin.NotPCBan.Value && (client.PlatformData.Platform is not Platforms.StandaloneEpicPC and not Platforms.StandaloneSteamPC)) return;
         string bunReportPath = @$"{SaveChatLogPatch.SSPDFolderPath}" + @$"BenReport.log";
 
-        Logger.Info($"BANListに登録していない人の手動BANを行った為, 保存します。 => {client.PlayerName} : {(SSPPlugin.HideFriendCode.Value ? "**********#****" : client?.FriendCode)}");
+        Logger.Info($"BANListに登録していない人の手動BANを行った為, 保存します。 => {client.PlayerName} : {friendCode}");
         string log = $"登録日時 : {DateTime.Now:yyMMdd_HHmm}, 登録者 : {client.PlayerName} ( {client?.FriendCode} ), プラットフォーム : {client.PlatformData.Platform}";
         File.AppendAllText(bunReportPath, log + Environment.NewLine);
     }
