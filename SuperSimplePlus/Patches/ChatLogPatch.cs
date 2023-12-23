@@ -51,7 +51,7 @@ class SendChatPatch
         bool handled = false;
 
         // 通常command
-        if (text.ToLower().StartsWith("/checkbantarget") || text.ToLower().StartsWith("/cbt"))
+        if (text.ToLower().StartsWith("/banlistlnquiry") || text.ToLower().StartsWith("/bll"))
         {
             handled = true;
             Dictionary<int, string> warningTextDic = new();
