@@ -1,5 +1,4 @@
 using System;
-using System.Timers;
 using System.IO;
 using System.Collections.Generic;
 using HarmonyLib;
