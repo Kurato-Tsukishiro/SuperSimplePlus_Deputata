@@ -21,22 +21,29 @@ public static class ImmigrationCheck
     /// <param name="client">照会対象</param>
     /// <param name="ran">BANを実行する。</param>
     /// <returns>>true / 対象者である, false / 対象者でない</returns>
-    internal static bool DenyEntryToFriendCode(ClientData client, bool ran = false)
+    internal static (bool, string) DenyEntryToFriendCode(ClientData client, bool ran = false)
     {
-        var result = dictionary.ContainsValue(client?.FriendCode);
+        if (AmongUsClient.Instance.NetworkMode == NetworkModes.OnlineGame) return (false, "");
 
-        if (ran && result)
+        var hasFriendCode = (client?.FriendCode is not null and not "") && client.FriendCode.Contains('#'); // 参考 => https://github.com/SuperNewRoles/SuperNewRoles/blob/2.1.1.1/SuperNewRoles/Modules/Blacklist.cs#L109-L113
+        var isSavedFriendCode = dictionary.ContainsValue(client?.FriendCode);
+
+        (bool isTaregt, string entrantCode) resultData;
+        resultData.isTaregt = !hasFriendCode || isSavedFriendCode;
+        resultData.entrantCode = !hasFriendCode ? "未所持" : SSPPlugin.HideFriendCode.Value ? "**********#****" : client?.FriendCode;
+
+        if (ran && resultData.isTaregt)
         {
             if (AmongUsClient.Instance.AmHost && SSPPlugin.FriendCodeBan.Value)
             {
-                AmongUsClient.Instance.KickPlayer(client.Id, ban: true); // 入室者のコードが辞書に乗っていたら BAN をする
+                AmongUsClient.Instance.KickPlayer(client.Id, ban: true); // 入室者がフレンドコードを未所持の場合 又は 入室者のコードが辞書に登録されている場合 BAN をする
 
-                var message = $"BANList対象者 : {client?.PlayerName}{(SSPPlugin.HideFriendCode.Value ? "" : $"( {client?.FriendCode} )")} のBANを実行しました。";
+                var message = $"BANList対象者 : {client?.PlayerName} ( {resultData.entrantCode} ) のBANを実行しました。";
                 FastDestroyableSingleton<HudManager>.Instance?.Chat?.AddChat(PlayerControl.LocalPlayer, message);
                 Logger.Info(message);
             }
         }
-        return result;
+        return resultData;
     }
 
     internal static async void LoadFriendCodeList()
