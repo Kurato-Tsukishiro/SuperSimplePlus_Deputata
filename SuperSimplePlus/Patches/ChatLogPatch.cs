@@ -341,7 +341,7 @@ class ChatLogHarmonyPatch
 
         // 死体通報
         [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.ReportDeadBody)), HarmonyPostfix]
-        static void ReportDeadBodyPostfix(PlayerControl __instance, [HarmonyArgument(0)] GameData.PlayerInfo target) => ReportDeadBodySystemLog(__instance, target);
+        static void ReportDeadBodyPostfix(PlayerControl __instance, [HarmonyArgument(0)] NetworkedPlayerInfo target) => ReportDeadBodySystemLog(__instance, target);
 
         // 投票感知&記載(Hostのみ)
         [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.CastVote)), HarmonyPostfix]
@@ -353,11 +353,11 @@ class ChatLogHarmonyPatch
 
         // 会議終了(airship以外)
         [HarmonyPatch(typeof(ExileController), nameof(ExileController.WrapUp)), HarmonyPostfix]
-        static void MeetingEndPostfix(ExileController __instance) => DescribeMeetingEndSystemLog(__instance.exiled);
+        static void MeetingEndPostfix(ExileController __instance) => DescribeMeetingEndSystemLog(__instance.initData?.networkedPlayer);
 
         // 会議終了(airship)
         [HarmonyPatch(typeof(AirshipExileController), nameof(AirshipExileController.WrapUpAndSpawn)), HarmonyPostfix]
-        static void AirshipMeetingEndPostfix(ExileController __instance) => DescribeMeetingEndSystemLog(__instance.exiled);
+        static void AirshipMeetingEndPostfix(ExileController __instance) => DescribeMeetingEndSystemLog(__instance.initData?.networkedPlayer);
 
         // キル発生時
         [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MurderPlayer)), HarmonyPostfix]
@@ -451,7 +451,7 @@ class SystemLogMethodManager
     }
 
     // 死体通報
-    internal static void ReportDeadBodySystemLog(PlayerControl convener, GameData.PlayerInfo target)
+    internal static void ReportDeadBodySystemLog(PlayerControl convener, NetworkedPlayerInfo target)
     {
         if (!SSPPlugin.ChatLog.Value) return;
 
@@ -476,7 +476,7 @@ class SystemLogMethodManager
     internal static void OpenVoteSystemLog(string openVoteMessage) => SaveSystemLog(GetSystemMessageLog(openVoteMessage));
 
     // 会議終了
-    internal static void DescribeMeetingEndSystemLog(GameData.PlayerInfo exiled)
+    internal static void DescribeMeetingEndSystemLog(NetworkedPlayerInfo exiled)
     {
         if (!SSPPlugin.ChatLog.Value) return;
 
