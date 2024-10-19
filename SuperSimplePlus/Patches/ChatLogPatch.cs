@@ -119,8 +119,7 @@ class SendChatPatch
         if (!SSPPlugin.ChatLog.Value) return;
 
         string date = DateTime.Now.ToString("[HH:mm:ss]");
-        string name = PlayerControl.LocalPlayer.GetClient().PlayerName;
-        string outChatMemo = processingRequired ? $"{date} {name} : {chatMemo}" : $"{date} {chatMemo}";
+        string outChatMemo = processingRequired ? $"{date} {PlayerControl.LocalPlayer?.GetClient().PlayerName} : {chatMemo}" : $"{date} {chatMemo}";
 
         if (ResetedMemo)
             File.AppendAllText(LogMemoFilePath, $"{outChatMemo}" + Environment.NewLine);
