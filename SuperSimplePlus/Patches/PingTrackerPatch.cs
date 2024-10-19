@@ -8,13 +8,11 @@ public class PingTrackerPatch
     {
         public static void Postfix(PingTracker __instance)
         {
-            __instance.text.alignment = TMPro.TextAlignmentOptions.TopRight;
             var bc = $"{ThisAssembly.Git.Branch}({ThisAssembly.Git.Commit})";
             __instance.text.text =
                 ThisAssembly.Git.Branch == "main" ?
-                    $"{SSPPlugin.ColoredModName} ver.{SSPPlugin.Version}\n{__instance.text.text}" :
-                    $"{SSPPlugin.ColoredModName} ver.{SSPPlugin.Version}\n{bc}\n{__instance.text.text}";
-            __instance.gameObject.GetComponent<AspectPosition>().DistanceFromEdge = new Vector3(1.2f, 0.1f, 0.5f);
+                    $"{__instance.text.text}\n{SSPPlugin.ColoredModName} ver.{SSPPlugin.Version}" :
+                    $"{__instance.text.text}\n{SSPPlugin.ColoredModName} ver.{SSPPlugin.Version}\n{bc}";
         }
     }
 }
