@@ -12,9 +12,7 @@ public class PingTrackerPatch
             __instance.text.text =
                 AmongUsClient.Instance.GameState == AmongUsClient.GameStates.Started
                     ? $"{__instance.text.text}<size=67%><line-height=55%>\n<pos=25%>{SSPPlugin.ColoredModName} ver.{SSPPlugin.Version}{(ThisAssembly.Git.Branch == "main" ? "" : " (β)")}</size></line-height>"
-                    : ThisAssembly.Git.Branch == "main" ?
-                        $"{__instance.text.text}\n{SSPPlugin.ColoredModName} ver.{SSPPlugin.Version}" :
-                        $"{__instance.text.text}\n{SSPPlugin.ColoredModName} ver.{SSPPlugin.Version}\n{bc}";
+                    : $"{__instance.text.text}\n<pos=25%>{SSPPlugin.ColoredModName} ver.{SSPPlugin.Version}</pos>{(ThisAssembly.Git.Branch == "main" ? "" : $"\n<pos=25%>{bc}</pos>")}";
         }
     }
 }
