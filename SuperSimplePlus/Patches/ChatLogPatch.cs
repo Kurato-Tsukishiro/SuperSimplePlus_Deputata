@@ -326,6 +326,9 @@ class ChatLogHarmonyPatch
 #pragma warning disable 8321
     // HarmonyPatchはローカル宣言で呼び出していなくても動くのに「ローカル関数 '関数名' は宣言されていますが、一度も使用されていません」と警告が出る為
     // このメソッドでは警告を表示しないようにしている
+
+    private static int LastPost_was;
+
     public static void ChatLogHarmony()
     {
         if (!SSPPlugin.ChatLog.Value) return; // ChatLogを作成しない設定だったら読まないようにする。
@@ -356,7 +359,14 @@ class ChatLogHarmonyPatch
 
         // 会議終了(airship)
         [HarmonyPatch(typeof(AirshipExileController), nameof(AirshipExileController.WrapUpAndSpawn)), HarmonyPostfix]
-        static void AirshipMeetingEndPostfix(ExileController __instance) => DescribeMeetingEndSystemLog(__instance.initData?.networkedPlayer);
+        static void AirshipMeetingEndPostfix(AirshipExileController._WrapUpAndSpawn_d__11 __instance)
+        {
+            int currentPost = __instance.__4__this.GetInstanceID();
+            if (LastPost_was == currentPost) return;
+            LastPost_was = currentPost;
+
+            DescribeMeetingEndSystemLog(__instance.__4__this.initData?.networkedPlayer);
+        }
 
         // キル発生時
         [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MurderPlayer)), HarmonyPostfix]
