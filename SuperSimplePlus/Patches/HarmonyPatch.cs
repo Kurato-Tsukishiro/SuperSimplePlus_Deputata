@@ -44,27 +44,27 @@ class AllHarmonyPatch
 
         // ゲーム開始時に情報を記載する
         [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.CoBegin)), HarmonyPostfix]
-        static void IntroCutsceneCoBeginPostfix() => SystemLogMethodManager.IntroCutsceneCoBeginSystemLog();
+        static void IntroCutsceneCoBeginPostfix() => GameSystemLogPatch.IntroCutsceneCoBeginSystemLog();
 
         // 会議開始
         [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.Start)), HarmonyPostfix]
-        static void MeetingStartPostfix(MeetingHud __instance) => SystemLogMethodManager.MeetingStartSystemLog(__instance);
+        static void MeetingStartPostfix(MeetingHud __instance) => GameSystemLogPatch.MeetingStartSystemLog(__instance);
 
         // 死体通報
         [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.ReportDeadBody)), HarmonyPostfix]
-        static void ReportDeadBodyPostfix(PlayerControl __instance, [HarmonyArgument(0)] NetworkedPlayerInfo target) => SystemLogMethodManager.ReportDeadBodySystemLog(__instance, target);
+        static void ReportDeadBodyPostfix(PlayerControl __instance, [HarmonyArgument(0)] NetworkedPlayerInfo target) => GameSystemLogPatch.ReportDeadBodySystemLog(__instance, target);
 
         // 投票感知&記載(Hostのみ)
         [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.CastVote)), HarmonyPostfix]
-        static void MeetingCastVotePostfix(byte srcPlayerId, byte suspectPlayerId) => SystemLogMethodManager.MeetingCastVoteSystemLog(srcPlayerId, suspectPlayerId);
+        static void MeetingCastVotePostfix(byte srcPlayerId, byte suspectPlayerId) => GameSystemLogPatch.MeetingCastVoteSystemLog(srcPlayerId, suspectPlayerId);
 
         // 開票(Hostのみ)
         [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.CheckForEndVoting)), HarmonyPostfix]
-        static void CheckForEndVotingPostfix(MeetingHud __instance) => SystemLogMethodManager.VoteLogMethodManager.MeetingCastVoteSave(__instance);
+        static void CheckForEndVotingPostfix(MeetingHud __instance) => GameSystemLogPatch.VoteLogMethodManager.MeetingCastVoteSave(__instance);
 
         // 会議終了(airship以外)
         [HarmonyPatch(typeof(ExileController), nameof(ExileController.WrapUp)), HarmonyPostfix]
-        static void MeetingEndPostfix(ExileController __instance) => SystemLogMethodManager.DescribeMeetingEndSystemLog(__instance.initData?.networkedPlayer);
+        static void MeetingEndPostfix(ExileController __instance) => GameSystemLogPatch.DescribeMeetingEndSystemLog(__instance.initData?.networkedPlayer);
 
         // 会議終了(airship)
         [HarmonyPatch(typeof(AirshipExileController), nameof(AirshipExileController.WrapUpAndSpawn)), HarmonyPostfix]
@@ -74,16 +74,16 @@ class AllHarmonyPatch
             if (LastPost_was == currentPost) return;
             LastPost_was = currentPost;
 
-            SystemLogMethodManager.DescribeMeetingEndSystemLog(__instance.__4__this.initData?.networkedPlayer);
+            GameSystemLogPatch.DescribeMeetingEndSystemLog(__instance.__4__this.initData?.networkedPlayer);
         }
 
         // キル発生時
         [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MurderPlayer)), HarmonyPostfix]
-        static void MurderPlayerPostfix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target) => SystemLogMethodManager.MurderPlayerSystemLog(__instance, target);
+        static void MurderPlayerPostfix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target) => GameSystemLogPatch.MurderPlayerSystemLog(__instance, target);
 
         // 試合終了
         [HarmonyPatch(typeof(EndGameManager), nameof(EndGameManager.SetEverythingUp)), HarmonyPostfix]
-        static void EndGamePostfix() => SystemLogMethodManager.EndGameSystemLog();
+        static void EndGamePostfix() => GameSystemLogPatch.EndGameSystemLog();
     }
 #pragma warning restore 8321
 }

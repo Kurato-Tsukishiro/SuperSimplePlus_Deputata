@@ -4,9 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Text.RegularExpressions;
-using BepInEx.Unity.IL2CPP;
-using HarmonyLib;
 using Hazel;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using InnerNet;
@@ -182,4 +179,20 @@ public static class Helpers
 
     public static string GetTranslation(this StringNames name) =>
         DestroyableSingleton<TranslationController>.Instance.GetString(name, new Il2CppReferenceArray<Il2CppSystem.Object>(0));
+
+    /// <summary>
+    /// stringsに含まれるファイル名に使用不可能な文字を"_"に置換する
+    /// </summary>
+    /// <param name="strings">ファイル名に使用したい未編集の文字列</param>
+    /// <returns>ファイル名に使用できるように加工した文字列を返す</returns>
+    // 参考? => https://github.com/ykundesu/SuperNewRoles/blob/1.8.1.0/SuperNewRoles/Modules/Logger.cs#L118-L131
+    internal static string ReplaceUnusableStringsAsFileNames(string strings)
+    {
+        var invalidChars = Path.GetInvalidFileNameChars();
+        string fileName = strings;
+        foreach (var invalid in invalidChars)
+            fileName = fileName.Replace($"{invalid}", "_");
+        fileName = fileName.Replace($".", "_");
+        return fileName;
+    }
 }
