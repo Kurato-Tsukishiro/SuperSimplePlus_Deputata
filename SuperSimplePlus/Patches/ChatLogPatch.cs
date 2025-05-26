@@ -16,40 +16,31 @@ using static SuperSimplePlus.Patches.SystemLogMethodManager.VoteLogMethodManager
 
 namespace SuperSimplePlus.Patches;
 
-// 参考=>https://github.com/ykundesu/SuperNewRoles/blob/master/SuperNewRoles/Patches/ChatHandlerPatch.cs
-[HarmonyPatch(typeof(ChatController), nameof(ChatController.AddChat))]
-class AddChatPatch
+class RecordingChatPatch
 {
+    // 参考=>https://github.com/ykundesu/SuperNewRoles/blob/master/SuperNewRoles/Patches/ChatHandlerPatch.cs
     /// <summary>
     /// チャットに流れた文字をチャットログを作成するメソッドに渡す。
     /// SNRのコマンドの返答等SNR側のSystemMessageの場合はSystemMessageとして反映する。
     /// </summary>
     /// <param name="sourcePlayer">チャット送信者</param>
     /// <param name="chatText">チャット内容</param>
-    public static void Prefix(PlayerControl sourcePlayer, string chatText)
+    internal static void MonitorChat(PlayerControl sourcePlayer, string chatText)
     {
-        if (!SSPPlugin.ChatLog.Value) return; // ChatLogを作成しない設定だったら読まないようにする。
-
         if (!sourcePlayer.GetClient().PlayerName.Contains(SNRSystemMessage))
             SaveChatLog(GetChatLog(sourcePlayer.GetClient(), chatText));
         else
             SaveSystemLog(GetSystemMessageLog(chatText));
     }
-}
 
-// 参照 => https://github.com/ykundesu/SuperNewRoles/blob/1.8.1.0/SuperNewRoles/Patches/ChatCommandPatch.cs
-[HarmonyPatch(typeof(ChatController), nameof(ChatController.SendChat))]
-class SendChatPatch
-{
-    private static bool ResetedMemo = false;
-    private static readonly string LogMemoFilePath = Path.GetDirectoryName(Application.dataPath) + @"\SSP_Deputata\AmongUs_ChatMemo.log";
-
-    static bool Prefix(ChatController __instance)
+    // 参照 => https://github.com/ykundesu/SuperNewRoles/blob/1.8.1.0/SuperNewRoles/Patches/ChatCommandPatch.cs
+    /// <summary> チャットコマンドの制御を行う </summary>
+    /// <param name="__instance"></param>
+    /// <param name="handled">チャットの送信を無効にするか</param>
+    internal static void SendChatPrefix(ChatController __instance, out bool handled)
     {
-        if (!SSPPlugin.ChatLog.Value) return true; // ChatLogを作成しない設定だったら判定しないようにする。
-
         string text = __instance.freeChatField.textArea.text, addChatMemo = __instance.freeChatField.textArea.text;
-        bool handled = false;
+        handled = false;
 
         if (text.ToLower().StartsWith("/cm") || text.ToLower().StartsWith("/memo"))
         {
@@ -75,39 +66,52 @@ class SendChatPatch
 
                 handled = true;
 
-                string comReplaceStr =
-                    ReplaceUnusableStringsAsFileNames(text.Replace("/sgl ", "").Replace("/sgl", "").Replace("/savegamelog ", "").Replace("/savegamelog", ""));
+                string removeCommandText = text.Replace("/sgl ", "").Replace("/sgl", "").Replace("/savegamelog ", "").Replace("/savegamelog", "");
+                string[] commandArray = removeCommandText.Replace(", ", ",").Split(','); // チャットコマンドの引数の区切りを','としている為、これで引数を抜き出せる
 
-                string[] nameArray = comReplaceStr.Split(',');
-                int count = GameCount; // Logを取得したい回 (初期値:最終のlog)
-                string status = $"[Error(SaveGameLog)] : 有効なコマンド列でなかった為,抜き出しに失敗しました。\n( {text} )"; // 返答の初期値をエラー表記にしている
 
-                foreach (string name in nameArray)
+                string saveStatusMessage = IsValidatingCommand(commandArray, out int index, out int logNum)
+                    ? SendChatPatch.ManuallySaveGameLog(index >= 0 ? commandArray[index] : Empty, logNum) // ファイル名が入力されていない(index == -1)場合は空の文字列を渡す
+                    : $"[Error(SaveGameLog)] : 有効なコマンド列でなかった為,抜き出しに失敗しました。\n( {text} )";
+
+                addChatMemo = saveStatusMessage;
+                __instance.AddChat(PlayerControl.LocalPlayer, saveStatusMessage);
+
+                // 有効なコマンドかの判定と、コマンドの引数の取得を行う
+                bool IsValidatingCommand(string[] array, out int index, out int count)
                 {
-                    if (int.TryParse(name, out int parse))
+                    index = -1; // -1 の時ファイル名指定なしとする
+                    count = 0;
+
+                    if (array.Length <= 0) return false;
+
+                    if (int.TryParse(array[0], out int parse))
                     {
-                        count = parse; // 取得したいゲームの回数が指定されていた場合, 取得する。
-                        continue;
+                        count = parse; // 引数1を取得対象のログの指定として取得
+                        index = 1; // 引数2をファイル名として取得
+                    }
+                    else
+                    {
+                        count = GameCount; // 指定されていない場合は 最終試合を取得対象とする。
+                        index = 0; // 引数1をファイル名として取得
                     }
 
-                    status = GemeLogSaveAs(name, count); // ゲームログを取得する。
-                    break;
+                    if (index >= commandArray.Length) index = -1; // 範囲外エラーが発生する場合は、ファイル名の引数が渡されなかったものとみなす
+                    return true; // 配列 範囲チェック (ファイル名が正常に指定されているか
                 }
-
-                addChatMemo = status;
-                __instance.AddChat(PlayerControl.LocalPlayer, status);
             }
         }
 
-        SaveChatMemo(addChatMemo);
-
-        if (handled)
-        {
-            __instance.freeChatField.textArea.Clear();
-            FastDestroyableSingleton<HudManager>.Instance.Chat.timeSinceLastMessage = 0f;
-        }
-        return !handled;
+        SendChatPatch.SaveChatMemo(addChatMemo);
     }
+}
+
+// FIXME : "SaveChatMemo"は"SaveChatLogPatch"に移動し、GameLog関連のMethod 及び 汎用的なMethodを該当のクラスに移動して、このクラスは削除する。
+
+class SendChatPatch
+{
+    private static bool ResetedMemo = false;
+    private static readonly string LogMemoFilePath = Path.GetDirectoryName(Application.dataPath) + @"\SSP_Deputata\AmongUs_ChatMemo.log";
 
     /// <summary>
     /// AmongUs_ChatMemo.logに自分のチャットと自視点メモを記載する。
@@ -130,6 +134,12 @@ class SendChatPatch
         }
     }
 
+    internal static string ManuallySaveGameLog(string importFileName, int count)
+    {
+        GemeLogSaveAs(ReplaceUnusableStringsAsFileNames(importFileName), count, out string saveStatusMessage); // ゲームログを取得する。
+        return saveStatusMessage;
+    }
+
     /// <summary>
     /// 一個前の試合のGameLogのみを任意のファイル名で保存する。　
     /// getCountを省略した(引数として`0`を渡した)場合、「最終のログ」を取得する
@@ -137,7 +147,7 @@ class SendChatPatch
     /// <param name="name">任意のfile名</param>
     /// <param name="getCount">ログを取得したいゲームの回数</param>
     /// <returns>string : 保存処理の結果</returns>
-    private static string GemeLogSaveAs(string name, int getCount)
+    private static void GemeLogSaveAs(string name, int getCount, out string saveStatusMessage)
     {
         string date = DateTime.Now.ToString("yyMMdd_HHmm");
         string fileName = $"{date}_{getCount}_{name}_GameLog" + ".log";
@@ -153,18 +163,18 @@ class SendChatPatch
             {
                 using StreamWriter sw = new(newFilePath, false);
                 sw.WriteLine(log);
-                return $"[ {fileName} ] に ゲームログを抜き出しました。";
+                saveStatusMessage = $"[ {fileName} ] に ゲームログを抜き出しました。";
             }
             else
             {
                 Logger.Error(log);
-                return $"[Error] {log}";
+                saveStatusMessage = $"[Error] {log}";
             }
         }
         catch (Exception e)
         {
             Logger.Error($"ゲームログの抜き出し保存に失敗しました : {e}");
-            return "[Error] ゲームログの抜き出し保存に失敗しました。";
+            saveStatusMessage = "[Error] ゲームログの抜き出し保存に失敗しました。";
         }
     }
 
@@ -174,7 +184,7 @@ class SendChatPatch
     /// <param name="strings">ファイル名に使用したい未編集の文字列</param>
     /// <returns>ファイル名に使用できるように加工した文字列を返す</returns>
     // 参考? => https://github.com/ykundesu/SuperNewRoles/blob/1.8.1.0/SuperNewRoles/Modules/Logger.cs#L118-L131
-    private static string ReplaceUnusableStringsAsFileNames(string strings)
+    internal static string ReplaceUnusableStringsAsFileNames(string strings)
     {
         var invalidChars = Path.GetInvalidFileNameChars();
         string fileName = strings;
@@ -314,7 +324,7 @@ internal static class SaveChatLogPatch
         await sw.WriteLineAsync(useLogString);
     }
     internal static (string log, bool success) GetGameLogDic(int count) =>
-        GameLogDic.ContainsKey(count) ? (GameLogDic[count], true) : (Format(ModTranslation.GetString("GetGameLogDicError"), count), false);
+        count <= 0 ? (Format(ModTranslation.GetString("GetGameLogDicError"), count), false) : GameLogDic.ContainsKey(count) ? (GameLogDic[count], true) : (Format(ModTranslation.GetString("GetGameLogDicError"), count), false);
 }
 
 /// <summary>

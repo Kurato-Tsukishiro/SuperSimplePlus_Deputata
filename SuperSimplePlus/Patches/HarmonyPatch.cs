@@ -14,6 +14,30 @@ class AllHarmonyPatch
 
     private static int LastPost_was;
 
+    public static void ChatLogHarmony()
+    {
+        if (!SSPPlugin.ChatLog.Value) return; // ChatLogを作成しない設定だったら読まないようにする。
+
+        // チャット履歴の保存
+        [HarmonyPatch(typeof(ChatController), nameof(ChatController.AddChat)), HarmonyPrefix]
+        static void AddChatPrefix(PlayerControl sourcePlayer, string chatText) => RecordingChatPatch.MonitorChat(sourcePlayer, chatText);
+
+        // チャットコマンドの監視
+        [HarmonyPatch(typeof(ChatController), nameof(ChatController.SendChat)), HarmonyPrefix]
+        static bool SendChatPrefix(ChatController __instance)
+        {
+            RecordingChatPatch.SendChatPrefix(__instance, out bool handled);
+
+            if (handled)
+            {
+                __instance.freeChatField.textArea.Clear();
+                FastDestroyableSingleton<HudManager>.Instance.Chat.timeSinceLastMessage = 0f;
+            }
+            return !handled;
+        }
+    }
+
+    /// <summary>ゲームログの作成関連で使用している HarmonyPatch</summary>
     public static void GameLogHarmony()
     {
         if (!SSPPlugin.ChatLog.Value) return; // ChatLogを作成しない設定だったら読まないようにする。
