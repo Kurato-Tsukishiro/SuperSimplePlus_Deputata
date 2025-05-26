@@ -27,9 +27,6 @@ class GameSystemLogPatch
     /// </summary>
     internal static void IntroCutsceneCoBeginSystemLog()
     {
-        if (!SSPPlugin.ChatLog.Value) return;
-
-        // TODO:確かサクランダーさんが「ログに試合数を記載したい」と言っていたので入れてみた。うまく動けばSNRにも実装したい
         GameLogManager.GameCount++;
         SaveSystemLog(GetSystemMessageLog(delimiterLine));
 
@@ -69,8 +66,6 @@ class GameSystemLogPatch
     // 会議開始
     internal static void MeetingStartSystemLog(MeetingHud __instance)
     {
-        if (!SSPPlugin.ChatLog.Value) return;
-
         VariableManager.NumberOfMeetings++;
         SaveSystemLog(GetSystemMessageLog("=================Task Phase End================="));
         SaveSystemLog("\n");
@@ -93,8 +88,6 @@ class GameSystemLogPatch
     // 死体通報
     internal static void ReportDeadBodySystemLog(PlayerControl convener, NetworkedPlayerInfo target)
     {
-        if (!SSPPlugin.ChatLog.Value) return;
-
         if (convener == null) return;
         if (target == null) SaveSystemLog(GetSystemMessageLog($"[{convener.name}] が 緊急招集しました。"));
         else SaveSystemLog(GetSystemMessageLog($"[{convener.name}] が [{target.Object.name}] の死体を通報しました。"));
@@ -107,8 +100,6 @@ class GameSystemLogPatch
     /// <param name="suspectPlayerId">投票先のPlayerId</param>
     internal static void MeetingCastVoteSystemLog(byte srcPlayerId, byte suspectPlayerId)
     {
-        if (!SSPPlugin.ChatLog.Value) return;
-
         string openVoteMessage = VoteLogMethodManager.GetOpenVoteMessage(PlayerById(srcPlayerId).GetClient().PlayerName, VoteLogMethodManager.WhereToVoteInfo(suspectPlayerId), suspectPlayerId);
         OpenVoteSystemLog(openVoteMessage);
     }
@@ -118,8 +109,6 @@ class GameSystemLogPatch
     // 会議終了
     internal static void DescribeMeetingEndSystemLog(NetworkedPlayerInfo exiled)
     {
-        if (!SSPPlugin.ChatLog.Value) return;
-
         SaveSystemLog("\n");
         SaveSystemLog(GetSystemMessageLog("=================End Meeting Info================="));
         if (exiled != null && exiled.Object == null) exiled = null;
@@ -149,8 +138,6 @@ class GameSystemLogPatch
 
     internal static void CrimeTimeAndKillerAndVictimLog()
     {
-        if (!SSPPlugin.ChatLog.Value) return;
-
         foreach (KeyValuePair<DateTime, (ClientData, ClientData)> kvp in VariableManager.CrimeTimeAndKillersAndVictims)
         {
             ClientData killerClient = kvp.Value.Item1;
@@ -190,8 +177,6 @@ class GameSystemLogPatch
     // キル発生時
     internal static void MurderPlayerSystemLog(PlayerControl Killer, PlayerControl victim)
     {
-        if (!SSPPlugin.ChatLog.Value) return;
-
         SaveSystemLog(GetSystemMessageLog($"[ {Killer.name} ] が [ {victim.name} ]を殺害しました。"));
         VariableManager.CrimeTimeAndKillersAndVictims[DateTime.Now] = (Killer.GetClient(), victim.GetClient());
     }
@@ -199,8 +184,6 @@ class GameSystemLogPatch
     // 試合終了
     internal static void EndGameSystemLog()
     {
-        if (!SSPPlugin.ChatLog.Value) return;
-
         SaveSystemLog(GetSystemMessageLog(delimiterLine), false);
         SaveSystemLog(GetSystemMessageLog("=================End Game Info================="), false);
         SaveSystemLog(GetSystemMessageLog($"{GameLogManager.GameCount}回目の試合 終了"), false);
@@ -226,8 +209,6 @@ class GameSystemLogPatch
         /// <param name="__instance"></param>
         internal static void MeetingCastVoteSave(MeetingHud __instance)
         {
-            if (!SSPPlugin.ChatLog.Value) return;
-
             foreach (PlayerVoteArea playerVoteArea in __instance.playerStates)
             {
                 byte srcPlayerId = playerVoteArea.TargetPlayerId;
