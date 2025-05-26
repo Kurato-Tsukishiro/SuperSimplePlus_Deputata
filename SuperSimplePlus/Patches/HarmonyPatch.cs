@@ -6,7 +6,7 @@ namespace SuperSimplePlus.Patches;
 /// チャットログに記載する、システムメッセージに関わるHarmonyPatchを纏めている。
 /// </summary>
 [HarmonyPatch]
-class ChatLogHarmonyPatch
+class AllHarmonyPatch
 {
 #pragma warning disable 8321
     // HarmonyPatchはローカル宣言で呼び出していなくても動くのに「ローカル関数 '関数名' は宣言されていますが、一度も使用されていません」と警告が出る為
@@ -14,7 +14,7 @@ class ChatLogHarmonyPatch
 
     private static int LastPost_was;
 
-    public static void ChatLogHarmony()
+    public static void GameLogHarmony()
     {
         if (!SSPPlugin.ChatLog.Value) return; // ChatLogを作成しない設定だったら読まないようにする。
 
