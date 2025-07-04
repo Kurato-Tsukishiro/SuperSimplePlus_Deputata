@@ -14,6 +14,7 @@ namespace SuperSimplePlus.Patches;
 [HarmonyPatch]
 internal static class ClientOptionsPatch
 {
+    // ChatLog を index = 3 として ボタン翻訳を上書きしているため, クライアント設定を変更した場合そこの対応も行う
     private static readonly SelectionBehaviour[] AllOptions = {
             new(ModTranslation.GetString("NotPCKick"),()=> SSPPlugin.NotPCKick.Value = !SSPPlugin.NotPCKick.Value,SSPPlugin.NotPCKick.Value),
             new(ModTranslation.GetString("NotPCBan"),()=> SSPPlugin.NotPCBan.Value = !SSPPlugin.NotPCBan.Value,SSPPlugin.NotPCBan.Value),
@@ -21,6 +22,8 @@ internal static class ClientOptionsPatch
             new(ModTranslation.GetString("ChatLog"),()=> SSPPlugin.ChatLog.Value = !SSPPlugin.ChatLog.Value,SSPPlugin.ChatLog.Value),
             new(ModTranslation.GetString("HideFriendCode"),()=> SSPPlugin.HideFriendCode.Value = !SSPPlugin.HideFriendCode.Value,SSPPlugin.HideFriendCode.Value),
     };
+
+    private static readonly bool IsValidChatLog = SSPPlugin.ChatLog.Value;
 
     private static GameObject popUp;
     private static TextMeshPro titleText;
@@ -187,6 +190,7 @@ internal static class ClientOptionsPatch
             button.Background.color = button.onState ? Color.green : Palette.ImpostorRed;
 
             button.Text.text = ModTranslation.GetString(info.Title);
+            if (i == 3) { button.Text.text += IsValidChatLog ? $"\n{ModTranslation.GetString("ChatLogOn")}" : $"\n{ModTranslation.GetString("ChatLogOff")}"; }
             button.Text.fontSizeMin = button.Text.fontSizeMax = 2.2f;
             button.Text.font = Object.Instantiate(titleText.font);
             button.Text.GetComponent<RectTransform>().sizeDelta = new Vector2(2, 2);
