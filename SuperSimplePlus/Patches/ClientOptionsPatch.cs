@@ -23,7 +23,7 @@ internal static class ClientOptionsPatch
             new(ModTranslation.GetString("HideFriendCode"),()=> SSPPlugin.HideFriendCode.Value = !SSPPlugin.HideFriendCode.Value,SSPPlugin.HideFriendCode.Value),
     };
 
-    private static readonly bool IsValidChatLog = SSPPlugin.ChatLog.Value;
+    internal static readonly bool IsValidChatLog = SSPPlugin.ChatLog.Value;
 
     private static GameObject popUp;
     private static TextMeshPro titleText;
