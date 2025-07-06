@@ -58,7 +58,7 @@ internal static class GameLogManager
         string fileName = $"{date}_AmongUs_GameLog.log";
         _chatLogFilePath = @$"{chatLogFolderPath}" + @$"{fileName}";
 
-        if (!SSPPlugin.ChatLog.Value) return;
+        if (!ClientOptionsPatch.IsValidChatLog) return;
 
         Logger.Info($"{Format(ModTranslation.GetString("ChatLogFileCreate"), fileName)}");
         SaveSystemLog(GetSystemMessageLog($"{Format(ModTranslation.GetString("ChatLogFileCreate"), fileName)}"));
