@@ -36,7 +36,7 @@ public class SSPPlugin : BasePlugin
         debugTool = Config.Bind("Client Options", "Debug Tool", false);
         NotPCKick = Config.Bind("Client Options", "NotPCKick", false);
         NotPCBan = Config.Bind("Client Options", "NotPCBan", false);
-        GameLog = Config.Bind("Client Options", "GameLog", true);
+        GameLog = Config.Bind("Client Options", "GameLog", false);
         HideFriendCode = Config.Bind("Client Options", "HideFriendCode", true);
         FriendCodeBan = Config.Bind("Client Options", "FriendCodeBan", false);
 
