@@ -14,7 +14,6 @@ namespace SuperSimplePlus.Patches;
 [HarmonyPatch]
 internal static class ClientOptionsPatch
 {
-    // ChatLog を index = 3 として ボタン翻訳を上書きしているため, クライアント設定を変更した場合そこの対応も行う
     private static readonly SelectionBehaviour[] AllOptions = {
             new("NotPCKick", () => SSPPlugin.NotPCKick.Value = !SSPPlugin.NotPCKick.Value, SSPPlugin.NotPCKick.Value),
             new("NotPCBan", () => SSPPlugin.NotPCBan.Value = !SSPPlugin.NotPCBan.Value, SSPPlugin.NotPCBan.Value),
@@ -188,7 +187,7 @@ internal static class ClientOptionsPatch
             button.Background.color = button.onState ? Color.green : Palette.ImpostorRed;
 
             button.Text.text = ModTranslation.GetString(info.Title);
-            if (i == 3) { button.Text.text += GameLogManager.IsValidChatLog ? $"\n{ModTranslation.GetString("ChatLogOn")}" : $"\n{ModTranslation.GetString("ChatLogOff")}"; }
+            if (info.Key == "GameLog") { button.Text.text += GameLogManager.IsValidChatLog ? $"\n{ModTranslation.GetString("ChatLogOn")}" : $"\n{ModTranslation.GetString("ChatLogOff")}"; }
             button.Text.fontSizeMin = button.Text.fontSizeMax = 2.2f;
             button.Text.font = Object.Instantiate(titleText.font);
             button.Text.GetComponent<RectTransform>().sizeDelta = new Vector2(2, 2);
