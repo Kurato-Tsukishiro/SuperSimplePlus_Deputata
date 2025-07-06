@@ -8,13 +8,9 @@ namespace SuperSimplePlus.Patches;
 [HarmonyPatch]
 class AllHarmonyPatch
 {
-#pragma warning disable 8321
-    // HarmonyPatchはローカル宣言で呼び出していなくても動くのに「ローカル関数 '関数名' は宣言されていますが、一度も使用されていません」と警告が出る為
-    // このメソッドでは警告を表示しないようにしている
-
     private static int LastPost_was;
 
-    static void ChatLogHarmony()
+    static class ChatLogHarmony
     {
         // チャット履歴の保存
         [HarmonyPatch(typeof(ChatController), nameof(ChatController.AddChat)), HarmonyPrepare]
@@ -43,7 +39,7 @@ class AllHarmonyPatch
     }
 
     /// <summary>ゲームログの作成関連で使用している HarmonyPatch</summary>
-    static void GameLogHarmony()
+    static class GameLogHarmony
     {
         // ゲーム開始時に情報を記載する
         [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.CoBegin)), HarmonyPrepare]
@@ -127,5 +123,4 @@ class AllHarmonyPatch
             GameSystemLogPatch.EndGameSystemLog();
         }
     }
-#pragma warning restore 8321
 }
