@@ -34,11 +34,11 @@ public class SSPPlugin : BasePlugin
         SuperSimplePlus.Logger.Info("SuperSimplePlus_Deputata 読み込み開始", shortModName);
 
         debugTool = Config.Bind("Client Options", "Debug Tool", false);
-        NotPCKick = Config.Bind("Client Options", "NotPCKick", false);
-        NotPCBan = Config.Bind("Client Options", "NotPCBan", false);
-        GameLog = Config.Bind("Client Options", "GameLog", false);
-        HideFriendCode = Config.Bind("Client Options", "HideFriendCode", true);
-        FriendCodeBan = Config.Bind("Client Options", "FriendCodeBan", false);
+        NotPCKick = Config.Bind("Client Options", "NotPCKick", false, "Steam及びEpic以外のプラットフォームのプレイヤーをキックするか");
+        NotPCBan = Config.Bind("Client Options", "NotPCBan", false, "Steam及びEpic以外のプラットフォームのプレイヤーをバンするか (優先)");
+        GameLog = Config.Bind("Client Options", "GameLog", false, "ゲームログ及びチャットログを作成するか");
+        HideFriendCode = Config.Bind("Client Options", "HideFriendCode", true, "ゲームログでフレンドコードを非表示にするか");
+        FriendCodeBan = Config.Bind("Client Options", "FriendCodeBan", false, "外部ファイルに記録されたフレンドコードをバンする機能を有効にするか");
 
         //Load
         ModTranslation.LoadCsv();
