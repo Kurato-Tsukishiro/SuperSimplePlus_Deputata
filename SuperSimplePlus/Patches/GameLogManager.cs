@@ -18,6 +18,8 @@ internal static class GameLogManager
         GameLogFileCreate();
     }
 
+    internal static readonly bool IsValidChatLog = SSPPlugin.ChatLog.Value;
+
     internal static string SSPDFolderPath { get { return _SSPDFolderPath; } }
     private static string _SSPDFolderPath;
 
@@ -58,7 +60,7 @@ internal static class GameLogManager
         string fileName = $"{date}_AmongUs_GameLog.log";
         _chatLogFilePath = @$"{chatLogFolderPath}" + @$"{fileName}";
 
-        if (!ClientOptionsPatch.IsValidChatLog) return;
+        if (!IsValidChatLog) return;
 
         Logger.Info($"{Format(ModTranslation.GetString("ChatLogFileCreate"), fileName)}");
         SaveSystemLog(GetSystemMessageLog($"{Format(ModTranslation.GetString("ChatLogFileCreate"), fileName)}"));

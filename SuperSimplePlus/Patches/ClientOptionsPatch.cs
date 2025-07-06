@@ -23,8 +23,6 @@ internal static class ClientOptionsPatch
             new(ModTranslation.GetString("HideFriendCode"),()=> SSPPlugin.HideFriendCode.Value = !SSPPlugin.HideFriendCode.Value,SSPPlugin.HideFriendCode.Value),
     };
 
-    internal static readonly bool IsValidChatLog = SSPPlugin.ChatLog.Value;
-
     private static GameObject popUp;
     private static TextMeshPro titleText;
 
@@ -190,7 +188,7 @@ internal static class ClientOptionsPatch
             button.Background.color = button.onState ? Color.green : Palette.ImpostorRed;
 
             button.Text.text = ModTranslation.GetString(info.Title);
-            if (i == 3) { button.Text.text += IsValidChatLog ? $"\n{ModTranslation.GetString("ChatLogOn")}" : $"\n{ModTranslation.GetString("ChatLogOff")}"; }
+            if (i == 3) { button.Text.text += GameLogManager.IsValidChatLog ? $"\n{ModTranslation.GetString("ChatLogOn")}" : $"\n{ModTranslation.GetString("ChatLogOff")}"; }
             button.Text.fontSizeMin = button.Text.fontSizeMax = 2.2f;
             button.Text.font = Object.Instantiate(titleText.font);
             button.Text.GetComponent<RectTransform>().sizeDelta = new Vector2(2, 2);

@@ -177,7 +177,7 @@ internal static class SaveChatLogPatch
     /// <param name="processingRequired">true : 自分の発言, 要加工 / false : システムログ </param>
     internal static void SaveChatMemo(string chatMemo, bool processingRequired = true)
     {
-        if (!ClientOptionsPatch.IsValidChatLog) return;
+        if (!GameLogManager.IsValidChatLog) return;
 
         string date = DateTime.Now.ToString("[HH:mm:ss]");
         string outChatMemo = processingRequired ? $"{date} {PlayerControl.LocalPlayer?.GetClient().PlayerName} : {chatMemo}" : $"{date} {chatMemo}";

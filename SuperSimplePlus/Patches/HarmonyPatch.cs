@@ -18,7 +18,7 @@ class AllHarmonyPatch
     {
         // チャット履歴の保存
         [HarmonyPatch(typeof(ChatController), nameof(ChatController.AddChat)), HarmonyPrepare]
-        static bool AddChatPrepare() => ClientOptionsPatch.IsValidChatLog;
+        static bool AddChatPrepare() => GameLogManager.IsValidChatLog;
         [HarmonyPatch(typeof(ChatController), nameof(ChatController.AddChat)), HarmonyPrefix]
         static void AddChatPrefix(PlayerControl sourcePlayer, string chatText)
         {
@@ -27,7 +27,7 @@ class AllHarmonyPatch
 
         // チャットコマンドの監視
         [HarmonyPatch(typeof(ChatController), nameof(ChatController.SendChat)), HarmonyPrepare]
-        static bool SendChatPrepare() => ClientOptionsPatch.IsValidChatLog;
+        static bool SendChatPrepare() => GameLogManager.IsValidChatLog;
         [HarmonyPatch(typeof(ChatController), nameof(ChatController.SendChat)), HarmonyPrefix]
         static bool SendChatPrefix(ChatController __instance)
         {
@@ -47,7 +47,7 @@ class AllHarmonyPatch
     {
         // ゲーム開始時に情報を記載する
         [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.CoBegin)), HarmonyPrepare]
-        static bool IntroCutsceneCoBeginPrepare() => ClientOptionsPatch.IsValidChatLog;
+        static bool IntroCutsceneCoBeginPrepare() => GameLogManager.IsValidChatLog;
         [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.CoBegin)), HarmonyPostfix]
         static void IntroCutsceneCoBeginPostfix()
         {
@@ -56,7 +56,7 @@ class AllHarmonyPatch
 
         // 会議開始
         [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.Start)), HarmonyPrepare]
-        static bool MeetingStartPrepare() => ClientOptionsPatch.IsValidChatLog;
+        static bool MeetingStartPrepare() => GameLogManager.IsValidChatLog;
         [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.Start)), HarmonyPostfix]
         static void MeetingStartPostfix(MeetingHud __instance)
         {
@@ -65,7 +65,7 @@ class AllHarmonyPatch
 
         // 死体通報
         [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.ReportDeadBody)), HarmonyPrepare]
-        static bool ReportDeadBodyPrepare() => ClientOptionsPatch.IsValidChatLog;
+        static bool ReportDeadBodyPrepare() => GameLogManager.IsValidChatLog;
         [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.ReportDeadBody)), HarmonyPostfix]
         static void ReportDeadBodyPostfix(PlayerControl __instance, [HarmonyArgument(0)] NetworkedPlayerInfo target)
         {
@@ -74,7 +74,7 @@ class AllHarmonyPatch
 
         // 投票感知&記載(Hostのみ)
         [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.CastVote)), HarmonyPrepare]
-        static bool MeetingCastVotePrepare() => ClientOptionsPatch.IsValidChatLog;
+        static bool MeetingCastVotePrepare() => GameLogManager.IsValidChatLog;
         [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.CastVote)), HarmonyPostfix]
         static void MeetingCastVotePostfix(byte srcPlayerId, byte suspectPlayerId)
         {
@@ -82,7 +82,7 @@ class AllHarmonyPatch
         }
         // 開票(Hostのみ)
         [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.CheckForEndVoting)), HarmonyPrepare]
-        static bool CheckForEndVotingPrepare() => ClientOptionsPatch.IsValidChatLog;
+        static bool CheckForEndVotingPrepare() => GameLogManager.IsValidChatLog;
         [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.CheckForEndVoting)), HarmonyPostfix]
         static void CheckForEndVotingPostfix(MeetingHud __instance)
         {
@@ -90,7 +90,7 @@ class AllHarmonyPatch
         }
         // 会議終了(airship以外)
         [HarmonyPatch(typeof(ExileController), nameof(ExileController.WrapUp)), HarmonyPrepare]
-        static bool MeetingEndPrepare() => ClientOptionsPatch.IsValidChatLog;
+        static bool MeetingEndPrepare() => GameLogManager.IsValidChatLog;
         [HarmonyPatch(typeof(ExileController), nameof(ExileController.WrapUp)), HarmonyPostfix]
         static void MeetingEndPostfix(ExileController __instance)
         {
@@ -98,7 +98,7 @@ class AllHarmonyPatch
         }
         // 会議終了(airship)
         [HarmonyPatch(typeof(AirshipExileController), nameof(AirshipExileController.WrapUpAndSpawn)), HarmonyPrepare]
-        static bool AirshipMeetingEndPrepare() => ClientOptionsPatch.IsValidChatLog;
+        static bool AirshipMeetingEndPrepare() => GameLogManager.IsValidChatLog;
         [HarmonyPatch(typeof(AirshipExileController), nameof(AirshipExileController.WrapUpAndSpawn)), HarmonyPostfix]
         static void AirshipMeetingEndPostfix(AirshipExileController._WrapUpAndSpawn_d__11 __instance)
         {
@@ -112,7 +112,7 @@ class AllHarmonyPatch
 
         // キル発生時
         [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MurderPlayer)), HarmonyPrepare]
-        static bool MurderPlayerPrepare() => ClientOptionsPatch.IsValidChatLog;
+        static bool MurderPlayerPrepare() => GameLogManager.IsValidChatLog;
         [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MurderPlayer)), HarmonyPostfix]
         static void MurderPlayerPostfix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
         {
@@ -120,7 +120,7 @@ class AllHarmonyPatch
         }
         // 試合終了
         [HarmonyPatch(typeof(EndGameManager), nameof(EndGameManager.SetEverythingUp)), HarmonyPrepare]
-        static bool EndGamePrepare() => ClientOptionsPatch.IsValidChatLog;
+        static bool EndGamePrepare() => GameLogManager.IsValidChatLog;
         [HarmonyPatch(typeof(EndGameManager), nameof(EndGameManager.SetEverythingUp)), HarmonyPostfix]
         static void EndGamePostfix()
         {
