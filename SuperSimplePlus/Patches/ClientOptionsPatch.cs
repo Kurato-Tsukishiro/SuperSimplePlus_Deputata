@@ -16,11 +16,11 @@ internal static class ClientOptionsPatch
 {
     // ChatLog を index = 3 として ボタン翻訳を上書きしているため, クライアント設定を変更した場合そこの対応も行う
     private static readonly SelectionBehaviour[] AllOptions = {
-            new(ModTranslation.GetString("NotPCKick"),()=> SSPPlugin.NotPCKick.Value = !SSPPlugin.NotPCKick.Value,SSPPlugin.NotPCKick.Value),
-            new(ModTranslation.GetString("NotPCBan"),()=> SSPPlugin.NotPCBan.Value = !SSPPlugin.NotPCBan.Value,SSPPlugin.NotPCBan.Value),
-            new(ModTranslation.GetString("FriendCodeBan"),()=> SSPPlugin.FriendCodeBan.Value = !SSPPlugin.FriendCodeBan.Value,SSPPlugin.FriendCodeBan.Value),
-            new(ModTranslation.GetString("ChatLog"),()=> SSPPlugin.ChatLog.Value = !SSPPlugin.ChatLog.Value,SSPPlugin.ChatLog.Value),
-            new(ModTranslation.GetString("HideFriendCode"),()=> SSPPlugin.HideFriendCode.Value = !SSPPlugin.HideFriendCode.Value,SSPPlugin.HideFriendCode.Value),
+            new("NotPCKick", () => SSPPlugin.NotPCKick.Value = !SSPPlugin.NotPCKick.Value, SSPPlugin.NotPCKick.Value),
+            new("NotPCBan", () => SSPPlugin.NotPCBan.Value = !SSPPlugin.NotPCBan.Value, SSPPlugin.NotPCBan.Value),
+            new("FriendCodeBan", () => SSPPlugin.FriendCodeBan.Value = !SSPPlugin.FriendCodeBan.Value, SSPPlugin.FriendCodeBan.Value),
+            new("ChatLog", () => SSPPlugin.ChatLog.Value = !SSPPlugin.ChatLog.Value, SSPPlugin.ChatLog.Value),
+            new("HideFriendCode", () => SSPPlugin.HideFriendCode.Value = !SSPPlugin.HideFriendCode.Value, SSPPlugin.HideFriendCode.Value),
     };
 
     private static GameObject popUp;
@@ -229,13 +229,17 @@ internal static class ClientOptionsPatch
 
     internal class SelectionBehaviour
     {
-        internal string Title;
-        internal Func<bool> OnClick;
-        internal bool DefaultValue;
+        /// <summary>翻訳キー</summary>
+        internal readonly string Key;
+        /// <summary>表示名</summary>
+        internal readonly string Title;
+        internal readonly Func<bool> OnClick;
+        internal readonly bool DefaultValue;
 
-        internal SelectionBehaviour(string title, Func<bool> onClick, bool defaultValue)
+        internal SelectionBehaviour(string key, Func<bool> onClick, bool defaultValue)
         {
-            Title = title;
+            Key = key;
+            Title = ModTranslation.GetString(key);
             OnClick = onClick;
             DefaultValue = defaultValue;
         }
