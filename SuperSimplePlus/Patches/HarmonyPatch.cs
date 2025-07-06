@@ -8,29 +8,25 @@ namespace SuperSimplePlus.Patches;
 [HarmonyPatch]
 class AllHarmonyPatch
 {
-#pragma warning disable 8321
-    // HarmonyPatchはローカル宣言で呼び出していなくても動くのに「ローカル関数 '関数名' は宣言されていますが、一度も使用されていません」と警告が出る為
-    // このメソッドでは警告を表示しないようにしている
-
     private static int LastPost_was;
-    private static bool isValidChatLog => SSPPlugin.ChatLog.Value;
 
-    static void ChatLogHarmony()
+    static class ChatLogHarmony
     {
         // チャット履歴の保存
+        [HarmonyPatch(typeof(ChatController), nameof(ChatController.AddChat)), HarmonyPrepare]
+        static bool AddChatPrepare() => GameLogManager.IsValidChatLog;
         [HarmonyPatch(typeof(ChatController), nameof(ChatController.AddChat)), HarmonyPrefix]
         static void AddChatPrefix(PlayerControl sourcePlayer, string chatText)
         {
-            if (!isValidChatLog) return;
             RecordingChatPatch.MonitorChat(sourcePlayer, chatText);
         }
 
         // チャットコマンドの監視
+        [HarmonyPatch(typeof(ChatController), nameof(ChatController.SendChat)), HarmonyPrepare]
+        static bool SendChatPrepare() => GameLogManager.IsValidChatLog;
         [HarmonyPatch(typeof(ChatController), nameof(ChatController.SendChat)), HarmonyPrefix]
         static bool SendChatPrefix(ChatController __instance)
         {
-            if (!isValidChatLog) return true;
-
             RecordingChatPatch.SendChatPrefix(__instance, out bool handled);
 
             if (handled)
@@ -43,58 +39,65 @@ class AllHarmonyPatch
     }
 
     /// <summary>ゲームログの作成関連で使用している HarmonyPatch</summary>
-    static void GameLogHarmony()
+    static class GameLogHarmony
     {
         // ゲーム開始時に情報を記載する
+        [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.CoBegin)), HarmonyPrepare]
+        static bool IntroCutsceneCoBeginPrepare() => GameLogManager.IsValidChatLog;
         [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.CoBegin)), HarmonyPostfix]
         static void IntroCutsceneCoBeginPostfix()
         {
-            if (!isValidChatLog) return;
             GameSystemLogPatch.IntroCutsceneCoBeginSystemLog();
         }
 
         // 会議開始
+        [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.Start)), HarmonyPrepare]
+        static bool MeetingStartPrepare() => GameLogManager.IsValidChatLog;
         [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.Start)), HarmonyPostfix]
         static void MeetingStartPostfix(MeetingHud __instance)
         {
-            if (!isValidChatLog) return;
             GameSystemLogPatch.MeetingStartSystemLog(__instance);
         }
 
         // 死体通報
+        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.ReportDeadBody)), HarmonyPrepare]
+        static bool ReportDeadBodyPrepare() => GameLogManager.IsValidChatLog;
         [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.ReportDeadBody)), HarmonyPostfix]
         static void ReportDeadBodyPostfix(PlayerControl __instance, [HarmonyArgument(0)] NetworkedPlayerInfo target)
         {
-            if (!isValidChatLog) return;
             GameSystemLogPatch.ReportDeadBodySystemLog(__instance, target);
         }
 
         // 投票感知&記載(Hostのみ)
+        [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.CastVote)), HarmonyPrepare]
+        static bool MeetingCastVotePrepare() => GameLogManager.IsValidChatLog;
         [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.CastVote)), HarmonyPostfix]
         static void MeetingCastVotePostfix(byte srcPlayerId, byte suspectPlayerId)
         {
-            if (!isValidChatLog) return;
             GameSystemLogPatch.MeetingCastVoteSystemLog(srcPlayerId, suspectPlayerId);
         }
         // 開票(Hostのみ)
+        [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.CheckForEndVoting)), HarmonyPrepare]
+        static bool CheckForEndVotingPrepare() => GameLogManager.IsValidChatLog;
         [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.CheckForEndVoting)), HarmonyPostfix]
         static void CheckForEndVotingPostfix(MeetingHud __instance)
         {
-            if (!isValidChatLog) return;
             GameSystemLogPatch.VoteLogMethodManager.MeetingCastVoteSave(__instance);
         }
         // 会議終了(airship以外)
+        [HarmonyPatch(typeof(ExileController), nameof(ExileController.WrapUp)), HarmonyPrepare]
+        static bool MeetingEndPrepare() => GameLogManager.IsValidChatLog;
         [HarmonyPatch(typeof(ExileController), nameof(ExileController.WrapUp)), HarmonyPostfix]
         static void MeetingEndPostfix(ExileController __instance)
         {
-            if (!isValidChatLog) return;
             GameSystemLogPatch.DescribeMeetingEndSystemLog(__instance.initData?.networkedPlayer);
         }
         // 会議終了(airship)
+        [HarmonyPatch(typeof(AirshipExileController), nameof(AirshipExileController.WrapUpAndSpawn)), HarmonyPrepare]
+        static bool AirshipMeetingEndPrepare() => GameLogManager.IsValidChatLog;
         [HarmonyPatch(typeof(AirshipExileController), nameof(AirshipExileController.WrapUpAndSpawn)), HarmonyPostfix]
         static void AirshipMeetingEndPostfix(AirshipExileController._WrapUpAndSpawn_d__11 __instance)
         {
-            if (!isValidChatLog) return;
 
             int currentPost = __instance.__4__this.GetInstanceID();
             if (LastPost_was == currentPost) return;
@@ -104,19 +107,20 @@ class AllHarmonyPatch
         }
 
         // キル発生時
+        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MurderPlayer)), HarmonyPrepare]
+        static bool MurderPlayerPrepare() => GameLogManager.IsValidChatLog;
         [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MurderPlayer)), HarmonyPostfix]
         static void MurderPlayerPostfix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
         {
-            if (!isValidChatLog) return;
             GameSystemLogPatch.MurderPlayerSystemLog(__instance, target);
         }
         // 試合終了
+        [HarmonyPatch(typeof(EndGameManager), nameof(EndGameManager.SetEverythingUp)), HarmonyPrepare]
+        static bool EndGamePrepare() => GameLogManager.IsValidChatLog;
         [HarmonyPatch(typeof(EndGameManager), nameof(EndGameManager.SetEverythingUp)), HarmonyPostfix]
         static void EndGamePostfix()
         {
-            if (!isValidChatLog) return;
             GameSystemLogPatch.EndGameSystemLog();
         }
     }
-#pragma warning restore 8321
 }

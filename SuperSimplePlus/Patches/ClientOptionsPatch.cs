@@ -15,11 +15,11 @@ namespace SuperSimplePlus.Patches;
 internal static class ClientOptionsPatch
 {
     private static readonly SelectionBehaviour[] AllOptions = {
-            new(ModTranslation.GetString("NotPCKick"),()=> SSPPlugin.NotPCKick.Value = !SSPPlugin.NotPCKick.Value,SSPPlugin.NotPCKick.Value),
-            new(ModTranslation.GetString("NotPCBan"),()=> SSPPlugin.NotPCBan.Value = !SSPPlugin.NotPCBan.Value,SSPPlugin.NotPCBan.Value),
-            new(ModTranslation.GetString("FriendCodeBan"),()=> SSPPlugin.FriendCodeBan.Value = !SSPPlugin.FriendCodeBan.Value,SSPPlugin.FriendCodeBan.Value),
-            new(ModTranslation.GetString("ChatLog"),()=> SSPPlugin.ChatLog.Value = !SSPPlugin.ChatLog.Value,SSPPlugin.ChatLog.Value),
-            new(ModTranslation.GetString("HideFriendCode"),()=> SSPPlugin.HideFriendCode.Value = !SSPPlugin.HideFriendCode.Value,SSPPlugin.HideFriendCode.Value),
+            new("NotPCKick", () => SSPPlugin.NotPCKick.Value = !SSPPlugin.NotPCKick.Value, SSPPlugin.NotPCKick.Value),
+            new("NotPCBan", () => SSPPlugin.NotPCBan.Value = !SSPPlugin.NotPCBan.Value, SSPPlugin.NotPCBan.Value),
+            new("FriendCodeBan", () => SSPPlugin.FriendCodeBan.Value = !SSPPlugin.FriendCodeBan.Value, SSPPlugin.FriendCodeBan.Value),
+            new("GameLog", () => SSPPlugin.GameLog.Value = !SSPPlugin.GameLog.Value, SSPPlugin.GameLog.Value),
+            new("HideFriendCode", () => SSPPlugin.HideFriendCode.Value = !SSPPlugin.HideFriendCode.Value, SSPPlugin.HideFriendCode.Value),
     };
 
     private static GameObject popUp;
@@ -187,6 +187,7 @@ internal static class ClientOptionsPatch
             button.Background.color = button.onState ? Color.green : Palette.ImpostorRed;
 
             button.Text.text = ModTranslation.GetString(info.Title);
+            if (info.Key == "GameLog") { button.Text.text += GameLogManager.IsValidChatLog ? $"\n{ModTranslation.GetString("ChatLogOn")}" : $"\n{ModTranslation.GetString("ChatLogOff")}"; }
             button.Text.fontSizeMin = button.Text.fontSizeMax = 2.2f;
             button.Text.font = Object.Instantiate(titleText.font);
             button.Text.GetComponent<RectTransform>().sizeDelta = new Vector2(2, 2);
@@ -227,13 +228,17 @@ internal static class ClientOptionsPatch
 
     internal class SelectionBehaviour
     {
-        internal string Title;
-        internal Func<bool> OnClick;
-        internal bool DefaultValue;
+        /// <summary>翻訳キー</summary>
+        internal readonly string Key;
+        /// <summary>表示名</summary>
+        internal readonly string Title;
+        internal readonly Func<bool> OnClick;
+        internal readonly bool DefaultValue;
 
-        internal SelectionBehaviour(string title, Func<bool> onClick, bool defaultValue)
+        internal SelectionBehaviour(string key, Func<bool> onClick, bool defaultValue)
         {
-            Title = title;
+            Key = key;
+            Title = ModTranslation.GetString(key);
             OnClick = onClick;
             DefaultValue = defaultValue;
         }
