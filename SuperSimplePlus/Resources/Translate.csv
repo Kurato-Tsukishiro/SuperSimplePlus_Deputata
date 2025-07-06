@@ -15,7 +15,7 @@ Key,English,Japanese
 # config
 NotPCKick,Kick non-PC,PC以外をキックする
 NotPCBan,Ban non-PC,PC以外をバンする
-ChatLog,<size=90%>Create GameLog</size>,<size=90%>ゲームログを作成する</size>
+GameLog,<size=90%>Create GameLog</size>,<size=90%>ゲームログを作成する</size>
 HideFriendCode,An display Friendcode,フレンドコード非表示
 FriendCodeBan,Registrant bans upon entry,登録者入室時バンする
 

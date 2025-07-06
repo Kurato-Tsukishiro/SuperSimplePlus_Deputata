@@ -18,7 +18,7 @@ public class SSPPlugin : BasePlugin
     public static ConfigEntry<bool> debugTool { get; set; }
     public static ConfigEntry<bool> NotPCKick { get; set; }
     public static ConfigEntry<bool> NotPCBan { get; set; }
-    public static ConfigEntry<bool> ChatLog { get; set; }
+    public static ConfigEntry<bool> GameLog { get; set; }
     public static ConfigEntry<bool> HideFriendCode { get; set; }
     public static ConfigEntry<bool> FriendCodeBan { get; set; }
 
@@ -36,7 +36,7 @@ public class SSPPlugin : BasePlugin
         debugTool = Config.Bind("Client Options", "Debug Tool", false);
         NotPCKick = Config.Bind("Client Options", "NotPCKick", false);
         NotPCBan = Config.Bind("Client Options", "NotPCBan", false);
-        ChatLog = Config.Bind("Client Options", "ChatLog", true);
+        GameLog = Config.Bind("Client Options", "GameLog", true);
         HideFriendCode = Config.Bind("Client Options", "HideFriendCode", true);
         FriendCodeBan = Config.Bind("Client Options", "FriendCodeBan", false);
 

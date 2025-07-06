@@ -18,7 +18,7 @@ internal static class GameLogManager
         GameLogFileCreate();
     }
 
-    internal static readonly bool IsValidChatLog = SSPPlugin.ChatLog.Value;
+    internal static readonly bool IsValidChatLog = SSPPlugin.GameLog.Value;
 
     internal static string SSPDFolderPath { get { return _SSPDFolderPath; } }
     private static string _SSPDFolderPath;

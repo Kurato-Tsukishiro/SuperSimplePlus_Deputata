@@ -19,7 +19,7 @@ internal static class ClientOptionsPatch
             new("NotPCKick", () => SSPPlugin.NotPCKick.Value = !SSPPlugin.NotPCKick.Value, SSPPlugin.NotPCKick.Value),
             new("NotPCBan", () => SSPPlugin.NotPCBan.Value = !SSPPlugin.NotPCBan.Value, SSPPlugin.NotPCBan.Value),
             new("FriendCodeBan", () => SSPPlugin.FriendCodeBan.Value = !SSPPlugin.FriendCodeBan.Value, SSPPlugin.FriendCodeBan.Value),
-            new("ChatLog", () => SSPPlugin.ChatLog.Value = !SSPPlugin.ChatLog.Value, SSPPlugin.ChatLog.Value),
+            new("GameLog", () => SSPPlugin.GameLog.Value = !SSPPlugin.GameLog.Value, SSPPlugin.GameLog.Value),
             new("HideFriendCode", () => SSPPlugin.HideFriendCode.Value = !SSPPlugin.HideFriendCode.Value, SSPPlugin.HideFriendCode.Value),
     };
 
