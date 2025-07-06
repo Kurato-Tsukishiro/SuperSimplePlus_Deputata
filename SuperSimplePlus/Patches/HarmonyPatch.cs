@@ -22,7 +22,6 @@ class AllHarmonyPatch
         [HarmonyPatch(typeof(ChatController), nameof(ChatController.AddChat)), HarmonyPrefix]
         static void AddChatPrefix(PlayerControl sourcePlayer, string chatText)
         {
-            if (!ClientOptionsPatch.IsValidChatLog) return;
             RecordingChatPatch.MonitorChat(sourcePlayer, chatText);
         }
 
@@ -32,8 +31,6 @@ class AllHarmonyPatch
         [HarmonyPatch(typeof(ChatController), nameof(ChatController.SendChat)), HarmonyPrefix]
         static bool SendChatPrefix(ChatController __instance)
         {
-            if (!ClientOptionsPatch.IsValidChatLog) return true;
-
             RecordingChatPatch.SendChatPrefix(__instance, out bool handled);
 
             if (handled)
@@ -54,7 +51,6 @@ class AllHarmonyPatch
         [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.CoBegin)), HarmonyPostfix]
         static void IntroCutsceneCoBeginPostfix()
         {
-            if (!ClientOptionsPatch.IsValidChatLog) return;
             GameSystemLogPatch.IntroCutsceneCoBeginSystemLog();
         }
 
@@ -64,7 +60,6 @@ class AllHarmonyPatch
         [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.Start)), HarmonyPostfix]
         static void MeetingStartPostfix(MeetingHud __instance)
         {
-            if (!ClientOptionsPatch.IsValidChatLog) return;
             GameSystemLogPatch.MeetingStartSystemLog(__instance);
         }
 
@@ -74,7 +69,6 @@ class AllHarmonyPatch
         [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.ReportDeadBody)), HarmonyPostfix]
         static void ReportDeadBodyPostfix(PlayerControl __instance, [HarmonyArgument(0)] NetworkedPlayerInfo target)
         {
-            if (!ClientOptionsPatch.IsValidChatLog) return;
             GameSystemLogPatch.ReportDeadBodySystemLog(__instance, target);
         }
 
@@ -84,7 +78,6 @@ class AllHarmonyPatch
         [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.CastVote)), HarmonyPostfix]
         static void MeetingCastVotePostfix(byte srcPlayerId, byte suspectPlayerId)
         {
-            if (!ClientOptionsPatch.IsValidChatLog) return;
             GameSystemLogPatch.MeetingCastVoteSystemLog(srcPlayerId, suspectPlayerId);
         }
         // 開票(Hostのみ)
@@ -93,7 +86,6 @@ class AllHarmonyPatch
         [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.CheckForEndVoting)), HarmonyPostfix]
         static void CheckForEndVotingPostfix(MeetingHud __instance)
         {
-            if (!ClientOptionsPatch.IsValidChatLog) return;
             GameSystemLogPatch.VoteLogMethodManager.MeetingCastVoteSave(__instance);
         }
         // 会議終了(airship以外)
@@ -102,7 +94,6 @@ class AllHarmonyPatch
         [HarmonyPatch(typeof(ExileController), nameof(ExileController.WrapUp)), HarmonyPostfix]
         static void MeetingEndPostfix(ExileController __instance)
         {
-            if (!ClientOptionsPatch.IsValidChatLog) return;
             GameSystemLogPatch.DescribeMeetingEndSystemLog(__instance.initData?.networkedPlayer);
         }
         // 会議終了(airship)
@@ -111,7 +102,6 @@ class AllHarmonyPatch
         [HarmonyPatch(typeof(AirshipExileController), nameof(AirshipExileController.WrapUpAndSpawn)), HarmonyPostfix]
         static void AirshipMeetingEndPostfix(AirshipExileController._WrapUpAndSpawn_d__11 __instance)
         {
-            if (!ClientOptionsPatch.IsValidChatLog) return;
 
             int currentPost = __instance.__4__this.GetInstanceID();
             if (LastPost_was == currentPost) return;
@@ -126,7 +116,6 @@ class AllHarmonyPatch
         [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MurderPlayer)), HarmonyPostfix]
         static void MurderPlayerPostfix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
         {
-            if (!ClientOptionsPatch.IsValidChatLog) return;
             GameSystemLogPatch.MurderPlayerSystemLog(__instance, target);
         }
         // 試合終了
@@ -135,7 +124,6 @@ class AllHarmonyPatch
         [HarmonyPatch(typeof(EndGameManager), nameof(EndGameManager.SetEverythingUp)), HarmonyPostfix]
         static void EndGamePostfix()
         {
-            if (!ClientOptionsPatch.IsValidChatLog) return;
             GameSystemLogPatch.EndGameSystemLog();
         }
     }
