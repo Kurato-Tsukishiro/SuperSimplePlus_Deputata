@@ -84,7 +84,7 @@ namespace SuperSimplePlus.Modules
                 client.DefaultRequestHeaders.Add("User-Agent", "SuperSimplePlus Updater");
 
                 JToken assets = data["assets"];
-                string downloadURI = "";
+                string downloadURL = "";
 
                 for (JToken current = assets.First; current != null; current = current.Next)
                 {
@@ -94,14 +94,14 @@ namespace SuperSimplePlus.Modules
                         if ((current["content_type"].ToString().Equals("application/octet-stream") || current["content_type"].ToString().Equals("application/x-msdownload"))
                             && browser_download_url.EndsWith(".dll"))
                         {
-                            downloadURI = browser_download_url;
+                            downloadURL = browser_download_url;
                         }
                     }
                 }
 
-                if (downloadURI.Length == 0) return false;
+                if (downloadURL.Length == 0) return false;
 
-                var res = await client.GetAsync(downloadURI, HttpCompletionOption.ResponseContentRead);
+                var res = await client.GetAsync(downloadURL, HttpCompletionOption.ResponseContentRead);
                 string filePath = Path.Combine(Paths.PluginPath, "SuperSimplePlus.dll");
                 if (File.Exists(filePath + ".old")) File.Delete(filePath + ".old");
                 if (File.Exists(filePath)) File.Move(filePath, filePath + ".old");
