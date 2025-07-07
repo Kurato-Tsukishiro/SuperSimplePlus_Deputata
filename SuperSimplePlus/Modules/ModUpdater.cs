@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BepInEx;
 using HarmonyLib;
 using Newtonsoft.Json.Linq;
+using TMPro;
 using Twitch;
 using UnityEngine;
 using UnityEngine.UI;
@@ -104,12 +105,15 @@ namespace SuperSimplePlus.Modules
                     if (template == null) return;
 
                     var buttonSSPUpdate = UnityEngine.Object.Instantiate(template, null);
-                    buttonSSPUpdate.transform.localPosition = new Vector3(buttonSSPUpdate.transform.localPosition.x + 9.4f, buttonSSPUpdate.transform.localPosition.y + 4.2f, buttonSSPUpdate.transform.localPosition.z);
+                    GameObject.Destroy(buttonSSPUpdate.GetComponent<AspectPosition>());
+                    buttonSSPUpdate.transform.localPosition = new(-0.9f, -2.45f, -10f);
 
-                    var textSSPUpdateButton = buttonSSPUpdate.transform.GetChild(0).GetComponent<TMPro.TMP_Text>();
-                    __instance.StartCoroutine(Effects.Lerp(0.1f, new System.Action<float>((p) =>
+                    var textSSPUpdateButton = buttonSSPUpdate.GetComponentInChildren<TextMeshPro>();
+                    textSSPUpdateButton.transform.localPosition = new(-0.5f, 0.035f, -2f);
+                    textSSPUpdateButton.alignment = TextAlignmentOptions.Center;
+                    __instance.StartCoroutine(Effects.Lerp(1f, new System.Action<float>((p) =>
                     {
-                        textSSPUpdateButton.SetText(String.Format(ModTranslation.GetString("UpdateButton"), SSPPlugin.ColoredModName));
+                        textSSPUpdateButton.text = (String.Format(ModTranslation.GetString("UpdateButton"), SSPPlugin.ColoredModName));
                     })));
 
                     PassiveButton passiveButtonSSPUpdate = buttonSSPUpdate.GetComponent<PassiveButton>();
