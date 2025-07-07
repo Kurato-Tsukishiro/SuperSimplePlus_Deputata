@@ -10,7 +10,7 @@ namespace SuperSimplePlus;
 public class SSPPlugin : BasePlugin
 {
     public const String Id = "jp.Kurato-Tsukishiro.SuperSimplePlus_Deputata";
-    public const String Version = "2.3.0.1";
+    public const String Version = "2.3.0.2";
 
     public const String ColoredModName = "<color=#96514d>SSP_Deputata</color>";
     public const String shortModName = "SSP_Deputata";
