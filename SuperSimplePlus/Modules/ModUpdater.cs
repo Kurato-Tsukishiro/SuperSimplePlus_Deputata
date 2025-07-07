@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BepInEx;
 using HarmonyLib;
@@ -16,7 +17,6 @@ namespace SuperSimplePlus.Modules
 {
     public class ModUpdater
     {
-        public static string Tag;
         public static JObject data;
         public static GenericPopup popup;
         public static GameObject PopupButton;
@@ -26,16 +26,51 @@ namespace SuperSimplePlus.Modules
             var client = new HttpClient();
             client.DefaultRequestHeaders.Add("User-Agent", "SuperSimplePlus Updater");
 
-            var req = await client.GetAsync("https://api.github.com/repos/Kurato-Tsukishiro/SuperSimplePlus_Deputata/releases/latest", HttpCompletionOption.ResponseContentRead);
+            var req = await client.GetAsync(new System.Uri($"https://api.github.com/repos/Kurato-Tsukishiro/SuperSimplePlus_Deputata/releases/latest"), HttpCompletionOption.ResponseContentRead);
             if (!req.IsSuccessStatusCode) return false;
 
             var dataString = await req.Content.ReadAsStringAsync();
             data = JObject.Parse(dataString);
 
-            Tag = data["tag_name"]?.ToString().TrimStart('v');
-            Logger.Info($"最新版かどうか判定\ngithub:{Tag}\n入ってるバージョン:{SSPPlugin.Version}", "ModUpdater");
+            var GitHubTag = Regex.Replace(data["tag_name"]?.ToString(), "[^0-9.]", "");
+            var LocalVersionStr = Regex.Replace(SSPPlugin.Version, "[^0-9.]", "");
 
-            return Version.TryParse(Tag, out var myVersion) && myVersion.BaseVersion() > Version.Parse(SSPPlugin.Version);
+            if (int.TryParse(GitHubTag.Replace(".", ""), out int githubVersion) && int.TryParse(LocalVersionStr.Replace(".", ""), out var localVersion))
+            {
+                Logger.Info($"最新版かどうか判定", "ModUpdater");
+                Logger.Info($"GitHub Version: {GitHubTag}", "ModUpdater");
+                Logger.Info($"Local Version: {LocalVersionStr}", "ModUpdater");
+
+                var Islatest = githubVersion <= localVersion;
+                if (Islatest) Logger.Info($"最新版です。", "ModUpdater");
+                else Logger.Info($"古いバージョンを使用しています。", "ModUpdater");
+
+                return !Islatest;
+            }
+            else
+            {
+                Logger.Error($"バージョン文字列の解析に失敗しました。 GitHub: '{GitHubTag}', Local: '{SSPPlugin.Version}'");
+                return false;
+            }
+
+            // FIXME : TryParse() がどうしても失敗してしまう (Geminiに聞いたが, Geminiも正しく動くはずと言い出している) 為, SemanticVersioning.Version での判定を諦めた。
+            /*
+            // TryParseが成功したかどうかをif文で判定する
+            if (Version.TryParse(cleanedGitHubTag, out var githubVersion) && Version.TryParse(cleanedLocalVersion, out var localVersion))
+            {
+                // パースに成功した場合のみ、バージョンを比較する
+                Logger.Info($"GitHub Version: {githubVersion}");
+                Logger.Info($"Local Version: {localVersion}");
+
+                // Versionオブジェクトは > 演算子で直接比較できる
+                return githubVersion > localVersion;
+            }
+            else
+            {
+                // パースに失敗した場合は、更新なし（またはエラー）として扱う
+                Logger.Error($"バージョン文字列の解析に失敗しました。 GitHub: '{cleanedGitHubTag}', Local: '{SSPPlugin.Version}'");
+                return false;
+            }*/
         }
         public async static Task<bool> DownloadUpdate()
         {
