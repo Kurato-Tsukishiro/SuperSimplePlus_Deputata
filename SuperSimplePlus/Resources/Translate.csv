@@ -26,8 +26,9 @@ ChatLogOff,<size=85%>(At startup: <color=#FF4C4C>Disabled</color>)</size>,<size=
 
 # ModUpdate
 UpdateButton,Update {0},{0} を\nアップデートする
-UpdateSuccess,{0} has been successfully updated. Please restart the game,{0}が正常に更新されました。\nゲームを再起動してください
-UpdateFailed,Update failed.\n Please retry later. Or update manually.,アップデートに失敗しました\n後で再試行してください。\nまたは手動でアップデートしてください。
+UpdateSuccess,{0} has been successfully updated. Please restart the game,{0}が正常に更新されました。\nゲームを再起動してください。
+UpdateAlready,The latest version has already been downloaded.\nIf you want to apply it，please restart the game.,最新版は、既にダウンロードされています。\n適応したい場合は、ゲームを再起動してください。
+UpdateFailed,Update failed.\n Please retry later. Or update manually.,アップデートに失敗しました。\n後で再試行してください。\nまたは手動でアップデートしてください。
 UpdateInProgress,Updating {0}\nPlease wait...,{0}をアップデート中\nしばらくお待ちください....
 
 # GameLog
