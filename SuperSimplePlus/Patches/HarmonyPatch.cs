@@ -10,6 +10,7 @@ class AllHarmonyPatch
 {
     private static int LastPost_was;
 
+    [HarmonyPatch]
     static class ChatLogHarmony
     {
         // チャット履歴の保存
@@ -39,6 +40,7 @@ class AllHarmonyPatch
     }
 
     /// <summary>ゲームログの作成関連で使用している HarmonyPatch</summary>
+    [HarmonyPatch]
     static class GameLogHarmony
     {
         // ゲーム開始時に情報を記載する
