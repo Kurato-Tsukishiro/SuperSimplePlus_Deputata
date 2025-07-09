@@ -42,7 +42,7 @@ class RecordingChatPatch
         string text = __instance.freeChatField.textArea.text, addChatMemo = __instance.freeChatField.textArea.text;
         handled = false;
 
-        if (StartsWithCommands(text, ["/cm", "/memo"]))
+        if (StartsWithCommands(text, CommandAliases["ChatMemo"]))
         {
             handled = true;
             string soliloquy = text.ToLower().Replace("/cm ", "").Replace("/memo ", "");
@@ -51,7 +51,7 @@ class RecordingChatPatch
             addChatMemo = soliloquy;
             __instance.AddChat(PlayerControl.LocalPlayer, soliloquy);
         }
-        else if (StartsWithCommands(text, ["/ngc", "/nowgamecount"]))
+        else if (StartsWithCommands(text, CommandAliases["CurrentGameCount"]))
         {
             handled = true;
             string gameCountAnnounce = addChatMemo = Format(ModTranslation.GetString("NowGameCountAnnounce"), GameLogManager.GameCount);
@@ -60,7 +60,7 @@ class RecordingChatPatch
 
         if (AmongUsClient.Instance.GameState != InnerNetClient.GameStates.Started)
         {
-            if (StartsWithCommands(text, ["/sgl", "/savegamelog"]))
+            if (StartsWithCommands(text, CommandAliases["SaveGameLog"]))
             {
                 // 参照 => https://github.com/ykundesu/SuperNewRoles/blob/1.8.1.2/SuperNewRoles/Modules/ModTranslation.cs
 
@@ -110,6 +110,15 @@ class RecordingChatPatch
     /// <param name="commands">判定対象のコマンド</param>
     /// <returns></returns>
     internal static bool StartsWithCommands(string text, string[] commands) => commands.Any(command => text.StartsWith(command, StringComparison.OrdinalIgnoreCase));
+    /// <summary></summary>
+    /// <returns>key => コマンドのId, value => コマンド文字列</returns>
+    internal static readonly Dictionary<string, string[]> CommandAliases = new()
+    {
+        {"ChatMemo", ["/cm", "/memo"]},
+        {"CurrentGameCount", ["/ngc", "/nowgamecount"]},
+
+        {"SaveGameLog", ["/sgl", "/savegamelog"]}
+    };
 }
 
 internal static class SaveChatLogPatch
