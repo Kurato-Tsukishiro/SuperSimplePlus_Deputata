@@ -42,7 +42,7 @@ class RecordingChatPatch
         string text = __instance.freeChatField.textArea.text, addChatMemo = __instance.freeChatField.textArea.text;
         handled = false;
 
-        if (text.ToLower().StartsWith("/cm") || text.ToLower().StartsWith("/memo"))
+        if (StartsWithCommands(text, ["/cm", "/memo"]))
         {
             handled = true;
             string soliloquy = text.ToLower().Replace("/cm ", "").Replace("/memo ", "");
@@ -51,7 +51,7 @@ class RecordingChatPatch
             addChatMemo = soliloquy;
             __instance.AddChat(PlayerControl.LocalPlayer, soliloquy);
         }
-        else if (text.ToLower().StartsWith("/ngc") || text.ToLower().StartsWith("/nowgamecount"))
+        else if (StartsWithCommands(text, ["/ngc", "/nowgamecount"]))
         {
             handled = true;
             string gameCountAnnounce = addChatMemo = Format(ModTranslation.GetString("NowGameCountAnnounce"), GameLogManager.GameCount);
@@ -60,7 +60,7 @@ class RecordingChatPatch
 
         if (AmongUsClient.Instance.GameState != InnerNetClient.GameStates.Started)
         {
-            if (text.ToLower().StartsWith("/sgl") || text.ToLower().StartsWith("/savegamelog"))
+            if (StartsWithCommands(text, ["/sgl", "/savegamelog"]))
             {
                 // 参照 => https://github.com/ykundesu/SuperNewRoles/blob/1.8.1.2/SuperNewRoles/Modules/ModTranslation.cs
 
@@ -104,6 +104,12 @@ class RecordingChatPatch
 
         SaveChatMemo(addChatMemo);
     }
+
+    /// <summary>コマンド文字列が入力されたか判定する</summary>
+    /// <param name="text">判定するチャット文章</param>
+    /// <param name="commands">判定対象のコマンド</param>
+    /// <returns></returns>
+    internal static bool StartsWithCommands(string text, string[] commands) => commands.Any(command => text.StartsWith(command, StringComparison.OrdinalIgnoreCase));
 }
 
 internal static class SaveChatLogPatch
