@@ -15,16 +15,20 @@ Key,English,Japanese
 # config
 NotPCKick,Kick non-PC,PC以外をキックする
 NotPCBan,Ban non-PC,PC以外をバンする
-ChatLog,Create GameLog,ゲームログを作成する
+GameLog,<size=90%>Create GameLog</size>,<size=90%>ゲームログを作成する</size>
 HideFriendCode,An display Friendcode,フレンドコード非表示
 FriendCodeBan,Registrant bans upon entry,登録者入室時バンする
+
+ChatLogOn,<size=85%>(At startup: <color=#99FF33>Enabled</color>)</size>,<size=85%>(起動時 : <color=#99FF33>有効</color>)</size>
+ChatLogOff,<size=85%>(At startup: <color=#FF4C4C>Disabled</color>)</size>,<size=85%>(起動時 : <color=#FF4C4C>無効</color>)</size>
 
 # features Translate
 
 # ModUpdate
-UpdateButton,Update {0},{0}\nをアップデートする
-UpdateSuccess,{0} has been successfully updated. Please restart the game,{0}が正常に更新されました。\nゲームを再起動してください
-UpdateFailed,Update failed.\n Please retry later. Or update manually.,アップデートに失敗しました\n後で再試行してください。\nまたは手動でアップデートしてください。
+UpdateButton,Update {0},{0} を\nアップデートする
+UpdateSuccess,{0} has been successfully updated. Please restart the game,{0}が正常に更新されました。\nゲームを再起動してください。
+UpdateAlready,The latest version has already been downloaded.\nIf you want to apply it，please restart the game.,最新版は、既にダウンロードされています。\n適応したい場合は、ゲームを再起動してください。
+UpdateFailed,Update failed.\n Please retry later. Or update manually.,アップデートに失敗しました。\n後で再試行してください。\nまたは手動でアップデートしてください。
 UpdateInProgress,Updating {0}\nPlease wait...,{0}をアップデート中\nしばらくお待ちください....
 
 # GameLog

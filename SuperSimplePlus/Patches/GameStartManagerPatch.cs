@@ -93,7 +93,7 @@ public class AmongUsClientOnPlayerLeftPatch
         if (isAllladyTaregt) return; // 既にBunListに登録されている場合は記載しない。
         // PC以外BANが有効で, Steam・Epic でない場合, 自動BANなので記載しない。
         if (SSPPlugin.NotPCBan.Value && (client.PlatformData.Platform is not Platforms.StandaloneEpicPC and not Platforms.StandaloneSteamPC)) return;
-        string bunReportPath = @$"{SaveChatLogPatch.SSPDFolderPath}" + @$"BenReport.log";
+        string bunReportPath = @$"{GameLogManager.SSPDFolderPath}" + @$"BenReport.log";
 
         Logger.Info($"BANListに登録していない人の手動BANを行った為, 保存します。 => {client.PlayerName} : {friendCode}");
         string log = $"登録日時 : {DateTime.Now:yyMMdd_HHmm}, 登録者 : {client.PlayerName} ( {client?.FriendCode} ), プラットフォーム : {client.PlatformData.Platform}";
@@ -138,6 +138,6 @@ public class VariableManager
         ResultsOfTheVoteCount = new();
         Helpers.IdControlDic = new();
         Helpers.CDToNameDic = new();
-        SaveChatLogPatch.AddGameLog();
+        GameLogManager.AddGameLog();
     }
 }
