@@ -146,14 +146,13 @@ class AllHarmonyPatch
             {
                 var patchedMethods = Harmony.GetAllPatchedMethods();
 
-                // 自分自身(MyPluginGuid)と、Harmonyの自動生成ID以外によって
                 // 適用されたパッチが1つでも存在するかをチェック
                 var otherOwners = patchedMethods
                                     .Select(Harmony.GetPatchInfo)
                                     .Where(patchInfo => patchInfo != null)
                                     .SelectMany(patchInfo => patchInfo.Owners)
                                     .Distinct()
-                                    .Where(owner => owner != SSPPlugin.Id && !owner.StartsWith("harmony-auto-"))
+                                    .Where(IsPluginOwnerValid)
                                     .ToList();
 
                 cachedHasOtherMods = otherOwners.Any();
@@ -180,6 +179,12 @@ class AllHarmonyPatch
             }
 
             return hasOtherMods;
+
+        static bool IsPluginOwnerValid(string owner)
+        {
+            // 自分自身のGuid(SSPPlugin.Id)と、Harmonyの自動生成IDを除外
+            return owner != SSPPlugin.Id && !owner.StartsWith("harmony-auto-");
+        }
         }
     }
 }
