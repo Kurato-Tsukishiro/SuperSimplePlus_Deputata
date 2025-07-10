@@ -145,19 +145,17 @@ class AllHarmonyPatch
 
                 // 自分自身(MyPluginGuid)と、Harmonyの自動生成ID以外によって
                 // 適用されたパッチが1つでも存在するかをチェック
-                cachedHasOtherMods = patchedMethods
-                    .SelectMany(method => Harmony.GetPatchInfo(method).Owners)
-                    .Any(owner => owner != SSPPlugin.Id && !owner.StartsWith("harmony-auto-"));
+                var otherOwners = patchedMethods
+                                    .SelectMany(method => Harmony.GetPatchInfo(method).Owners)
+                                    .Distinct()
+                                    .Where(owner => owner != SSPPlugin.Id && !owner.StartsWith("harmony-auto-"))
+                                    .ToList();
+
+                cachedHasOtherMods = otherOwners.Any();
 
                 if (cachedHasOtherMods == true)
                 {
                     Logger.Info("SSP_Dは他のMODと併用されています。");
-
-                    var otherOwners = patchedMethods
-                        .SelectMany(method => Harmony.GetPatchInfo(method).Owners)
-                        .Distinct()
-                        .Where(owner => owner != SSPPlugin.Id && !owner.StartsWith("harmony-auto-"));
-
                     foreach (var owner in otherOwners) { Logger.Info($"併用MODの可能性: {owner}"); }
                 }
                 else
@@ -170,7 +168,7 @@ class AllHarmonyPatch
             // 此処でtrueを返しても、併用しているmodがfalseを返したならそちらが優先される。
             var hasOtherMods = cachedHasOtherMods == true;
 
-            if(!hasOtherMods)
+            if (!hasOtherMods)
             {
                 FastDestroyableSingleton<HudManager>.Instance?.Chat?.AddChat(PlayerControl.LocalPlayer, ModTranslation.GetString("MakePublicError"));
             }
