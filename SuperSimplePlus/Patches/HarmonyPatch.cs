@@ -170,7 +170,8 @@ class AllHarmonyPatch
 
             if (!hasOtherMods)
             {
-                FastDestroyableSingleton<HudManager>.Instance?.Chat?.AddChat(PlayerControl.LocalPlayer, ModTranslation.GetString("MakePublicError"));
+                if (FastDestroyableSingleton<HudManager>.Instance != null && FastDestroyableSingleton<HudManager>.Instance.Chat != null)
+                    FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, ModTranslation.GetString("MakePublicError"));
             }
 
             return hasOtherMods;
