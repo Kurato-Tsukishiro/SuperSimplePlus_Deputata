@@ -130,7 +130,7 @@ class AllHarmonyPatch
     [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.MakePublic))]
     class MakePublicPatch
     {
-        /// <summary></summary>
+        /// <summary>Modを併用しているか</summary>
         /// <value>null => cache無し / true => 併用している / false => 単独導入</value>
         internal static bool? cachedHasOtherMods { get; private set; } = null;
 
