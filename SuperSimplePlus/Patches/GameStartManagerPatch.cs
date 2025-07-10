@@ -36,7 +36,7 @@ internal class JoindPatch
 
         foreach (ClientData cd in AmongUsClient.Instance.allClients)
         {
-            (var isTaregt, var friendCode) = ImmigrationCheck.DenyEntryToFriendCode(cd);
+            (var isTaregt, var friendCode) = Modules.ImmigrationCheck.DenyEntryToFriendCode(cd);
             var isCodeOK = isTaregt ? '×' : '〇';
             var dicPage = $"[{cd.PlayerName}], ClientId : {cd.Id}, Platform:{cd.PlatformData.Platform}, FriendCode : {friendCode}({isCodeOK})";
             var warningText = "";
@@ -58,20 +58,6 @@ internal class JoindPatch
 
         Logger.Info($"|:========== 既入室者の記録 End ==========:|", "AmongUsClientOnPlayerJoindPatch");
     }
-
-    [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerJoined)), HarmonyPostfix]
-    internal static void OnPlayerJoined_Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client)
-    {
-        (var isTaregt, var friendCode) = ImmigrationCheck.DenyEntryToFriendCode(client, true);
-        var isCodeOK = isTaregt ? '×' : '〇';
-
-        Logger.Info($"[{client.PlayerName}], ClientId : {client.Id}, Platform:{client.PlatformData.Platform}, FriendCode : {friendCode}({isCodeOK})", "OnPlayerJoined");
-
-        if (!isTaregt) return;
-
-        if (!(AmongUsClient.Instance.AmHost && SSPPlugin.FriendCodeBan.Value)) //ゲスト 又は, ホストで機能が無効な場合
-            FastDestroyableSingleton<HudManager>.Instance?.Chat?.AddChat(PlayerControl.LocalPlayer, $"<align={"left"}><color=#F2E700><size=150%>警告!</size></color><size=80%>\n{client.PlayerName}は, {(friendCode != "未所持" ? $"BAN対象のコード{friendCode}を所持しています" : "フレンドコードを所持していません")}。</size></align>");
-    }
 }
 
 [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerLeft))]
@@ -88,7 +74,7 @@ public class AmongUsClientOnPlayerLeftPatch
 
     private static void WriteBunReport(ClientData client)
     {
-        (var isAllladyTaregt, var friendCode) = ImmigrationCheck.DenyEntryToFriendCode(client);
+        (var isAllladyTaregt, var friendCode) = Modules.ImmigrationCheck.DenyEntryToFriendCode(client);
 
         if (isAllladyTaregt) return; // 既にBunListに登録されている場合は記載しない。
         // PC以外BANが有効で, Steam・Epic でない場合, 自動BANなので記載しない。

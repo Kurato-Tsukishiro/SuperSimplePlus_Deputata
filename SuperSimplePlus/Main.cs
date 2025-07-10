@@ -42,7 +42,7 @@ public class SSPPlugin : BasePlugin
 
         //Load
         ModTranslation.LoadCsv();
-        ImmigrationCheck.LoadFriendCodeList();
+        Modules.ImmigrationCheck.LoadFriendCodeList();
 
         Harmony.PatchAll();
 

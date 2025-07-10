@@ -9,8 +9,8 @@ using InnerNet;
 using SuperSimplePlus.Patches;
 using UnityEngine;
 
-namespace SuperSimplePlus;
-public static class ImmigrationCheck
+namespace SuperSimplePlus.Modules;
+internal static class ImmigrationCheck
 {
     // 一番左と一行全部
     private static readonly Dictionary<uint, string> dictionary = new(); //keyを行番号, valueをフレンドコードに

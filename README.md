@@ -21,6 +21,11 @@
     - 共存先のModのデバック時、このModの機能が必要ない場合は、抜く事をお勧めします。
     - このModの機能がデバックに必要で共存させる場合は、Host機のみに入れる事を推奨します。
 
+## 🔵 使用上の注意
+- **このmodを単独で導入している場合、バニラサーバーで公開部屋を作成する事ができません。**
+  - 併用している場合は、共存先Modの仕様に準じます。
+  - "廃村", "投票&開票スキップ", "自動 Kick&BAN" も **『ユーザが意図しないMod体験』** に当たると判断したためです。ご了承ください。
+
 ## ChangeLog
 - [更新履歴及びAmongUsバージョン対応表](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%9B%B4%E6%96%B0%E5%B1%A5%E6%AD%B4%E5%8F%8A%E3%81%B3AmongUs%E3%83%90%E3%83%BC%E3%82%B8%E3%83%A7%E3%83%B3%E5%AF%BE%E5%BF%9C%E8%A1%A8)
   - [更新履歴](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%9B%B4%E6%96%B0%E5%B1%A5%E6%AD%B4%E5%8F%8A%E3%81%B3AmongUs%E3%83%90%E3%83%BC%E3%82%B8%E3%83%A7%E3%83%B3%E5%AF%BE%E5%BF%9C%E8%A1%A8#%E6%9B%B4%E6%96%B0%E5%B1%A5%E6%AD%B4)(GitHub Wikiに移動)<br><br>

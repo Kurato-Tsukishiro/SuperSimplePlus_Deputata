@@ -15,6 +15,14 @@ using UnityEngine;
 namespace SuperSimplePlus;
 public static class Helpers
 {
+    // 参考 => https://github.com/SuperNewRoles/SuperNewRoles/blob/2.7.0.2/SuperNewRoles/ModHelpers.cs#L918-L923
+    public static bool IsCustomServer()
+    {
+        if (FastDestroyableSingleton<ServerManager>.Instance == null || FastDestroyableSingleton<ServerManager>.Instance.CurrentRegion == null) return false;
+        StringNames n = FastDestroyableSingleton<ServerManager>.Instance.CurrentRegion.TranslateName;
+        return n is not StringNames.ServerNA and not StringNames.ServerEU and not StringNames.ServerAS;
+    }
+
     public static Sprite loadSpriteFromResources(string path, float pixelsPerUnit)
     {
         try
