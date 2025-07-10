@@ -146,7 +146,9 @@ class AllHarmonyPatch
                 // 自分自身(MyPluginGuid)と、Harmonyの自動生成ID以外によって
                 // 適用されたパッチが1つでも存在するかをチェック
                 var otherOwners = patchedMethods
-                                    .SelectMany(method => Harmony.GetPatchInfo(method).Owners)
+                                    .Select(Harmony.GetPatchInfo)
+                                    .Where(patchInfo => patchInfo != null)
+                                    .SelectMany(patchInfo => patchInfo.Owners)
                                     .Distinct()
                                     .Where(owner => owner != SSPPlugin.Id && !owner.StartsWith("harmony-auto-"))
                                     .ToList();
