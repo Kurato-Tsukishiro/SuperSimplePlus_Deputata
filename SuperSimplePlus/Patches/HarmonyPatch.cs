@@ -1,3 +1,4 @@
+using System.Linq;
 using HarmonyLib;
 
 namespace SuperSimplePlus.Patches;
@@ -123,6 +124,67 @@ class AllHarmonyPatch
         static void EndGamePostfix()
         {
             GameSystemLogPatch.EndGameSystemLog();
+        }
+    }
+
+    [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.MakePublic))]
+    class MakePublicPatch
+    {
+        /// <summary>Modを併用しているか</summary>
+        /// <value>null => cache無し / true => 併用している / false => 単独導入</value>
+        internal static bool? cachedHasOtherMods { get; private set; } = null;
+
+        /// <summary>公開部屋への変更が可能か?</summary>
+        /// <param name="__instance"></param>
+        /// <returns>true => 可能 / false => 不可能</returns>
+        internal static bool Prefix(GameStartManager __instance)
+        {
+            if (!AmongUsClient.Instance.AmHost || Helpers.IsCustomServer()) return true;
+
+            // 参考 => https://g.co/gemini/share/145248f63766
+            if (cachedHasOtherMods == null) // checkを一度も行っていない時のみ実行
+            {
+                var patchedMethods = Harmony.GetAllPatchedMethods();
+
+                // 適用されたパッチが1つでも存在するかをチェック
+                var otherOwners = patchedMethods
+                                    .Select(Harmony.GetPatchInfo)
+                                    .Where(patchInfo => patchInfo != null)
+                                    .SelectMany(patchInfo => patchInfo.Owners)
+                                    .Distinct()
+                                    .Where(IsPluginOwnerValid)
+                                    .ToList();
+
+                cachedHasOtherMods = otherOwners.Any();
+
+                if (cachedHasOtherMods == true)
+                {
+                    Logger.Info("SSP_Dは他のMODと併用されています。");
+                    foreach (var owner in otherOwners) { Logger.Info($"併用MODの可能性: {owner}"); }
+                }
+                else
+                {
+                    Logger.Info("SSP_D 単独導入か、他のMODがHarmonyを使用していません。");
+                }
+            }
+
+            // 併用状態の場合、公開部屋を可能と判定する。 (単独導入の場合、公開部屋を不可能にする)
+            // 此処でtrueを返しても、併用しているmodがfalseを返したならそちらが優先される。
+            var hasOtherMods = cachedHasOtherMods == true;
+
+            if (!hasOtherMods)
+            {
+                if (FastDestroyableSingleton<HudManager>.Instance != null && FastDestroyableSingleton<HudManager>.Instance.Chat != null)
+                    FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, ModTranslation.GetString("MakePublicError"));
+            }
+
+            return hasOtherMods;
+
+        static bool IsPluginOwnerValid(string owner)
+        {
+            // 自分自身のGuid(SSPPlugin.Id)と、Harmonyの自動生成IDを除外
+            return owner != SSPPlugin.Id && !owner.StartsWith("harmony-auto-");
+        }
         }
     }
 }
