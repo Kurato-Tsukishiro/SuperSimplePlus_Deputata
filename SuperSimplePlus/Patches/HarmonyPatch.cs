@@ -134,6 +134,9 @@ class AllHarmonyPatch
         /// <value>null => cache無し / true => 併用している / false => 単独導入</value>
         internal static bool? cachedHasOtherMods { get; private set; } = null;
 
+        /// <summary>公開部屋への変更が可能か?</summary>
+        /// <param name="__instance"></param>
+        /// <returns>true => 可能 / false => 不可能</returns>
         internal static bool Prefix(GameStartManager __instance)
         {
             if (!AmongUsClient.Instance.AmHost || Helpers.IsCustomServer()) return true;
