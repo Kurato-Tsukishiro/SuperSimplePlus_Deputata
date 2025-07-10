@@ -131,25 +131,25 @@ class AllHarmonyPatch
     class MakePublicPatch
     {
         /// <summary></summary>
-        /// <value>null => cash無し / true => 併用している / false => 単独導入</value>
-        internal static bool? cashedHasOtherMods { get; private set; } = null;
+        /// <value>null => cache無し / true => 併用している / false => 単独導入</value>
+        internal static bool? cachedHasOtherMods { get; private set; } = null;
 
         internal static bool Prefix(GameStartManager __instance)
         {
             if (!AmongUsClient.Instance.AmHost || Helpers.IsCustomServer()) return true;
 
             // 参考 => https://g.co/gemini/share/145248f63766
-            if (cashedHasOtherMods == null) // checkを一度も行っていない時のみ実行
+            if (cachedHasOtherMods == null) // checkを一度も行っていない時のみ実行
             {
                 var patchedMethods = Harmony.GetAllPatchedMethods();
 
                 // 自分自身(MyPluginGuid)と、Harmonyの自動生成ID以外によって
                 // 適用されたパッチが1つでも存在するかをチェック
-                cashedHasOtherMods = patchedMethods
+                cachedHasOtherMods = patchedMethods
                     .SelectMany(method => Harmony.GetPatchInfo(method).Owners)
                     .Any(owner => owner != SSPPlugin.Id && !owner.StartsWith("harmony-auto-"));
 
-                if (cashedHasOtherMods == true)
+                if (cachedHasOtherMods == true)
                 {
                     Logger.Info("SSP_Dは他のMODと併用されています。");
 
@@ -168,7 +168,7 @@ class AllHarmonyPatch
 
             // 併用状態の場合、公開部屋を可能と判定する。 (単独導入の場合、公開部屋を不可能にする)
             // 此処でtrueを返しても、併用しているmodがfalseを返したならそちらが優先される。
-            var hasOtherMods = cashedHasOtherMods == true;
+            var hasOtherMods = cachedHasOtherMods == true;
 
             if(!hasOtherMods)
             {
