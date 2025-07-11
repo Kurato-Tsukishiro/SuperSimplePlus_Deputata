@@ -15,35 +15,24 @@ internal static class ImmigrationCheck
     // 一番左と一行全部
     private static readonly Dictionary<uint, string> dictionary = new(); //keyを行番号, valueをフレンドコードに
 
-    /// <summary>
-    /// BANListの照会を行う。ranがtrueの時対象者のBANも実行する。
-    /// </summary>
+    /// <summary>BANListの照会を行う</summary>
     /// <param name="client">照会対象</param>
-    /// <param name="ran">BANを実行する。</param>
-    /// <returns>>true / 対象者である, false / 対象者でない</returns>
-    internal static (bool, string) DenyEntryToFriendCode(ClientData client, bool ran = false)
+    /// <returns>true / 対象者である, false / 対象者でない</returns>
+    internal static bool DenyEntryToFriendCode(ClientData client)
     {
-        if (AmongUsClient.Instance.NetworkMode == NetworkModes.OnlineGame) return (false, "");
-
-        var hasFriendCode = (client?.FriendCode is not null and not "") && client.FriendCode.Contains('#'); // 参考 => https://github.com/SuperNewRoles/SuperNewRoles/blob/2.1.1.1/SuperNewRoles/Modules/Blacklist.cs#L109-L113
-        var isSavedFriendCode = dictionary.ContainsValue(client?.FriendCode);
-
-        (bool isTaregt, string entrantCode) resultData;
-        resultData.isTaregt = !hasFriendCode || isSavedFriendCode;
-        resultData.entrantCode = !hasFriendCode ? "未所持" : SSPPlugin.HideFriendCode.Value ? "**********#****" : client?.FriendCode;
-
-        if (ran && resultData.isTaregt)
+        if (AmongUsClient.Instance.NetworkMode == NetworkModes.OnlineGame) return false;
+        if (client == null)
         {
-            if (AmongUsClient.Instance.AmHost && SSPPlugin.FriendCodeBan.Value)
-            {
-                AmongUsClient.Instance.KickPlayer(client.Id, ban: true); // 入室者がフレンドコードを未所持の場合 又は 入室者のコードが辞書に登録されている場合 BAN をする
-
-                var message = $"BANList対象者 : {client?.PlayerName} ( {resultData.entrantCode} ) のBANを実行しました。";
-                FastDestroyableSingleton<HudManager>.Instance?.Chat?.AddChat(PlayerControl.LocalPlayer, message);
-                Logger.Info(message);
-            }
+            Logger.Error($"照会対象が存在しません。");
+            return false;
         }
-        return resultData;
+
+        var isSavedFriendCode = dictionary.ContainsValue(client.FriendCode);
+
+        bool isTaregt;
+        isTaregt = !HasFriendCode(client) || isSavedFriendCode;
+
+        return isTaregt;
     }
 
     internal static async void LoadFriendCodeList()
@@ -109,4 +98,17 @@ internal static class ImmigrationCheck
         }
         catch (Exception e) { Logger.Error($"[BANFriendCodeList.txt]のロードに失敗しました : {e}", "ImmigrationCheck"); }
     }
+
+    // 参考 => https://github.com/SuperNewRoles/SuperNewRoles/blob/2.1.1.1/SuperNewRoles/Modules/Blacklist.cs#L109-L113
+    /// <summary>フレンドコードを有するか</summary>
+    /// <param name="client">確認対象</param>
+    /// <returns>true = 有する / false = 有さない</returns>
+    internal static bool HasFriendCode(ClientData client)
+        => client != null && (client.FriendCode is not null and not "") && client.FriendCode.Contains('#');
+
+    /// <summary>フレンドコードをログに記載する形に変換する</summary>
+    /// <param name="client">取得したい対象</param>
+    /// <returns>変換されたフレンドコード</returns>
+    internal static string FriendCodeFormatString(ClientData client)
+        => client == null ? "Error" : HasFriendCode(client) ? "未所持" : SSPPlugin.HideFriendCode.Value ? "**********#****" : client.FriendCode;
 }

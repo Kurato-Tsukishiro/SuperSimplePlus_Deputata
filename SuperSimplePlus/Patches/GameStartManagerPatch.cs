@@ -36,9 +36,10 @@ internal class JoindPatch
 
         foreach (ClientData cd in AmongUsClient.Instance.allClients)
         {
-            (var isTaregt, var friendCode) = Modules.ImmigrationCheck.DenyEntryToFriendCode(cd);
-            var isCodeOK = isTaregt ? '×' : '〇';
-            var dicPage = $"[{cd.PlayerName}], ClientId : {cd.Id}, Platform:{cd.PlatformData.Platform}, FriendCode : {friendCode}({isCodeOK})";
+            var isTaregt = Modules.ImmigrationCheck.DenyEntryToFriendCode(cd);
+            var friendCode = Modules.ImmigrationCheck.FriendCodeFormatString(cd);
+
+            var dicPage = $"[{cd.PlayerName}], ClientId : {cd.Id}, Platform:{cd.PlatformData.Platform}, FriendCode : {friendCode}({(isTaregt ? '×' : '〇')})";
             var warningText = "";
 
             if (participantDic.ContainsKey(cd.Id)) participantDic.Add(cd.Id, dicPage);
@@ -46,7 +47,7 @@ internal class JoindPatch
 
             if (isTaregt)
             {
-                warningText = $"{cd.PlayerName}は, {(friendCode != "未所持" ? $"BAN対象のコード{friendCode}を所持しています" : "フレンドコードを所持していません")}。";
+                warningText = $"{cd.PlayerName}は, {(Modules.ImmigrationCheck.HasFriendCode(cd)? $"BAN対象のコード{friendCode}を所持しています" : "フレンドコードを所持していません")}。";
 
                 if (warningTextDic.ContainsKey(cd.Id)) warningTextDic.Add(cd.Id, warningText);
                 else warningTextDic[cd.Id] = warningText;
@@ -74,14 +75,13 @@ public class AmongUsClientOnPlayerLeftPatch
 
     private static void WriteBunReport(ClientData client)
     {
-        (var isAllladyTaregt, var friendCode) = Modules.ImmigrationCheck.DenyEntryToFriendCode(client);
+        if (Modules.ImmigrationCheck.DenyEntryToFriendCode(client)) return; // 既にBunListに登録されている場合は記載しない。
 
-        if (isAllladyTaregt) return; // 既にBunListに登録されている場合は記載しない。
         // PC以外BANが有効で, Steam・Epic でない場合, 自動BANなので記載しない。
         if (SSPPlugin.NotPCBan.Value && (client.PlatformData.Platform is not Platforms.StandaloneEpicPC and not Platforms.StandaloneSteamPC)) return;
         string bunReportPath = @$"{GameLogManager.SSPDFolderPath}" + @$"BenReport.log";
 
-        Logger.Info($"BANListに登録していない人の手動BANを行った為, 保存します。 => {client.PlayerName} : {friendCode}");
+        Logger.Info($"BANListに登録していない人の手動BANを行った為, 保存します。 => {client.PlayerName} : {Modules.ImmigrationCheck.FriendCodeFormatString(client)}");
         string log = $"登録日時 : {DateTime.Now:yyMMdd_HHmm}, 登録者 : {client.PlayerName} ( {client?.FriendCode} ), プラットフォーム : {client.PlatformData.Platform}";
         File.AppendAllText(bunReportPath, log + Environment.NewLine);
     }
