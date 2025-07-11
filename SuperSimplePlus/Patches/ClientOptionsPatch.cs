@@ -17,6 +17,8 @@ internal static class ClientOptionsPatch
     private static readonly SelectionBehaviour[] AllOptions = {
             new("NotPCKick", () => SSPPlugin.NotPCKick.Value = !SSPPlugin.NotPCKick.Value, SSPPlugin.NotPCKick.Value),
             new("NotPCBan", () => SSPPlugin.NotPCBan.Value = !SSPPlugin.NotPCBan.Value, SSPPlugin.NotPCBan.Value),
+
+            new("UseSSPDFeature", () => SSPPlugin.UseSSPDFeature.Value = !SSPPlugin.UseSSPDFeature.Value, SSPPlugin.UseSSPDFeature.Value),
             new("FriendCodeBan", () => SSPPlugin.FriendCodeBan.Value = !SSPPlugin.FriendCodeBan.Value, SSPPlugin.FriendCodeBan.Value),
             new("GameLog", () => SSPPlugin.GameLog.Value = !SSPPlugin.GameLog.Value, SSPPlugin.GameLog.Value),
             new("HideFriendCode", () => SSPPlugin.HideFriendCode.Value = !SSPPlugin.HideFriendCode.Value, SSPPlugin.HideFriendCode.Value),
