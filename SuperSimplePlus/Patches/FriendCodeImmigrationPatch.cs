@@ -71,4 +71,38 @@ internal static class FriendCodeImmigrationPatch
                 FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, $"<align={"left"}><color=#F2E700><size=150%>警告!</size></color><size=80%>\n{client.PlayerName}は, {(Modules.ImmigrationCheck.HasFriendCode(client) ? $"BAN対象のコード{friendCode}を所持しています" : "フレンドコードを所持していません")}。</size></align>");
         }
     }
+
+    /// <summary>入室時に既に参加していたプレイヤーをログに記載する</summary>
+    internal static void RecordsOfExistingPlayer()
+    {
+        if (AmongUsClient.Instance.AmHost) return;
+
+        Dictionary<int, string> participantDic = new();
+        Dictionary<int, string> warningTextDic = new();
+
+        foreach (ClientData cd in AmongUsClient.Instance.allClients)
+        {
+            var isTaregt = Modules.ImmigrationCheck.DenyEntryToFriendCode(cd);
+            var friendCode = Modules.ImmigrationCheck.FriendCodeFormatString(cd);
+
+            var dicPage = $"[{cd.PlayerName}], ClientId : {cd.Id}, Platform:{cd.PlatformData.Platform}, FriendCode : {friendCode}({(isTaregt ? '×' : '〇')})";
+            var warningText = "";
+
+            if (participantDic.ContainsKey(cd.Id)) participantDic.Add(cd.Id, dicPage);
+            else participantDic[cd.Id] = dicPage;
+
+            if (isTaregt)
+            {
+                warningText = $"{cd.PlayerName}は, {(Modules.ImmigrationCheck.HasFriendCode(cd) ? $"BAN対象のコード{friendCode}を所持しています" : "フレンドコードを所持していません")}。";
+
+                if (warningTextDic.ContainsKey(cd.Id)) warningTextDic.Add(cd.Id, warningText);
+                else warningTextDic[cd.Id] = warningText;
+            }
+        }
+
+        Logger.Info($"|:========== 既入室者の記録 Start ==========:|", "AmongUsClientOnPlayerJoindPatch");
+        foreach (KeyValuePair<int, string> kvp in participantDic) Logger.Info(kvp.Value, "OnPlayerJoined");
+
+        Logger.Info($"|:========== 既入室者の記録 End ==========:|", "AmongUsClientOnPlayerJoindPatch");
+    }
 }

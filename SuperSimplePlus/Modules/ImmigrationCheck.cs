@@ -99,6 +99,25 @@ internal static class ImmigrationCheck
         catch (Exception e) { Logger.Error($"[BANFriendCodeList.txt]のロードに失敗しました : {e}", "ImmigrationCheck"); }
     }
 
+    /// <summary>手動でBAN又はKickを行った場合、BenReport.logに記録する</summary>
+    /// <param name="client">対象</param>
+    /// <param name="reason">切断理由</param>
+    internal static void WriteBunReport(ClientData client, DisconnectReasons reason)
+    {
+        if (reason is DisconnectReasons.Banned or DisconnectReasons.Kicked) return;
+
+        if (!AmongUsClient.Instance.AmHost) return;
+        if (DenyEntryToFriendCode(client)) return; // 既にBunListに登録されている場合は記載しない。
+
+        // PC以外BANが有効で, Steam・Epic でない場合, 自動BANなので記載しない。
+        if (SSPPlugin.NotPCBan.Value && (client.PlatformData.Platform is not Platforms.StandaloneEpicPC and not Platforms.StandaloneSteamPC)) return;
+        string bunReportPath = @$"{GameLogManager.SSPDFolderPath}" + @$"BenReport.log";
+
+        Logger.Info($"Listに登録していない人の手動BAN 又は手動キックを行った為, 保存します。 =>({reason}) {client.PlayerName} : {FriendCodeFormatString(client)}");
+        string log = $"登録日時 : {DateTime.Now:yyMMdd_HHmm}, 登録者 : {client.PlayerName} ( {client.FriendCode} ), 理由 : {reason}, プラットフォーム : {client.PlatformData.Platform}";
+        File.AppendAllText(bunReportPath, log + Environment.NewLine);
+    }
+
     // 参考 => https://github.com/SuperNewRoles/SuperNewRoles/blob/2.1.1.1/SuperNewRoles/Modules/Blacklist.cs#L109-L113
     /// <summary>フレンドコードを有するか</summary>
     /// <param name="client">確認対象</param>

@@ -1,6 +1,7 @@
 using System.Linq;
 using HarmonyLib;
 using InnerNet;
+using SuperSimplePlus.Modules;
 
 namespace SuperSimplePlus.Patches;
 
@@ -147,6 +148,15 @@ class AllHarmonyPatch
             }
             return !handled;
         }
+
+        [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerLeft)), HarmonyPostfix]
+        //参考=>https://github.com/haoming37/TheOtherRoles-GM-Haoming/blob/haoming-main/TheOtherRoles/Patches/GameStartManagerPatch.cs
+        public static void OnPlayerLeftPostfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client, [HarmonyArgument(1)] DisconnectReasons reason)
+            => ImmigrationCheck.WriteBunReport(client, reason);
+
+        [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnGameJoined)), HarmonyPostfix]
+        internal static void OnGameJoined_Postfix(AmongUsClient __instance)
+            => FriendCodeImmigrationPatch.RecordsOfExistingPlayer();
     }
 
     [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.MakePublic))]
