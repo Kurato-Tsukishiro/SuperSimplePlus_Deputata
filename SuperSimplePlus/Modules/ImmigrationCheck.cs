@@ -104,7 +104,7 @@ internal static class ImmigrationCheck
     /// <param name="reason">切断理由</param>
     internal static void WriteBunReport(ClientData client, DisconnectReasons reason)
     {
-        if (reason is DisconnectReasons.Banned or DisconnectReasons.Kicked) return;
+        if (reason is not DisconnectReasons.Banned and not DisconnectReasons.Kicked) return;
 
         if (!AmongUsClient.Instance.AmHost) return;
         if (DenyEntryToFriendCode(client)) return; // 既にBunListに登録されている場合は記載しない。
