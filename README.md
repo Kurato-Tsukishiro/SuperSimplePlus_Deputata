@@ -13,13 +13,14 @@
 
 # このmodについて
 ## 目的
-- このmodは廃村機能などのごく僅かな機能しか無い、機能追加modです。
-- 他modに干渉しない事を目指しています。
-  - 完全な共存性を保証できるModは[SuperNewRoles](https://github.com/ykundesu/SuperNewRoles)のみとなっています。
-  - 主要Modとの共存性は調査していますが、完全な保証はできません。
-  - このModを導入してバグが発生した場合、共存先modのバグだけでなく此方のModの原因も疑ってください。
-    - 共存先のModのデバック時、このModの機能が必要ない場合は、抜く事をお勧めします。
-    - このModの機能がデバックに必要で共存させる場合は、Host機のみに入れる事を推奨します。
+- このmodは``SSP_Dの機能を使用する``を無効にしている場合、廃村機能などのごく僅かな機能しか無い、機能追加modです。
+  - 他modに干渉しない事を目指しています。
+    - 完全な共存性を保証できるModは[SuperNewRoles](https://github.com/ykundesu/SuperNewRoles)のみとなっています。
+    - 主要Modとの共存性は調査していますが、完全な保証はできません。
+    - このModを導入してバグが発生した場合、共存先modのバグだけでなく此方のModの原因も疑ってください。
+      - 共存先のModのデバック時、このModの機能が必要ない場合は、抜く事をお勧めします。
+      - このModの機能がデバックに必要で共存させる場合は、Host機のみに入れる事を推奨します。
+  - ``SSP_Dの機能を使用する``を無効にした場合、``SuperSimplePlus_Deputataの機能``の呼び出しを行わない為、有効な時よりも他modへの干渉が発生しにくくなります、
 
 ## 🔵 使用上の注意
 - **このmodを単独で導入している場合、バニラサーバーで公開部屋を作成する事ができません。**
@@ -68,20 +69,33 @@
 # 機能一覧
 
 ## 設定
+### SuperSimplePlusの機能
 | 機能 | 説明 |
 | :-- | :-- |
 | PC以外をキックする | 有効時 入室した或いは既に入室している steam及びEpic以外のプレイヤーをキックする。  |
 | PC以外をバンする | 有効時 入室した或いは既に入室している steam及びEpic以外のプレイヤーをBANする。 |
+
+### SuperSimplePlus_Deputataの機能
+| 機能 | 説明 |
+| :-- | :-- |
+| SSP_Dの機能を使用する | **起動時**に有効な場合[^1] [ ``SuperSimplePlus_Deputataの機能`` ] と記載している機能が使用可能になる。 |
 | 登録者入室時バンする | 有効時 ``BanFriendCodeList.txt``にフレンドコードが登録されているプレイヤー及びフレンドコード未所持のプレイヤーが入室した場合, BANをする。<br>[機能詳細:登録者入室時バンする](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%A9%9F%E8%83%BD-:-%5B-%E7%99%BB%E9%8C%B2%E8%80%85%E5%85%A5%E5%AE%A4%E6%99%82%E3%83%90%E3%83%B3%E3%81%99%E3%82%8B-%5D) |
-| ゲームログを作成する | **起動時**に有効な場合 以下の機能が有効になる ( [機能詳細:ゲームログを作成する](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%A9%9F%E8%83%BD-:-%5B-%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0%E3%82%92%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B-%5D) )<br>・[1. ゲームログの作成 ](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%A9%9F%E8%83%BD-:-%5B-%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0%E3%82%92%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B-%5D#1%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0yymmdd_hhmm_amongus_gameloglog%E3%81%AE%E4%BD%9C%E6%88%90)<br>・[2. 自身のチャットのみのlogの作成 ](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%A9%9F%E8%83%BD-:-%5B-%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0%E3%82%92%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B-%5D#2%E8%87%AA%E8%BA%AB%E3%81%AE%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%E3%81%AE%E3%81%BF%E3%81%AElogamongus_chatmemolog%E3%81%AE%E4%BD%9C%E6%88%90)<br>・[3. 自視点のみで表示されるチャット ](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%A9%9F%E8%83%BD-:-%5B-%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0%E3%82%92%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B-%5D#3%E8%87%AA%E8%A6%96%E7%82%B9%E3%81%AE%E3%81%BF%E3%81%A7%E8%A1%A8%E7%A4%BA%E3%81%95%E3%82%8C%E3%82%8B%E3%83%81%E3%83%A3%E3%83%83%E3%83%88)<br>・[4. 試合単位のゲームログを切り出す ](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%A9%9F%E8%83%BD-:-%5B-%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0%E3%82%92%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B-%5D#4%E8%A9%A6%E5%90%88%E5%8D%98%E4%BD%8D%E3%81%AE%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0%E3%82%92%E5%88%87%E3%82%8A%E5%87%BA%E3%81%99)|
+| ゲームログを作成する | **起動時**に有効な場合[^1] 以下の機能が有効になる ( [機能詳細:ゲームログを作成する](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%A9%9F%E8%83%BD-:-%5B-%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0%E3%82%92%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B-%5D) )<br>・[1. ゲームログの作成 ](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%A9%9F%E8%83%BD-:-%5B-%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0%E3%82%92%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B-%5D#1%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0yymmdd_hhmm_amongus_gameloglog%E3%81%AE%E4%BD%9C%E6%88%90)<br>・[2. 自身のチャットのみのlogの作成 ](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%A9%9F%E8%83%BD-:-%5B-%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0%E3%82%92%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B-%5D#2%E8%87%AA%E8%BA%AB%E3%81%AE%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%E3%81%AE%E3%81%BF%E3%81%AElogamongus_chatmemolog%E3%81%AE%E4%BD%9C%E6%88%90)<br>・[3. 自視点のみで表示されるチャット ](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%A9%9F%E8%83%BD-:-%5B-%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0%E3%82%92%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B-%5D#3%E8%87%AA%E8%A6%96%E7%82%B9%E3%81%AE%E3%81%BF%E3%81%A7%E8%A1%A8%E7%A4%BA%E3%81%95%E3%82%8C%E3%82%8B%E3%83%81%E3%83%A3%E3%83%83%E3%83%88)<br>・[4. 試合単位のゲームログを切り出す ](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%A9%9F%E8%83%BD-:-%5B-%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0%E3%82%92%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B-%5D#4%E8%A9%A6%E5%90%88%E5%8D%98%E4%BD%8D%E3%81%AE%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0%E3%82%92%E5%88%87%E3%82%8A%E5%87%BA%E3%81%99)|
 | フレンドコード非表示 | 有効時 ゲームログ内などSSPの機能でフレンドコードを表示する物において、伏字で表記する。 |
+
+[^1]: <br>ゲーム中で変更した設定は反映されない。反映されていない状態の場合、ボタン表示が薄い色になる。<br>(再起動後有効になる場合 : 薄い黄緑色, 再起動後無効になる場合 : 薄い赤色)
 
 <hr>
 
 ## その他の機能
+### SuperSimplePlusの機能
 | 機能 | 説明 | 操作 |
 | :-- | :-- | :-- |
 | アップデート機能 | SSPのアップデートがあった時更新ボタンが表示され, それを押すことでアップデートすることができる。 | タイトル画面の右上のアップデートボタンを押してアップデート |
+
+### SuperSimplePlus_Deputataの機能
+| 機能 | 説明 | 操作 |
+| :-- | :-- | :-- |
 | 一人からゲームを開始できる | 共存先Modが[Nebula on the Ship](https://github.com/Dolly1016/Nebula)の場合機能が動かない | ロビーで常時発動 |
 | 対象者がいた場合警告する | BANListに登録済みのプレイヤーが参加している場合, チャットで警告する。 | - 自身の入室時 (ゲスト参加)<br> - 対象者入室時 (ゲスト参加時 又は ホストで[登録者入室時バンする](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%A9%9F%E8%83%BD-:-%5B-%E7%99%BB%E9%8C%B2%E8%80%85%E5%85%A5%E5%AE%A4%E6%99%82%E3%83%90%E3%83%B3%E3%81%99%E3%82%8B-%5D)機能無効時。) |
 | BANを行ったプレイヤーを記録する | BANを手動で行った時 BenReport.logに 登録日時, 登録時のプレイヤー名, フレンドコードを記載する。 | ホストで手動BANを実行した時 |
@@ -89,7 +103,8 @@
 <hr>
 
 ## キーボードショートカット
-### ホストのみ
+### SuperSimplePlusの機能
+#### ホストのみ
 | キー                    | 機能           | 使えるとき     |
 | ----------------------- | -------------- | -------------- |
 | `左Shift`+`A`+`右Shift` | 廃村           | 試合中いつでも |
@@ -98,21 +113,21 @@
 <hr>
 
 ## チャットコマンド
-### 全員
-
-#### [ ゲームログを作成する ] 機能 起動時有効の場合
+### SuperSimplePlus_Deputataの機能
+#### 全員 / [ ゲームログを作成する ] 機能 起動時有効の場合
 | コマンド | 引数 | 説明 |
 | :-- | :-- | :-- |
-| ``/memo``<br>``/cm`` | 自視点のみで表示されるチャットの内容 | ``/cm 黄色 時間的に私のベント移動アドミン見ている 告発しない マッド?``<br>[機能詳細：自視点のみで表示されるチャット](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%A9%9F%E8%83%BD-:-%5B-%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0%E3%82%92%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B-%5D#3%E8%87%AA%E8%A6%96%E7%82%B9%E3%81%AE%E3%81%BF%E3%81%A7%E8%A1%A8%E7%A4%BA%E3%81%95%E3%82%8C%E3%82%8B%E3%83%81%E3%83%A3%E3%83%83%E3%83%88) |
-| ``/nowgamecount``<br>``/ngc`` | 現在の試合回数を取得する。 | ``/ngc`` => 「 現在のゲームプレイ回数 : {0} 回 」<br>[機能詳細 : 現在の試合回数を取得する。](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%A9%9F%E8%83%BD-:-%5B-%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0%E3%82%92%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B-%5D#%E7%8F%BE%E5%9C%A8%E3%81%AE%E8%A9%A6%E5%90%88%E6%95%B0) |
-| ``/banlistlnquiry``<br>``/bll`` |  | 現在の参加者にBANList対象のユーザがいるか確認する。 |
-
-### 全員 [ ロビー ]
-
-| コマンド | 引数 | 説明 |
-| :-- | :-- | :-- |
+| ゲームログ関連 |  | ロビーで使用可能 |
 | ``/savegamelog``<br>``/sgl`` | 最終ゲームのGameLogを取得する。<br>ファイル名(全角可)<br>未入力でも使用可能 |  記入例： ``/sgl マッドてるてる_位置偽装成功_追報勝利回``<br>[機能詳細 : 試合単位のゲームログを切り出す](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%A9%9F%E8%83%BD-%3A-%5B-%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0%E3%82%92%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B-%5D/_edit#4%E8%A9%A6%E5%90%88%E5%8D%98%E4%BD%8D%E3%81%AE%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0%E3%82%92%E5%88%87%E3%82%8A%E5%87%BA%E3%81%99) |
 | ``/savegamelog [引数1], [引数2]``<br>``/sgl [引数1], [引数2]`` | [引数1]回目のゲームのGameLogを取得し、<br>ファイル名に[引数2]を使用して保存する。 | ``/sgl 2, マッドてるてる_位置偽装成功_追報勝利回``<br>(2回目のゲームのGameLogを ファイル名を指定して保存)<br>[機能詳細](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%A9%9F%E8%83%BD-:-%5B-%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0%E3%82%92%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B-%5D#%E6%95%B0%E5%AD%97%E3%81%AE%E5%BC%95%E6%95%B0%E3%81%82%E3%82%8A-%E6%8C%87%E5%AE%9A%E8%A9%A6%E5%90%88%E3%81%AE%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0%E3%81%AE%E5%8F%96%E5%BE%97)|
+| チャットログ関連 |  | 常に使用可能 |
+| ``/memo``<br>``/cm`` | 自視点のみで表示されるチャットの内容 | ``/cm 黄色 時間的に私のベント移動アドミン見ている 告発しない マッド?``<br>[機能詳細：自視点のみで表示されるチャット](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%A9%9F%E8%83%BD-:-%5B-%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0%E3%82%92%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B-%5D#3%E8%87%AA%E8%A6%96%E7%82%B9%E3%81%AE%E3%81%BF%E3%81%A7%E8%A1%A8%E7%A4%BA%E3%81%95%E3%82%8C%E3%82%8B%E3%83%81%E3%83%A3%E3%83%83%E3%83%88) |
+| ``/nowgamecount``<br>``/ngc`` | 現在の試合回数を取得する。 | ``/ngc`` => 「 現在のゲームプレイ回数 : {0} 回 」<br>[機能詳細 : 現在の試合回数を取得する。](https://github.com/Kurato-Tsukishiro/SuperSimplePlus_Deputata/wiki/%E6%A9%9F%E8%83%BD-:-%5B-%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%AD%E3%82%B0%E3%82%92%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B-%5D#%E7%8F%BE%E5%9C%A8%E3%81%AE%E8%A9%A6%E5%90%88%E6%95%B0) |
+
+#### 全員 / [ 登録者入室時バンする ] 機能 起動時有効の場合
+| コマンド | 引数 | 説明 |
+| :-- | :-- | :-- |
+| ``/banlistlnquiry``<br>``/bll`` |  | 現在の参加者にBANList対象のユーザがいるか確認する。 |
 
 <hr>
 
