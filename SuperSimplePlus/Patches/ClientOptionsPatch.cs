@@ -18,17 +18,36 @@ internal static class ClientOptionsPatch
             new("NotPCKick", () => SSPPlugin.NotPCKick.Value = !SSPPlugin.NotPCKick.Value, SSPPlugin.NotPCKick.Value),
             new("NotPCBan", () => SSPPlugin.NotPCBan.Value = !SSPPlugin.NotPCBan.Value, SSPPlugin.NotPCBan.Value),
 
-            new("UseSSPDFeature", () => SSPPlugin.UseSSPDFeature.Value = !SSPPlugin.UseSSPDFeature.Value, SSPPlugin.UseSSPDFeature.Value),
+            new("UseSSPDFeature", () => SSPPlugin.UseSSPDFeature.Value = !SSPPlugin.UseSSPDFeature.Value, SSPPlugin.UseSSPDFeature.Value,
+                () =>
+                    {
+                        // ボタンが押されたら SSP_Dで追加した設定ボタンの表示を切り替える
+                        foreach (var button in modButtons)
+                        {
+                            if (button.Item1 is "NotPCKick" or "NotPCBan" or "UseSSPDFeature") continue;
+
+                            var canAct = SSPPlugin.UseSSPDFeature.Value;
+                            button.Item2.gameObject.SetActive(canAct);
+                        }
+                    }),
             new("FriendCodeBan", () => SSPPlugin.FriendCodeBan.Value = !SSPPlugin.FriendCodeBan.Value, SSPPlugin.FriendCodeBan.Value),
             new("GameLog", () => SSPPlugin.GameLog.Value = !SSPPlugin.GameLog.Value, SSPPlugin.GameLog.Value),
             new("HideFriendCode", () => SSPPlugin.HideFriendCode.Value = !SSPPlugin.HideFriendCode.Value, SSPPlugin.HideFriendCode.Value),
+    };
+
+    /// <summary>起動時の設定を反映する設定</summary>
+    /// <returns>Key => ボタンの翻訳key / Value => 起動時の設定/returns>
+    internal static readonly Dictionary<string, bool> StartupState = new()
+    {
+        {"UseSSPDFeature", SSPPlugin.UseSSPDFeature.Value},
+        {"GameLog", SSPPlugin.GameLog.Value}
     };
 
     private static GameObject popUp;
     private static TextMeshPro titleText;
 
     private static ToggleButtonBehaviour modOption;
-    private static List<ToggleButtonBehaviour> modButtons;
+    private static List<(string, ToggleButtonBehaviour)> modButtons;
     private static TextMeshPro titleTextTitle;
 
     private static ToggleButtonBehaviour buttonPrefab;
@@ -173,7 +192,7 @@ internal static class ClientOptionsPatch
     {
         if (popUp.transform.GetComponentInChildren<ToggleButtonBehaviour>()) return;
 
-        modButtons = new List<ToggleButtonBehaviour>();
+        modButtons = new List<(string, ToggleButtonBehaviour)>();
 
         for (var i = 0; i < AllOptions.Length; i++)
         {
@@ -185,17 +204,17 @@ internal static class ClientOptionsPatch
             var transform = button.transform;
             transform.localPosition = pos;
 
-            button.onState = info.DefaultValue;
-            button.Background.color = button.onState ? Color.green : Palette.ImpostorRed;
-
+            button.onState = info.DefaultValue; // 現在のボタンの状態 (コンフィグに保存されている状態)
+            button.Background.color = buttonColor();
             button.Text.text = ModTranslation.GetString(info.Title);
-            if (info.Key == "GameLog") { button.Text.text += GameLogManager.IsValidChatLog ? $"\n{ModTranslation.GetString("ChatLogOn")}" : $"\n{ModTranslation.GetString("ChatLogOff")}"; }
+            if (StartupState.ContainsKey(info.Key)) { button.Text.text += StartupState[info.Key] ? $"\n{ModTranslation.GetString("StartupStateOn")}" : $"\n{ModTranslation.GetString("StartupStateOff")}"; }
             button.Text.fontSizeMin = button.Text.fontSizeMax = 2.2f;
             button.Text.font = Object.Instantiate(titleText.font);
             button.Text.GetComponent<RectTransform>().sizeDelta = new Vector2(2, 2);
 
             button.name = info.Title.Replace(" ", "") + "Toggle";
-            button.gameObject.SetActive(true);
+            var canAct = SSPPlugin.UseSSPDFeature.Value || info.Key is "NotPCKick" or "NotPCBan" or "UseSSPDFeature";
+            button.gameObject.SetActive(canAct);
 
             var passiveButton = button.GetComponent<PassiveButton>();
             var colliderButton = button.GetComponent<BoxCollider2D>();
@@ -209,15 +228,30 @@ internal static class ClientOptionsPatch
             passiveButton.OnClick.AddListener((Action)(() =>
             {
                 button.onState = info.OnClick();
-                button.Background.color = button.onState ? Color.green : Palette.ImpostorRed;
+                info.AdditionalAction?.Invoke();
+                button.Background.color = buttonColor();
             }));
 
             passiveButton.OnMouseOver.AddListener((Action)(() => button.Background.color = new Color32(34, 139, 34, byte.MaxValue)));
-            passiveButton.OnMouseOut.AddListener((Action)(() => button.Background.color = button.onState ? Color.green : Palette.ImpostorRed));
+            passiveButton.OnMouseOut.AddListener((Action)(() => button.Background.color = buttonColor()));
 
             foreach (var spr in button.gameObject.GetComponentsInChildren<SpriteRenderer>())
                 spr.size = new Vector2(2.2f, .7f);
-            modButtons.Add(button);
+            modButtons.Add((info.Key, button));
+
+            Color32 buttonColor()
+            {
+                // 反映している設定と現在の設定が異なる場合、薄い色で状態を表示する
+                Color32 color = StartupState.ContainsKey(info.Key) && StartupState[info.Key] != button.onState
+                    ? button.onState
+                        ? new Color32(144, 238, 144, 255) // 薄い黄緑
+                        : new Color32(233, 150, 122, 255) // 薄い赤
+                    : (Color32)(button.onState
+                        ? Color.green
+                        : Palette.ImpostorRed);
+
+                return color;
+            }
         }
     }
     private static IEnumerable<GameObject> GetAllChilds(this GameObject Go)
@@ -236,13 +270,16 @@ internal static class ClientOptionsPatch
         internal readonly string Title;
         internal readonly Func<bool> OnClick;
         internal readonly bool DefaultValue;
+        /// <summary>ボタン押下時に追加で行う処理</summary>
+        internal readonly Action? AdditionalAction;
 
-        internal SelectionBehaviour(string key, Func<bool> onClick, bool defaultValue)
+        internal SelectionBehaviour(string key, Func<bool> onClick, bool defaultValue, Action? additionalAction = null)
         {
             Key = key;
             Title = ModTranslation.GetString(key);
             OnClick = onClick;
             DefaultValue = defaultValue;
+            AdditionalAction = additionalAction;
         }
     }
 }
