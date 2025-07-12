@@ -36,7 +36,7 @@ internal static class ClientOptionsPatch
     };
 
     /// <summary>起動時の設定を反映する設定</summary>
-    /// <returns>Key => ボタンの翻訳key / Value => 起動時の設定/returns>
+    /// <returns>Key => ボタンの翻訳key / Value => 起動時の設定</returns>
     internal static readonly Dictionary<string, bool> StartupState = new()
     {
         {"UseSSPDFeature", SSPPlugin.UseSSPDFeature.Value},
