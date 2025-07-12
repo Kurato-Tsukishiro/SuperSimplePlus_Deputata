@@ -40,13 +40,7 @@ class GameSystemLogPatch
         SaveSystemLog(GetSystemMessageLog($"プレイヤー数：{PlayerControl.AllPlayerControls.Count}人"));
         foreach (ClientData client in AmongUsClient.Instance.allClients)
         {
-            // 参考? =>https://github.com/ykundesu/SuperNewRoles/blob/1.8.1.0/SuperNewRoles/Modules/CustomOverlay.cs#L648-#L651
-            string friendCode;
-            if (client?.FriendCode is not null and not "") friendCode = client?.FriendCode; // フレンドコードを所持している場合
-            else friendCode = "未所持"; // クライアントデータやフレンドコードがない場合, フレンドコードがブランクだった場合
-            if (SSPPlugin.HideFriendCode.Value) friendCode = "**********#****"; // バニラ設定[配信者モード]が有効時フレンドコードを伏字風にする
-
-            SaveSystemLog(GetSystemMessageLog($"{client.PlayerName}(pid:{client.GetPlayer().PlayerId})(FriendCode:{friendCode})({GetColorName(client)})({client?.PlatformData?.Platform})"));
+            SaveSystemLog(GetSystemMessageLog($"{client.PlayerName}(pid:{client.GetPlayer().PlayerId})(FriendCode:{Modules.ImmigrationCheck.FriendCodeFormatString(client)})({GetColorName(client)})({client?.PlatformData?.Platform})"));
         }
 
         CDToNameDic = new(); // 試合開始時に, 文字数調整した名前とClientIdと紐づけた辞書を初期化する。
