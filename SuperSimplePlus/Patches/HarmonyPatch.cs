@@ -160,7 +160,7 @@ internal class AllHarmonyPatch
             internal static bool Prepare() => ClientOptionsPatch.StartupState["UseSSPDFeature"];
             //参考=>https://github.com/haoming37/TheOtherRoles-GM-Haoming/blob/haoming-main/TheOtherRoles/Patches/GameStartManagerPatch.cs
             public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client, [HarmonyArgument(1)] DisconnectReasons reason)
-                => ImmigrationCheck.WriteBunReport(client, reason);
+                => ImmigrationCheck.WriteBanReport(client, reason);
         }
 
         /// <summary>コマンドの管理</summary>
