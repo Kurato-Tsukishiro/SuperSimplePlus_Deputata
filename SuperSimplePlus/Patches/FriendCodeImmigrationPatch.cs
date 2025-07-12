@@ -22,8 +22,7 @@ internal static class FriendCodeImmigrationPatch
                     var friendCode = Modules.ImmigrationCheck.FriendCodeFormatString(cd);
                     var warningText = $"{cd.PlayerName}は, {(Modules.ImmigrationCheck.HasFriendCode(cd) ? $"BAN対象のコード{friendCode}を所持しています" : "フレンドコードを所持していません")}。";
 
-                    if (warningTextDic.ContainsKey(cd.Id)) warningTextDic.Add(cd.Id, warningText);
-                    else warningTextDic[cd.Id] = warningText;
+                    warningTextDic[cd.Id] = warningText;
                 }
             }
 
@@ -95,8 +94,7 @@ internal static class FriendCodeImmigrationPatch
             {
                 warningText = $"{cd.PlayerName}は, {(Modules.ImmigrationCheck.HasFriendCode(cd) ? $"BAN対象のコード{friendCode}を所持しています" : "フレンドコードを所持していません")}。";
 
-                if (warningTextDic.ContainsKey(cd.Id)) warningTextDic.Add(cd.Id, warningText);
-                else warningTextDic[cd.Id] = warningText;
+                warningTextDic[cd.Id] = warningText;
             }
         }
 
