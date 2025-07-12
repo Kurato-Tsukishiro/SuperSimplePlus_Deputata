@@ -99,7 +99,7 @@ internal static class ImmigrationCheck
         catch (Exception e) { Logger.Error($"[BANFriendCodeList.txt]のロードに失敗しました : {e}", "ImmigrationCheck"); }
     }
 
-    /// <summary>手動でBAN又はKickを行った場合、BenReport.logに記録する</summary>
+    /// <summary>手動でBAN又はKickを行った場合、BanReport.logに記録する</summary>
     /// <param name="client">対象</param>
     /// <param name="reason">切断理由</param>
     internal static void WriteBanReport(ClientData client, DisconnectReasons reason)
@@ -111,7 +111,7 @@ internal static class ImmigrationCheck
 
         // PC以外BANが有効で, Steam・Epic でない場合, 自動BANなので記載しない。
         if (SSPPlugin.NotPCBan.Value && (client.PlatformData.Platform is not Platforms.StandaloneEpicPC and not Platforms.StandaloneSteamPC)) return;
-        string bunReportPath = @$"{GameLogManager.SSPDFolderPath}" + @$"BenReport.log";
+        string bunReportPath = @$"{GameLogManager.SSPDFolderPath}" + @$"BanReport.log";
 
         Logger.Info($"Listに登録していない人の手動BAN 又は手動キックを行った為, 保存します。 =>({reason}) {client.PlayerName} : {FriendCodeFormatString(client)}");
         string log = $"登録日時 : {DateTime.Now:yyMMdd_HHmm}, 登録者 : {client.PlayerName} ( {client.FriendCode} ), 理由 : {reason}, プラットフォーム : {client.PlatformData.Platform}";
