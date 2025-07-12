@@ -102,7 +102,7 @@ internal static class ImmigrationCheck
     /// <summary>手動でBAN又はKickを行った場合、BenReport.logに記録する</summary>
     /// <param name="client">対象</param>
     /// <param name="reason">切断理由</param>
-    internal static void WriteBunReport(ClientData client, DisconnectReasons reason)
+    internal static void Write(ClientData client, DisconnectReasons reason)
     {
         if (reason is not DisconnectReasons.Banned and not DisconnectReasons.Kicked) return;
 
@@ -129,5 +129,5 @@ internal static class ImmigrationCheck
     /// <param name="client">取得したい対象</param>
     /// <returns>変換されたフレンドコード</returns>
     internal static string FriendCodeFormatString(ClientData client)
-        => client == null ? "Error" : HasFriendCode(client) ? "未所持" : SSPPlugin.HideFriendCode.Value ? "**********#****" : client.FriendCode;
+        => client == null ? "Error" : !HasFriendCode(client) ? "未所持" : SSPPlugin.HideFriendCode.Value ? "**********#****" : client.FriendCode;
 }
