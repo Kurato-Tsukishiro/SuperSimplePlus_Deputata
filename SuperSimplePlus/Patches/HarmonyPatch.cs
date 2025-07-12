@@ -9,7 +9,7 @@ namespace SuperSimplePlus.Patches;
 /// SSP_Dで追加した機能関連のHarmonyPatchを纏めている
 /// </summary>
 [HarmonyPatch]
-class AllHarmonyPatch
+internal class AllHarmonyPatch
 {
     private static readonly bool IsValidChatLog = ClientOptionsPatch.StartupState["UseSSPDFeature"] && ClientOptionsPatch.StartupState["GameLog"];
 
@@ -46,7 +46,7 @@ class AllHarmonyPatch
 
     /// <summary>ゲームログの作成関連で使用しているHarmonyPatch</summary>
     [HarmonyPatch]
-    static class GameLogHarmony
+    internal static class GameLogHarmony
     {
         /// <summary>ゲーム開始時に情報を記載する</summary>
         [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.CoBegin))]
@@ -82,7 +82,7 @@ class AllHarmonyPatch
 
         /// <summary>開票時に情報を記載する</summary>
         [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.CheckForEndVoting))]
-        internal class CheckForEndVotingPatch
+        static class CheckForEndVotingPatch
         {
             static bool Prepare() => IsValidChatLog;
             static void Postfix(MeetingHud __instance) => GameSystemLogPatch.VoteLogMethodManager.MeetingCastVoteSave(__instance);
@@ -98,9 +98,9 @@ class AllHarmonyPatch
 
         /// <summary>会議終了時(airship)に情報を記載する</summary>
         [HarmonyPatch(typeof(AirshipExileController), nameof(AirshipExileController.WrapUpAndSpawn))]
-        static class AirshipExileControllerWrapUpAndSpawnPatch
+        internal static class AirshipExileControllerWrapUpAndSpawnPatch
         {
-            static int LastPost_was;
+            internal static int LastPost_was;
 
             static bool Prepare() => IsValidChatLog;
             static void Postfix(AirshipExileController._WrapUpAndSpawn_d__11 __instance)

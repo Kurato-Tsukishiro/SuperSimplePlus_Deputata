@@ -66,5 +66,7 @@ public class VariableManager
         Helpers.IdControlDic = new();
         Helpers.CDToNameDic = new();
         GameLogManager.AddGameLog();
+
+        AllHarmonyPatch.GameLogHarmony.AirshipExileControllerWrapUpAndSpawnPatch.LastPost_was = -1;
     }
 }
