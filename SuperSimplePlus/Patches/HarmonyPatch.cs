@@ -133,10 +133,14 @@ class AllHarmonyPatch
     [HarmonyPatch]
     static class FriendCodeBANPatch
     {
+        [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerJoined)), HarmonyPrepare]
+        internal static bool OnPlayerJoinedPrepare() => ClientOptionsPatch.StartupState["UseSSPDFeature"];
         [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerJoined)), HarmonyPostfix]
         internal static void OnPlayerJoinedPostfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client)
             => FriendCodeImmigrationPatch.OnPlayerJoined_postfix(client);
 
+        [HarmonyPatch(typeof(ChatController), nameof(ChatController.SendChat)), HarmonyPrepare]
+        internal static bool SendChatPrepare() => ClientOptionsPatch.StartupState["UseSSPDFeature"];
         [HarmonyPatch(typeof(ChatController), nameof(ChatController.SendChat)), HarmonyPrefix]
         static bool SendChatPrefix(ChatController __instance)
         {
@@ -150,13 +154,17 @@ class AllHarmonyPatch
             return !handled;
         }
 
+        [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerLeft)), HarmonyPrepare]
+        internal static bool OnPlayerLeftPrepare() => ClientOptionsPatch.StartupState["UseSSPDFeature"];
         [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerLeft)), HarmonyPostfix]
         //参考=>https://github.com/haoming37/TheOtherRoles-GM-Haoming/blob/haoming-main/TheOtherRoles/Patches/GameStartManagerPatch.cs
         public static void OnPlayerLeftPostfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client, [HarmonyArgument(1)] DisconnectReasons reason)
             => ImmigrationCheck.WriteBunReport(client, reason);
 
+        [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnGameJoined)), HarmonyPrepare]
+        internal static bool OnGameJoinedPrepare() => ClientOptionsPatch.StartupState["UseSSPDFeature"];
         [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnGameJoined)), HarmonyPostfix]
-        internal static void OnGameJoined_Postfix(AmongUsClient __instance)
+        internal static void OnGameJoinedPostfix(AmongUsClient __instance)
             => FriendCodeImmigrationPatch.RecordsOfExistingPlayer();
     }
 
@@ -166,6 +174,8 @@ class AllHarmonyPatch
         /// <summary>Modを併用しているか</summary>
         /// <value>null => cache無し / true => 併用している / false => 単独導入</value>
         internal static bool? cachedHasOtherMods { get; private set; } = null;
+
+        internal static bool Prepare() => ClientOptionsPatch.StartupState["UseSSPDFeature"];
 
         /// <summary>公開部屋への変更が可能か?</summary>
         /// <param name="__instance"></param>
