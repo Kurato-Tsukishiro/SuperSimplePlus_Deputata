@@ -87,8 +87,7 @@ internal static class FriendCodeImmigrationPatch
             var dicPage = $"[{cd.PlayerName}], ClientId : {cd.Id}, Platform:{cd.PlatformData.Platform}, FriendCode : {friendCode}({(isTaregt ? '×' : '〇')})";
             var warningText = "";
 
-            if (participantDic.ContainsKey(cd.Id)) participantDic.Add(cd.Id, dicPage);
-            else participantDic[cd.Id] = dicPage;
+            participantDic[cd.Id] = dicPage;
 
             if (isTaregt)
             {
