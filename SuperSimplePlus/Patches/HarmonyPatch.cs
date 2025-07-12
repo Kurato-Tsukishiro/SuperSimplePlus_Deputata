@@ -252,5 +252,15 @@ class AllHarmonyPatch
                 return hasOtherMods;
             }
         }
+
+        [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Update))]
+        static class GameStartManagerUpdatePatch
+        {
+            static bool Prepare() => ClientOptionsPatch.StartupState["UseSSPDFeature"];
+            //参考=>https://github.com/ykundesu/SuperNewRoles/blob/master/SuperNewRoles/Patches/ShareGameVersionPatch.cs
+            /// <summary>1人以上からゲームを開始できるようにする</summary>
+            /// <param name="__instance"></param>
+            static void Prefix(GameStartManager __instance) => __instance.MinPlayers = 1;
+        }
     }
 }

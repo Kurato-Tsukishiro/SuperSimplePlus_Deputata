@@ -18,9 +18,6 @@ public class GameStartManagerUpdatePatch
                 AmongUsClient.Instance.KickPlayer(c.Id, ban: SSPPlugin.NotPCBan.Value); // 第2引数が trueの時 BAN / falseの時Kick
         }
     }
-
-    //参考=>https://github.com/ykundesu/SuperNewRoles/blob/master/SuperNewRoles/Patches/ShareGameVersionPatch.cs
-    public static void Prefix(GameStartManager __instance) => __instance.MinPlayers = 1;
 }
 
 [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerLeft))]
