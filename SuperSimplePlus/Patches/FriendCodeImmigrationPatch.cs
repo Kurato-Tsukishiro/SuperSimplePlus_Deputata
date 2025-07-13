@@ -77,7 +77,7 @@ internal static class FriendCodeImmigrationPatch
         if (AmongUsClient.Instance.AmHost) return;
 
         Dictionary<int, string> participantDic = new();
-        Dictionary<int, string> warningTextDic = new();
+        // Dictionary<int, string> warningTextDic = new();
 
         foreach (ClientData cd in AmongUsClient.Instance.allClients)
         {
@@ -85,17 +85,32 @@ internal static class FriendCodeImmigrationPatch
             var friendCode = Modules.ImmigrationCheck.FriendCodeFormatString(cd);
 
             var dicPage = $"[{cd.PlayerName}], ClientId : {cd.Id}, Platform:{cd.PlatformData.Platform}, FriendCode : {friendCode}({(isTaregt ? '×' : '〇')})";
-            var warningText = "";
+            // var warningText = "";
 
             participantDic[cd.Id] = dicPage;
 
-            if (isTaregt)
+            /*if (isTaregt)
             {
                 warningText = $"{cd.PlayerName}は, {(Modules.ImmigrationCheck.HasFriendCode(cd) ? $"BAN対象のコード{friendCode}を所持しています" : "フレンドコードを所持していません")}。";
 
                 warningTextDic[cd.Id] = warningText;
-            }
+            }*/
         }
+
+
+        // FIXME : 入室タイミングでのチャット表示は ``FastDestroyableSingleton<HudManager>.Instance.Chat`` が null の為使用できない。タイマーとかで実行タイミングずらして表示できるようにする
+        /*
+        string? warningMessage = null;
+        if (FastDestroyableSingleton<HudManager>.Instance != null && FastDestroyableSingleton<HudManager>.Instance.Chat != null)
+        {
+            foreach (KeyValuePair<int, string> kvp in warningTextDic) { warningMessage += $"{kvp.Value}\n"; }
+
+            if (warningMessage == null)
+                FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, $"<align={"left"}><color=#89c3eb><size=150%>Infomation</size></color><size=80%>\n現在, BANList対象者は入室しておりません。</size></align>");
+            else
+                FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, $"<align={"left"}><color=#F2E700><size=150%>警告!</size></color><size=80%>\n{warningMessage}</size></align>");
+        }
+        */
 
         Logger.Info($"|:========== 既入室者の記録 Start ==========:|", "AmongUsClientOnPlayerJoindPatch");
         foreach (KeyValuePair<int, string> kvp in participantDic) Logger.Info(kvp.Value, "OnPlayerJoined");
