@@ -9,34 +9,30 @@ using InnerNet;
 using SuperSimplePlus.Patches;
 using UnityEngine;
 
-namespace SuperSimplePlus;
-public static class ImmigrationCheck
+namespace SuperSimplePlus.Modules;
+internal static class ImmigrationCheck
 {
     // 一番左と一行全部
     private static readonly Dictionary<uint, string> dictionary = new(); //keyを行番号, valueをフレンドコードに
 
-    /// <summary>
-    /// BANListの照会を行う。ranがtrueの時対象者のBANも実行する。
-    /// </summary>
+    /// <summary>BANListの照会を行う</summary>
     /// <param name="client">照会対象</param>
-    /// <param name="ran">BANを実行する。</param>
-    /// <returns>>true / 対象者である, false / 対象者でない</returns>
-    internal static bool DenyEntryToFriendCode(ClientData client, bool ran = false)
+    /// <returns>true / 対象者である, false / 対象者でない</returns>
+    internal static bool DenyEntryToFriendCode(ClientData client)
     {
-        var result = dictionary.ContainsValue(client?.FriendCode);
-
-        if (ran && result)
+        if (AmongUsClient.Instance.NetworkMode == NetworkModes.OnlineGame) return false;
+        if (client == null)
         {
-            if (AmongUsClient.Instance.AmHost && SSPPlugin.FriendCodeBan.Value)
-            {
-                AmongUsClient.Instance.KickPlayer(client.Id, ban: true); // 入室者のコードが辞書に乗っていたら BAN をする
-
-                var message = $"BANList対象者 : {client?.PlayerName}{(SSPPlugin.HideFriendCode.Value ? "" : $"( {client?.FriendCode} )")} のBANを実行しました。";
-                FastDestroyableSingleton<HudManager>.Instance?.Chat?.AddChat(PlayerControl.LocalPlayer, message);
-                Logger.Info(message);
-            }
+            Logger.Error($"照会対象が存在しません。");
+            return false;
         }
-        return result;
+
+        var isSavedFriendCode = dictionary.ContainsValue(client.FriendCode);
+
+        bool isTaregt;
+        isTaregt = !HasFriendCode(client) || isSavedFriendCode;
+
+        return isTaregt;
     }
 
     internal static async void LoadFriendCodeList()
@@ -102,4 +98,36 @@ public static class ImmigrationCheck
         }
         catch (Exception e) { Logger.Error($"[BANFriendCodeList.txt]のロードに失敗しました : {e}", "ImmigrationCheck"); }
     }
+
+    /// <summary>手動でBAN又はKickを行った場合、BanReport.logに記録する</summary>
+    /// <param name="client">対象</param>
+    /// <param name="reason">切断理由</param>
+    internal static void WriteBanReport(ClientData client, DisconnectReasons reason)
+    {
+        if (reason is not DisconnectReasons.Banned and not DisconnectReasons.Kicked) return;
+
+        if (!AmongUsClient.Instance.AmHost) return;
+        if (DenyEntryToFriendCode(client)) return; // 既にBunListに登録されている場合は記載しない。
+
+        // PC以外BANが有効で, Steam・Epic でない場合, 自動BANなので記載しない。
+        if (SSPPlugin.NotPCBan.Value && (client.PlatformData.Platform is not Platforms.StandaloneEpicPC and not Platforms.StandaloneSteamPC)) return;
+        string banReportPath = @$"{GameLogManager.SSPDFolderPath}" + @$"BanReport.log";
+
+        Logger.Info($"Listに登録していない人の手動BAN 又は手動キックを行った為, 保存します。 =>({reason}) {client.PlayerName} : {FriendCodeFormatString(client)}");
+        string log = $"登録日時 : {DateTime.Now:yyMMdd_HHmm}, 登録者 : {client.PlayerName} ( {client.FriendCode} ), 理由 : {reason}, プラットフォーム : {client.PlatformData.Platform}";
+        File.AppendAllText(banReportPath, log + Environment.NewLine);
+    }
+
+    // 参考 => https://github.com/SuperNewRoles/SuperNewRoles/blob/2.1.1.1/SuperNewRoles/Modules/Blacklist.cs#L109-L113
+    /// <summary>フレンドコードを有するか</summary>
+    /// <param name="client">確認対象</param>
+    /// <returns>true = 有する / false = 有さない</returns>
+    internal static bool HasFriendCode(ClientData client)
+        => client != null && (client.FriendCode is not null and not "") && client.FriendCode.Contains('#');
+
+    /// <summary>フレンドコードをログに記載する形に変換する</summary>
+    /// <param name="client">取得したい対象</param>
+    /// <returns>変換されたフレンドコード</returns>
+    internal static string FriendCodeFormatString(ClientData client)
+        => client == null ? "Error" : !HasFriendCode(client) ? "未所持" : SSPPlugin.HideFriendCode.Value ? "**********#****" : client.FriendCode;
 }

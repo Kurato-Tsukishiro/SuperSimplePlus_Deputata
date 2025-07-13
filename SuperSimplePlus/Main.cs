@@ -10,7 +10,7 @@ namespace SuperSimplePlus;
 public class SSPPlugin : BasePlugin
 {
     public const String Id = "jp.Kurato-Tsukishiro.SuperSimplePlus_Deputata";
-    public const String Version = "2.3.0.2";
+    public const String Version = "2.3.1.0";
 
     public const String ColoredModName = "<color=#96514d>SSP_Deputata</color>";
     public const String shortModName = "SSP_Deputata";
@@ -18,6 +18,7 @@ public class SSPPlugin : BasePlugin
     public static ConfigEntry<bool> debugTool { get; set; }
     public static ConfigEntry<bool> NotPCKick { get; set; }
     public static ConfigEntry<bool> NotPCBan { get; set; }
+    public static ConfigEntry<bool> UseSSPDFeature { get; set; }
     public static ConfigEntry<bool> GameLog { get; set; }
     public static ConfigEntry<bool> HideFriendCode { get; set; }
     public static ConfigEntry<bool> FriendCodeBan { get; set; }
@@ -36,13 +37,14 @@ public class SSPPlugin : BasePlugin
         debugTool = Config.Bind("Client Options", "Debug Tool", false);
         NotPCKick = Config.Bind("Client Options", "NotPCKick", false, "Steam及びEpic以外のプラットフォームのプレイヤーをキックするか");
         NotPCBan = Config.Bind("Client Options", "NotPCBan", false, "Steam及びEpic以外のプラットフォームのプレイヤーをバンするか (優先)");
+        UseSSPDFeature = Config.Bind("Client Options", "UseSSPDFeature", false, "SSP_Dで追加された機能を有効にするか");
         GameLog = Config.Bind("Client Options", "GameLog", false, "ゲームログ及びチャットログを作成するか");
         HideFriendCode = Config.Bind("Client Options", "HideFriendCode", true, "ゲームログでフレンドコードを非表示にするか");
         FriendCodeBan = Config.Bind("Client Options", "FriendCodeBan", false, "外部ファイルに記録されたフレンドコードをバンする機能を有効にするか");
 
         //Load
         ModTranslation.LoadCsv();
-        ImmigrationCheck.LoadFriendCodeList();
+        Modules.ImmigrationCheck.LoadFriendCodeList();
 
         Harmony.PatchAll();
 
