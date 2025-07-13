@@ -18,46 +18,6 @@ public class GameStartManagerUpdatePatch
                 AmongUsClient.Instance.KickPlayer(c.Id, ban: SSPPlugin.NotPCBan.Value); // 第2引数が trueの時 BAN / falseの時Kick
         }
     }
-
-    //参考=>https://github.com/ykundesu/SuperNewRoles/blob/master/SuperNewRoles/Patches/ShareGameVersionPatch.cs
-    public static void Prefix(GameStartManager __instance) => __instance.MinPlayers = 1;
-}
-
-[HarmonyPatch]
-internal class JoindPatch
-{
-    [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnGameJoined)), HarmonyPostfix]
-    internal static void OnGameJoined_Postfix(AmongUsClient __instance)
-    {
-        if (AmongUsClient.Instance.AmHost) return;
-
-        Dictionary<int, string> participantDic = new();
-        Dictionary<int, string> warningTextDic = new();
-
-        foreach (ClientData cd in AmongUsClient.Instance.allClients)
-        {
-            (var isTaregt, var friendCode) = Modules.ImmigrationCheck.DenyEntryToFriendCode(cd);
-            var isCodeOK = isTaregt ? '×' : '〇';
-            var dicPage = $"[{cd.PlayerName}], ClientId : {cd.Id}, Platform:{cd.PlatformData.Platform}, FriendCode : {friendCode}({isCodeOK})";
-            var warningText = "";
-
-            if (participantDic.ContainsKey(cd.Id)) participantDic.Add(cd.Id, dicPage);
-            else participantDic[cd.Id] = dicPage;
-
-            if (isTaregt)
-            {
-                warningText = $"{cd.PlayerName}は, {(friendCode != "未所持" ? $"BAN対象のコード{friendCode}を所持しています" : "フレンドコードを所持していません")}。";
-
-                if (warningTextDic.ContainsKey(cd.Id)) warningTextDic.Add(cd.Id, warningText);
-                else warningTextDic[cd.Id] = warningText;
-            }
-        }
-
-        Logger.Info($"|:========== 既入室者の記録 Start ==========:|", "AmongUsClientOnPlayerJoindPatch");
-        foreach (KeyValuePair<int, string> kvp in participantDic) Logger.Info(kvp.Value, "OnPlayerJoined");
-
-        Logger.Info($"|:========== 既入室者の記録 End ==========:|", "AmongUsClientOnPlayerJoindPatch");
-    }
 }
 
 [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerLeft))]
@@ -65,26 +25,7 @@ public class AmongUsClientOnPlayerLeftPatch
 {
     //参考=>https://github.com/haoming37/TheOtherRoles-GM-Haoming/blob/haoming-main/TheOtherRoles/Patches/GameStartManagerPatch.cs
     public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client, [HarmonyArgument(1)] DisconnectReasons reason)
-    {
-        Logger.Info($"PlayerName: \"{client.PlayerName}(ID:{client.Id})({client.PlatformData.Platform})\" Left (Reason: {reason})", "OnPlayerLeft");
-
-        if (!AmongUsClient.Instance.AmHost) return;
-        if (reason == DisconnectReasons.Banned) WriteBunReport(client);
-    }
-
-    private static void WriteBunReport(ClientData client)
-    {
-        (var isAllladyTaregt, var friendCode) = Modules.ImmigrationCheck.DenyEntryToFriendCode(client);
-
-        if (isAllladyTaregt) return; // 既にBunListに登録されている場合は記載しない。
-        // PC以外BANが有効で, Steam・Epic でない場合, 自動BANなので記載しない。
-        if (SSPPlugin.NotPCBan.Value && (client.PlatformData.Platform is not Platforms.StandaloneEpicPC and not Platforms.StandaloneSteamPC)) return;
-        string bunReportPath = @$"{GameLogManager.SSPDFolderPath}" + @$"BenReport.log";
-
-        Logger.Info($"BANListに登録していない人の手動BANを行った為, 保存します。 => {client.PlayerName} : {friendCode}");
-        string log = $"登録日時 : {DateTime.Now:yyMMdd_HHmm}, 登録者 : {client.PlayerName} ( {client?.FriendCode} ), プラットフォーム : {client.PlatformData.Platform}";
-        File.AppendAllText(bunReportPath, log + Environment.NewLine);
-    }
+        => Logger.Info($"PlayerName: \"{client.PlayerName}(ID:{client.Id})({client.PlatformData.Platform})\" Left (Reason: {reason})", "OnPlayerLeft");
 }
 
 [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Start))]
@@ -125,5 +66,7 @@ public class VariableManager
         Helpers.IdControlDic = new();
         Helpers.CDToNameDic = new();
         GameLogManager.AddGameLog();
+
+        AllHarmonyPatch.GameLogHarmony.AirshipExileControllerWrapUpAndSpawnPatch.LastPost_was = -1;
     }
 }
