@@ -11,7 +11,7 @@ internal static class FriendCodeImmigrationPatch
         string text = __instance.freeChatField.textArea.text;
         handled = false;
 
-        if (RecordingChatPatch.StartsWithCommands(text, RecordingChatPatch.CommandAliases["BanListLnquiry"]))
+        if (RecordingChatPatch.StartsWithCommands(text, RecordingChatPatch.CommandAliases["BanListinquiry"]))
         {
             handled = true;
             Dictionary<int, string> warningTextDic = new();
