@@ -26,16 +26,12 @@ internal static class FriendCodeImmigrationPatch
                 }
             }
 
-            string warningMessage = "";
+            string? warningMessage = null;
             foreach (KeyValuePair<int, string> kvp in warningTextDic) { warningMessage += $"{kvp.Value}\n"; }
-            if (warningMessage == "")
-            {
+            if (warningMessage == null)
                 __instance.AddChat(PlayerControl.LocalPlayer, $"<align={"left"}><color=#89c3eb><size=150%>Infomation</size></color><size=80%>\n現在, BANList対象者は入室しておりません。</size></align>");
-            }
             else
-            {
                 __instance.AddChat(PlayerControl.LocalPlayer, $"<align={"left"}><color=#F2E700><size=150%>警告!</size></color><size=80%>\n{warningMessage}</size></align>");
-            }
         }
     }
 
