@@ -119,7 +119,7 @@ class RecordingChatPatch
 
         {"SaveGameLog", ["/sgl", "/savegamelog"]},
 
-        {"BanListLnquiry", ["/bll", "/banlistlnquiry"]}
+        {"BanListInquiry", ["/bli", "/banlistinquiry"]}
     };
 }
 
